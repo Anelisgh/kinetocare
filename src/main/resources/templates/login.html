@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Login</title>
+    <link rel="stylesheet" href="/css/auth.css">
+</head>
+<body>
+<h1>Conectează-te</h1>
+<div th:if="${error}" class="error-message">Email sau parolă incorectă!</div>
+<div th:if="${logout}" class="success-message">Ai fost delogat cu succes.</div>
+<form th:action="@{/login}" method="post">
+    <input type="email" name="email" placeholder="Email" required>
+    <input type="password" name="password" placeholder="Parolă" required>
+    <button type="submit">Conectează-te</button>
+</form>
+<a th:href="@{/register}">Înregistrează-te</a>
+</body>
+</html>

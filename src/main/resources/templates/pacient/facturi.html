@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Istoric Plăți</title>
+    <link rel="stylesheet" href="/css/navbar.css">
+    <link rel="stylesheet" href="/css/facturi.css">
+</head>
+<body>
+<div th:replace="~{fragments/navbar_p :: navbar}"></div>
+<div class="container">
+    <h2 class="title">Istoricul de Plăți</h2>
+
+    <!-- Controls Section -->
+    <div class="controls">
+        <!-- Sorting Controls -->
+        <div class="sorting">
+            <span>Sortează după:</span>
+
+            <!-- Sortare Data -->
+            <a th:href="@{/pacient/facturi(page=0, size=${pageSize}, sort=${sort.startsWith('data') ? (sort.endsWith('desc') ? 'data,asc' : 'data,desc') : 'data,desc'})}"
+               th:classappend="${sort.startsWith('data')} ? 'active'">
+                Data
+                <span th:if="${sort == 'data,desc'}">🡣</span>
+                <span th:if="${sort == 'data,asc'}">🡡</span>
+            </a>
+
+            <!-- Sortare Sumă -->
+            <a th:href="@{/pacient/facturi(page=0, size=${pageSize}, sort=${sort.startsWith('suma') ? (sort.endsWith('desc') ? 'suma,asc' : 'suma,desc') : 'suma,desc'})}"
+               th:classappend="${sort.startsWith('suma')} ? 'active'">
+                Sumă
+                <span th:if="${sort == 'suma,desc'}">🡣</span>
+                <span th:if="${sort == 'suma,asc'}">🡡</span>
+            </a>
+        </div>
+
+        <!-- Page Size Selector -->
+        <div class="page-size">
+            <span>Elemente pe pagină:</span>
+            <select id="pageSize" onchange="changePageSize(this)">
+                <option value="5" th:selected="${pageSize == 5}">5</option>
+                <option value="10" th:selected="${pageSize == 10}">10</option>
+                <option value="20" th:selected="${pageSize == 20}">20</option>
+            </select>
+        </div>
+    </div>
+
+    <div th:if="${plati.isEmpty()}" class="info-message">
+        Nu există plăți înregistrate.
+    </div>
+
+    <table th:if="${!plati.isEmpty()}" class="payments-table">
+    <thead>
+        <tr>
+            <th>Data programării</th>
+            <th>Serviciu</th>
+            <th>Sumă</th>
+            <th>Stare plată</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="plata : ${plati.content}">
+            <td th:text="${#temporals.format(plata.dataProgramare, 'dd.MM.yyyy')}"></td>
+            <td th:text="${plata.serviciu}"></td>
+            <td th:text="${#numbers.formatDecimal(plata.suma, 1, 2)} + ' RON'"></td>
+            <td>
+                <span th:classappend="${plata.starePlata == 'Achitată'} ? 'badge badge-success' : 'badge badge-warning'"
+                      th:text="${plata.starePlata}"></span>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <!-- Pagination Controls -->
+    <div th:if="${plati.totalPages > 1}" class="pagination">
+        <a th:href="@{/pacient/facturi(page=${plati.number - 1}, size=${pageSize}, sort=${sort})}"
+           th:if="${!plati.first}" class="page-link">
+            &laquo; Înapoi
+        </a>
+
+        <span th:each="page : ${#numbers.sequence(0, plati.totalPages - 1)}">
+            <a th:if="${page != plati.number}"
+               th:href="@{/pacient/facturi(page=${page}, size=${pageSize}, sort=${sort})}"
+               class="page-number"
+               th:text="${page + 1}"></a>
+            <span th:if="${page == plati.number}" class="current-page" th:text="${page + 1}"></span>
+        </span>
+
+        <a th:href="@{/pacient/facturi(page=${plati.number + 1}, size=${pageSize}, sort=${sort})}"
+           th:if="${!plati.last}" class="page-link">
+            Următoarea &raquo;
+        </a>
+    </div>
+
+    <div class="totals">
+        <div class="total-box success">
+            <h5>Total Achitat</h5>
+            <p th:text="${#numbers.formatDecimal(totalPlatit, 1, 2)} + ' RON'"></p>
+        </div>
+        <div class="total-box danger">
+            <h5>Total de Plată</h5>
+            <p th:text="${#numbers.formatDecimal(dePlatit, 1, 2)} + ' RON'"></p>
+        </div>
+    </div>
+</div>
+
+<script>
+    function changePageSize(select) {
+        const size = select.value;
+        const currentUrl = new URL(window.location.href);
+        currentUrl.searchParams.set('size', size);
+        currentUrl.searchParams.set('page', '0');
+        window.location.href = currentUrl.toString();
+    }
+</script>
+</body>
+</html>

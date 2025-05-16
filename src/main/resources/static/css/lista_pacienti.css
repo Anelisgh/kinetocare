@@ -1,0 +1,39 @@
+body {
+    font-family: "Nunito", sans-serif;
+}
+
+h1 {
+    text-align: center;
+    font-size: 32px;
+    margin-bottom: 30px;
+    color: #203249;
+}
+
+.pacient-card {
+    max-width: 600px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #ffffff;
+    border: 1px solid #d0d7f2;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(122, 154, 245, 0.1);
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.3s;
+}
+
+.pacient-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 16px rgba(122, 154, 245, 0.2);
+}
+
+.pacient-card h3 {
+    margin: 0 0 10px;
+    color: #2a4365;
+    font-size: 24px;
+}
+
+.pacient-card p {
+    margin: 4px 0;
+    font-size: 16px;
+    color: #555;
+}

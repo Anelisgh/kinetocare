@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Navigation Bar</title>
+    <link rel="stylesheet" href="/css/navbar.css">
+</head>
+<body>
+<div th:fragment="navbar">
+    <nav>
+        <div class="logo">
+            <a th:href="@{/homepage}">
+                <img src="/images/Logo.png" alt="Logo Kinetocare">
+                <h1>Kinetocare</h1>
+            </a>
+        </div>
+        <div class="menu">
+            <a th:href="@{/terapeut/pacienti}">Pacienți</a>
+            <a th:href="@{/terapeut/adaugare_evaluare}">Evaluare nouă</a>
+            <a th:href="@{/terapeut/adaugare_evolutie}">Evoluție nouă</a>
+            <a th:href="@{/logout}">Deconectare</a>
+        </div>
+    </nav>
+</div>
+</body>
+</html>

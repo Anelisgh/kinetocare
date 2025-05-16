@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="/css/navbar.css">
+    <link rel="stylesheet" href="/css/detalii_pacient.css">
+    <title>Detalii Pacient</title>
+</head>
+<body>
+<div th:replace="~{fragments/navbar_t :: navbar}"></div>
+<h1 th:text="${pacient.nume}"></h1>
+
+<ul>
+    <li><strong>Gen:</strong> <span th:text="${pacient.gen}"></span></li>
+    <li><strong>Vârstă:</strong> <span th:text="${pacient.varsta} + ' ani'"></span></li>
+    <li><strong>Telefon:</strong> <span th:text="${pacient.telefon}"></span></li>
+    <li><strong>Email:</strong> <span th:text="${pacient.email}"></span></li>
+</ul>
+
+<h2>Ultimul diagnostic</h2>
+<div th:if="${!pacient.evaluari.isEmpty()}">
+    <ul>
+        <li><strong>Diagnostic:</strong> <span th:text="${pacient.evaluari[0].numeDiagnostic}"></span></li>
+        <li><strong>Data:</strong> <span th:text="${#temporals.format(pacient.evaluari[0].dataEvaluare, 'dd-MM-yyyy')}"></span></li>
+        <li><strong>Serviciu recomandat:</strong>
+            <span th:text="${pacient.evaluari[0].tipServiciu.getDisplayName()}"></span>
+        </li>
+        <li><strong>Sedințe până la Reevaluare:</strong> <span th:text="${pacient.evaluari[0].sedintePanaLaReevaluare}"></span></li>
+    </ul>
+</div>
+<div th:if="${pacient.evaluari.isEmpty()}">
+    <p>Nu există evaluări pentru acest pacient.</p>
+</div>
+
+<h2>Evaluări</h2>
+<table>
+    <thead>
+    <tr>
+        <th>Tip evaluare</th>
+        <th>Data</th>
+        <th>Diagnostic</th>
+        <th>Serviciu recomandat</th>
+        <th>Sedinte recomandate</th>
+        <th>Observații</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="evaluare : ${pacient.evaluari}">
+        <td th:text="${evaluare.tipEvaluare.getDisplayName()}"></td>
+        <td th:text="${#temporals.format(evaluare.dataEvaluare, 'dd-MM-yyyy')}"></td>
+        <td th:text="${evaluare.numeDiagnostic}"></td>
+        <td th:text="${evaluare.tipServiciu.getDisplayName()}"></td>
+        <td th:text="${evaluare.sedinteRecomandate}"></td>
+        <td th:text="${evaluare.observatii}"></td>
+    </tr>
+    </tbody>
+</table>
+
+<h2>Evoluții</h2>
+<table class="evolutii">
+    <thead>
+    <tr>
+        <th>Data</th>
+        <th>Observații</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="evolutie : ${pacient.evolutii}">
+        <td th:text="${#temporals.format(evolutie.dataEvolutie, 'dd-MM-yyyy')}"></td>
+        <td th:text="${evolutie.observatii}"></td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>

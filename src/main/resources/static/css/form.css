@@ -1,0 +1,70 @@
+body {
+    font-family: "Nunito", sans-serif;
+}
+
+h1 {
+    text-align: center;
+    margin-top: 30px;
+    font-weight: 700;
+    color: #2a4365;
+}
+
+form {
+    max-width: 500px;
+    margin: 40px auto;
+    padding: 30px;
+    background-color: #F3F8FF;
+    border: 1px solid #C6CFFF;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+form div {
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+label {
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: #2a4365;
+}
+
+input, select, textarea {
+    font-family: "Nunito", sans-serif;
+    padding: 10px 12px;
+    font-size: 15px;
+    border: 1px solid #C6CFFF;
+    border-radius: 8px;
+    outline: none;
+    transition: border 0.3s ease;
+}
+
+input:focus, select:focus, textarea:focus {
+    border-color: #A6B2F0;
+    box-shadow: 0 0 0 3px rgba(198, 207, 255, 0.3);
+}
+
+textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+button[type="submit"] {
+    background-color: #C6CFFF;
+    color: #2a4365;
+    font-size: 16px;
+    font-weight: 500;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    display: block;
+    margin: 0 auto;
+}
+
+button[type="submit"]:hover {
+    background-color: #A6B2F0;
+}

@@ -1,0 +1,68 @@
+#calendar {
+    max-width: 700px;
+    height: 550px;
+    margin: 40px auto;
+    padding: 20px;
+    background: #f6f8ff;
+    border: 1px solid #8f99c6;
+    border-radius: 12px;
+    font-family: "Nunito", sans-serif;
+    overflow: auto;
+}
+
+.fc-timegrid-slot{
+    height: 70px !important;
+}
+
+.fc-cell-shaded{
+    background-color: white !important;
+}
+
+.fc .fc-button {
+    background-color: #C6CFFF;
+    border: none;
+    color: #2a4365;
+    font-family: "Nunito", sans-serif;
+    font-weight: 600;
+    border-radius: 8px;
+    padding: 0.4rem 1rem;
+    transition: all 0.3s ease;
+}
+
+.fc .fc-button:hover {
+    background-color: #b0bbf5;
+    color: #2a4365;
+}
+
+.fc .fc-button:focus {
+    box-shadow: 0 0 0 3px rgba(198, 207, 255, 0.3);
+    outline: none;
+}
+
+.fc .fc-button.fc-button-active,
+.fc .fc-button:active {
+    background-color: #A6B2F0;
+    color: #2a4365;
+}
+
+#editSidebar {
+    position: fixed;
+    right: -350px;
+    top: 0;
+    width: 350px;
+    height: 100%;
+    background: #F3F8FF;
+    transition: right 0.3s ease-in-out;
+    padding: 2rem;
+    z-index: 1000;
+    font-family: "Nunito", sans-serif;
+    overflow-y: auto;
+}
+
+.btn-secondary{
+    background-color: #2a4365;
+}
+
+#editSidebar.active {
+    right: 0;
+}

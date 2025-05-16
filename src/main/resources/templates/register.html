@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="ro" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Înregistrare</title>
+    <link rel="stylesheet" href="/css/auth.css">
+</head>
+<body>
+<h1>Înregistrare</h1>
+
+<form th:action="@{/register}" th:object="${registrationDTO}" method="post">
+    <!-- Afișare erori globale -->
+    <div th:if="${#fields.hasErrors('*')}" class="error-message">
+        <ul>
+            <li th:each="err : ${#fields.detailedErrors()}">
+                <span th:text="${err.fieldName}"></span>:
+                <span th:text="${err.message}"></span>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Câmpuri comune -->
+    <div th:classappend="${#fields.hasErrors('email')} ? 'error-field'">
+        <input type="email" th:field="*{email}" placeholder="Email" required/>
+        <small th:errors="*{email}"></small>
+    </div>
+
+    <div th:classappend="${#fields.hasErrors('password')} ? 'error-field'">
+        <input type="password" th:field="*{password}" placeholder="Parolă" required/>
+        <small th:errors="*{password}"></small>
+    </div>
+
+    <div th:classappend="${#fields.hasErrors('roleType')} ? 'error-field'">
+        <select th:field="*{roleType}" id="roleType" required onchange="toggleFields()">
+            <option value="" disabled th:selected="${registrationDTO.roleType == null}">Selectează tipul de cont</option>
+            <option th:each="type : ${T(com.example.kinetocare.domain.security.RoleType).values()}"
+                    th:value="${type}"
+                    th:text="${#strings.replace(type.name(), 'ROLE_', '')}">
+            </option>
+        </select>
+        <small th:errors="*{roleType}"></small>
+    </div>
+
+    <!-- Câmpuri pacient -->
+    <div id="pacientFields" th:if="${registrationDTO.pacientDetails != null}" style="display:none;">
+        <h3>Detalii pacient</h3>
+
+        <div th:classappend="${#fields.hasErrors('pacientDetails.nume')} ? 'error-field'">
+            <input type="text" th:field="*{pacientDetails.nume}" placeholder="Nume complet"/>
+            <small th:errors="*{pacientDetails.nume}"></small>
+        </div>
+
+        <div th:classappend="${#fields.hasErrors('pacientDetails.telefon')} ? 'error-field'">
+            <input type="tel" th:field="*{pacientDetails.telefon}" placeholder="Telefon"/>
+            <small th:errors="*{pacientDetails.telefon}"></small>
+        </div>
+
+        <div th:classappend="${#fields.hasErrors('pacientDetails.gen')} ? 'error-field'">
+            <select th:field="*{pacientDetails.gen}">
+                <option value="" disabled>Selectează genul</option>
+                <option th:each="gen : ${T(com.example.kinetocare.domain.Gen).values()}"
+                        th:value="${gen}"
+                        th:text="${gen.displayName}">
+                </option>
+            </select>
+            <small th:errors="*{pacientDetails.gen}"></small>
+        </div>
+
+        <div th:classappend="${#fields.hasErrors('pacientDetails.cnp')} ? 'error-field'">
+            <input type="text" th:field="*{pacientDetails.cnp}" placeholder="CNP"/>
+            <small th:errors="*{pacientDetails.cnp}"></small>
+        </div>
+
+        <div th:classappend="${#fields.hasErrors('pacientDetails.dataNastere')} ? 'error-field'">
+            <input type="date" th:field="*{pacientDetails.dataNastere}"
+                   th:value="${registrationDTO.pacientDetails?.dataNastere != null} ? ${#temporals.format(registrationDTO.pacientDetails.dataNastere, 'yyyy-MM-dd')} : ''"
+                   pattern="\d{4}-\d{2}-\d{2}"
+                   title="Introduceți data în format AAAA-LL-ZZ (ex: 2000-01-01)"/>
+            <small th:errors="*{pacientDetails.dataNastere}"></small>
+        </div>
+
+        <div th:classappend="${#fields.hasErrors('pacientDetails.tipSport')} ? 'error-field'">
+            <select th:field="*{pacientDetails.tipSport}">
+                <option value="" disabled>Selectează tipul de sport</option>
+                <option th:each="sport : ${T(com.example.kinetocare.domain.TipSport).values()}"
+                        th:value="${sport}"
+                        th:text="${sport.displayName}">
+                </option>
+            </select>
+            <small th:errors="*{pacientDetails.tipSport}"></small>
+        </div>
+
+        <div th:classappend="${#fields.hasErrors('pacientDetails.detaliiSport')} ? 'error-field'">
+            <textarea th:field="*{pacientDetails.detaliiSport}" placeholder="Detalii sport (opțional)"></textarea>
+            <small th:errors="*{pacientDetails.detaliiSport}"></small>
+        </div>
+    </div>
+
+    <!-- Câmpuri terapeut -->
+    <div id="terapeutFields" th:if="${registrationDTO.terapeutDetails != null}" style="display:none;">
+        <h3>Detalii terapeut</h3>
+
+        <div th:classappend="${#fields.hasErrors('terapeutDetails.nume')} ? 'error-field'">
+            <input type="text" th:field="*{terapeutDetails.nume}" placeholder="Nume complet"/>
+            <small th:errors="*{terapeutDetails.nume}"></small>
+        </div>
+
+        <div th:classappend="${#fields.hasErrors('terapeutDetails.telefon')} ? 'error-field'">
+            <input type="tel" th:field="*{terapeutDetails.telefon}" placeholder="Telefon"/>
+            <small th:errors="*{terapeutDetails.telefon}"></small>
+        </div>
+
+        <div th:classappend="${#fields.hasErrors('terapeutDetails.cnp')} ? 'error-field'">
+            <input type="text" th:field="*{terapeutDetails.cnp}" placeholder="CNP"/>
+            <small th:errors="*{terapeutDetails.cnp}"></small>
+        </div>
+
+        <div th:classappend="${#fields.hasErrors('terapeutDetails.dataNastere')} ? 'error-field'">
+            <input type="date" th:field="*{terapeutDetails.dataNastere}"
+                   th:value="${registrationDTO.terapeutDetails?.dataNastere != null} ? ${#temporals.format(registrationDTO.terapeutDetails.dataNastere, 'yyyy-MM-dd')} : ''"
+                   pattern="\d{4}-\d{2}-\d{2}"
+                   title="Introduceți data în format AAAA-LL-ZZ (ex: 2000-01-01)"/>
+            <small th:errors="*{terapeutDetails.dataNastere}"></small>
+        </div>
+    </div>
+
+    <button type="submit">Înregistrează-te</button>
+</form>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        toggleFields();
+
+        document.querySelector('form').addEventListener('submit', function(e) {
+            const dateInputs = document.querySelectorAll('input[type="date"]');
+            let isValid = true;
+
+            dateInputs.forEach(input => {
+                if (input.value && !input.validity.valid) {
+                    alert("Folosiți formatul AAAA-LL-ZZ (ex: 2000-01-01)");
+                    isValid = false;
+                }
+            });
+
+            if (!isValid) {
+                e.preventDefault();
+            }
+        });
+    });
+
+    function toggleFields() {
+        const roleType = document.getElementById('roleType').value;
+        const pacientFields = document.getElementById('pacientFields');
+        const terapeutFields = document.getElementById('terapeutFields');
+
+        [pacientFields, terapeutFields].forEach(fields => {
+            if (fields) {
+                fields.style.display = 'none';
+                fields.querySelectorAll('input, select, textarea').forEach(el => {
+                    el.required = false;
+                    el.disabled = true;
+                });
+            }
+        });
+
+        if (roleType === 'ROLE_PACIENT' && pacientFields) {
+            pacientFields.style.display = 'block';
+
+            pacientFields.querySelectorAll('input:not([id$="detaliiSport"]), select').forEach(el => {
+                el.required = true;
+                el.disabled = false;
+            });
+
+            const detaliiSport = pacientFields.querySelector('textarea[id$="detaliiSport"]');
+            if (detaliiSport) {
+                detaliiSport.disabled = false;
+                detaliiSport.required = false;
+            }
+
+        } else if (roleType === 'ROLE_TERAPEUT' && terapeutFields) {
+            terapeutFields.style.display = 'block';
+            terapeutFields.querySelectorAll('input, select').forEach(el => {
+                el.required = true;
+                el.disabled = false;
+            });
+        }
+    }
+</script>
+
+<a th:href="@{/login}">Ai deja cont? Conectează-te</a>
+</body>
+</html>
