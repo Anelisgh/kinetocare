@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="/css/navbar.css">
+    <link rel="stylesheet" href="/css/form.css">
+    <title>Evaluare nouă</title>
+</head>
+<body>
+<div th:replace="~{fragments/navbar_t :: navbar}"></div>
+
+<h1>Evaluare nouă</h1>
+
+<form th:action="@{/terapeut/adaugare_evaluare}" th:object="${evaluareDTO}" method="post">
+    <!-- Dropdown Pacienți -->
+    <div>
+        <label>Pacient:</label>
+        <select th:field="*{pacientId}" required>
+            <option value="" disabled>Selectează pacient</option>
+            <option th:each="pacient : ${pacienti}"
+                    th:value="${pacient.id}"
+                    th:text="${pacient.nume}"></option>
+        </select>
+        <span th:if="${#fields.hasErrors('pacientId')}" th:errors="*{pacientId}"></span>
+    </div>
+
+    <!-- Tip Evaluare -->
+    <div>
+        <label>Tip Evaluare:</label>
+        <select th:field="*{tipEvaluare}" required>
+            <option value="" disabled>Selectează tip evaluare</option>
+            <option th:each="tip : ${T(com.example.kinetocare.domain.TipEvaluare).values()}"
+                    th:value="${tip}"
+                    th:text="${tip.getDisplayName()}"></option>
+        </select>
+        <span th:if="${#fields.hasErrors('tipEvaluare')}" th:errors="*{tipEvaluare}"></span>
+    </div>
+
+    <!-- Data -->
+    <div>
+        <label>Data:</label>
+        <input type="date" th:field="*{dataEvaluare}" required>
+        <span th:if="${#fields.hasErrors('dataEvaluare')}" th:errors="*{dataEvaluare}"></span>
+    </div>
+
+    <!-- Diagnostic -->
+    <div>
+        <label>Diagnostic:</label>
+        <input type="text" th:field="*{numeDiagnostic}" required>
+        <span th:if="${#fields.hasErrors('numeDiagnostic')}" th:errors="*{numeDiagnostic}"></span>
+    </div>
+
+    <!-- sedinte Recomandate -->
+    <div>
+        <label>Sedințe până la Reevaluare:</label>
+        <input type="number" th:field="*{sedinteRecomandate}" min="1" required>
+        <span th:if="${#fields.hasErrors('sedinteRecomandate')}" th:errors="*{sedinteRecomandate}"></span>
+    </div>
+
+    <!-- Serviciu Recomandat -->
+    <div>
+        <label>Serviciu Recomandat:</label>
+        <select th:field="*{tipServiciu}" required>
+            <option value="" disabled>Selectează serviciu</option>
+            <option th:each="serviciu : ${T(com.example.kinetocare.domain.TipServiciu).values()}"
+                    th:value="${serviciu}"
+                    th:text="${serviciu.getDisplayName()}"></option>
+        </select>
+        <span th:if="${#fields.hasErrors('tipServiciu')}" th:errors="*{tipServiciu}"></span>
+    </div>
+
+    <!-- Observații -->
+    <div>
+        <label>Observații:</label>
+        <textarea th:field="*{observatii}"></textarea>
+    </div>
+
+    <button type="submit">Salvează</button>
+</form>
+</body>
+</html>

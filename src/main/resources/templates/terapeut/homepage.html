@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calendar Programări</title>
+
+    <!-- FullCalendar CSS from CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/main.min.css" rel="stylesheet">
+    <link href='https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.css' rel='stylesheet'>
+    <link href='https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.13.1/css/all.css' rel='stylesheet'>
+    <link rel="stylesheet" href="/css/navbar.css">
+    <link rel="stylesheet" href="/css/calendar.css">
+</head>
+<body>
+<div th:replace="~{fragments/navbar_t :: navbar}"></div>
+
+<div class="container">
+    <div id="calendar"></div>
+</div>
+
+<!-- Edit Sidebar -->
+<div id="editSidebar">
+    <h3>Editare Programare</h3>
+    <form id="editForm">
+        <input type="hidden" id="programareId">
+
+        <div class="mb-3">
+            <label class="form-label">Data:</label>
+            <input type="date" class="form-control" id="editDate" required>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Ora:</label>
+            <input type="time" class="form-control" id="editTime" required>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Status:</label>
+            <select class="form-select" id="editStatus">
+                <option th:each="status : ${T(com.example.kinetocare.domain.Status).values()}"
+                        th:value="${status.name()}"
+                        th:text="${status.getDisplayName()}"></option>
+            </select>
+        </div>
+
+        <button type="button" class="btn btn-primary" onclick="saveChanges()">Salvează</button>
+        <button type="button" class="btn btn-secondary" onclick="closeSidebar()">Închide</button>
+    </form>
+</div>
+
+<!-- jQuery -->
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
+
+<!-- FullCalendar JS from CDN -->
+<script src='fullcalendar/dist/index.global.js'></script>
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/locales-all.global.min.js"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const calendarEl = document.getElementById('calendar');
+
+        const calendar = new FullCalendar.Calendar(calendarEl, {
+            themeSystem: 'bootstrap',
+            initialView: 'listWeek',
+            headerToolbar: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'timeGridWeek,listWeek'
+            },
+            locale: 'ro',
+            firstDay: 1,
+            events: '/terapeut/programari',
+            eventTimeFormat: {
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: false
+            },
+            slotMinTime: '08:00:00',
+            slotMaxTime: '20:00:00',
+            slotDuration: '00:30:00',
+            contentHeight: 'auto',
+            expandRows: true,
+            allDaySlot: false,
+            dayHeaderFormat: {
+                weekday: 'long'
+            },
+            eventDidMount: function (info) {
+                switch (info.event.extendedProps.status) {
+                    case 'PROGRAMATA':
+                        info.el.style.backgroundColor = '#9AE6B4';
+                        info.el.style.color = '#22543D';
+                        break;
+                    case 'ANULATA':
+                        info.el.style.backgroundColor = '#FED7D7';
+                        info.el.style.color = '#742A2A';
+                        break;
+                    case 'FINALIZATA':
+                        info.el.style.backgroundColor = '#BEE3F8';
+                        info.el.style.color = '#2A4365';
+                        break;
+                }
+            },
+            eventContent: function(arg) {
+                return {
+                    html: `<div class="fc-event-content">
+                      <div class="fc-event-time">${arg.timeText}</div>
+                      <div class="fc-event-title">${arg.event.title}</div>
+                   </div>`
+                };
+            },
+            eventDrop: function (info) {
+                updateProgramare(
+                    info.event.id,
+                    info.event.startStr.substring(0, 10),
+                    info.event.startStr.substring(11, 16),
+                    info.event.extendedProps.status
+                );
+            },
+            eventClick: function (info) {
+                openSidebar(info.event);
+            }
+        });
+
+        calendar.render();
+    });
+
+    function openSidebar(event) {
+        const sidebar = document.getElementById('editSidebar');
+        sidebar.classList.add('active');
+        document.getElementById('programareId').value = event.id;
+        document.getElementById('editDate').value = event.startStr.substring(0, 10);
+        document.getElementById('editTime').value = event.startStr.substring(11, 16);
+        document.getElementById('editStatus').value = event.extendedProps.status;
+    }
+
+    function closeSidebar() {
+        document.getElementById('editSidebar').classList.remove('active');
+    }
+
+    async function saveChanges() {
+        const programareId = document.getElementById('programareId').value;
+        const newDate = document.getElementById('editDate').value;
+        const newTime = document.getElementById('editTime').value;
+        const newStatus = document.getElementById('editStatus').value;
+
+        try {
+            const response = await fetch('/terapeut/update-programare', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                body: new URLSearchParams({programareId, newDate, newTime, newStatus})
+            });
+
+            if (!response.ok) throw new Error('Eroare server');
+            alert('Actualizare reușită!');
+            window.location.reload();
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Eroare la actualizare: ' + error.message);
+        }
+    }
+</script>
+
+</body>
+</html>

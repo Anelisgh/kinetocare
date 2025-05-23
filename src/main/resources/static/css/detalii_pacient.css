@@ -1,0 +1,72 @@
+body {
+    font-family: "Nunito", sans-serif;
+    color: #1a202c; /* un negru-albastru închis, clar */
+}
+
+h1, h2 {
+    text-align: center;
+    margin: 20px 0 0;
+    font-weight: 700;
+}
+
+ul {
+    max-width: 600px;
+    margin: 0 auto 15px;
+    background-color: #eef2ff;
+    padding: 15px 20px;
+    border-radius: 8px;
+    list-style: none;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+}
+
+ul li {
+    margin-bottom: 6px;
+    font-size: 15px;
+}
+
+strong {
+    color: #2c3e50;
+}
+
+p {
+    text-align: center;
+    color: #555;
+    font-style: italic;
+    margin-top: 10px;
+}
+
+table {
+    width: 80%;
+    margin: 20px auto;
+    border-collapse: collapse;
+    font-size: 16px;
+}
+
+thead {
+    background-color: #dbe4ff; /* un bleu mai viu */
+    color: #1c2e75;
+}
+
+thead th {
+    padding: 12px;
+    text-align: left;
+    font-weight: 600;
+}
+
+tbody td {
+    padding: 12px;
+    border-bottom: 1px solid #d6d6d6;
+}
+
+tbody tr:last-child td {
+    border-bottom: none;
+}
+
+tbody tr:nth-child(even) {
+    background-color: #f5f8ff;
+}
+
+table.evolutii {
+    width: 50% !important;
+}
+

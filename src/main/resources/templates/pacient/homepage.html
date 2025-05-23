@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Homepage</title>
+    <link rel="stylesheet" href="/css/navbar.css">
+    <link rel="stylesheet" href="/css/homepage_p.css">
+</head>
+<body>
+<div th:replace="~{fragments/navbar_p :: navbar}"></div>
+<div class="container">
+
+    <!-- Mesaje de succes/eroare -->
+    <div th:if="${success}" class="alert alert-success" role="alert">
+        <span th:text="${success}"></span>
+    </div>
+
+    <div th:if="${error}" class="alert alert-danger" role="alert">
+        <span th:text="${error}"></span>
+    </div>
+
+    <!-- Sectiunea header -->
+    <div class="patient-info">
+        <h1 th:text="${pacientHome.nume}"></h1>
+        <p>Diagnostic: <span th:text="${pacientHome.diagnostic} ?: 'N/A'"></span></p>
+        <p>Vârstă: <span th:text="${pacientHome.varsta}"></span> ani</p>
+        <p th:if="${pacientHome.sedintePanaLaReevaluare != null}">
+            Sedințe până la Reevaluare: <span th:text="${pacientHome.sedintePanaLaReevaluare}"></span>
+        </p>
+    </div>
+
+    <!-- Sectiunea programare existenta -->
+    <div class="programare-section" th:if="${pacientHome.urmatoareaProgramare != null}">
+        <h2>Următoarea programare</h2>
+        <div class="programare-info">
+            <p>Data: <span th:text="${#temporals.format(pacientHome.urmatoareaProgramare.data, 'dd.MM.yyyy')}"></span></p>
+            <p>Ora: <span th:text="${#temporals.format(pacientHome.urmatoareaProgramare.ora, 'HH:mm')}"></span></p>
+            <p th:if="${pacientHome.urmatoareaProgramare.numeTerapeut != null}">
+                Terapeut: <span th:text="${pacientHome.urmatoareaProgramare.numeTerapeut}"></span>
+            </p>
+            <p th:if="${pacientHome.urmatoareaProgramare.serviciu != null}">
+                Serviciu: <span th:text="${pacientHome.urmatoareaProgramare.serviciu.tipServiciu.displayName}"></span>
+            </p>
+            <p>Status: <span th:text="${pacientHome.urmatoareaProgramare.status.displayName}"></span></p>
+        </div>
+
+        <!-- Buton ștergere -->
+        <form th:action="@{/pacient/programari/sterge/{id}(id=${pacientHome.urmatoareaProgramare.id})}"
+              method="post">
+            <button type="submit">Șterge programare</button>
+        </form>
+    </div>
+
+    <!-- Sectiunea programare noua/modificare -->
+    <div class="programare-section" th:if="${!areProgramare}">
+        <h2 th:if="${pacientHome.urmatoareaProgramare == null}">Crează o programare</h2>
+        <h2 th:if="${pacientHome.urmatoareaProgramare != null}">Modifică programarea</h2>
+        <form th:action="${formAction}" method="post" th:object="${pacientHome.nouaProgramare}">
+            <input type="hidden" th:field="*{id}">
+
+            <div class="form-group">
+                <label>Data:</label>
+                <input type="date" th:field="*{data}" required>
+                <small th:if="${#fields.hasErrors('data')}" class="error" th:errors="*{data}"></small>
+            </div>
+
+            <div class="form-group">
+                <label>Ora:</label>
+                <select th:field="*{ora}" required id="oraSelect">
+                    <option value="" disabled selected>Selectează ora</option>
+                </select>
+                <small th:if="${#fields.hasErrors('ora')}" class="error" th:errors="*{ora}"></small>
+            </div>
+
+            <button type="submit">
+                <span th:text="${pacientHome.urmatoareaProgramare != null} ? 'Modifică' : 'Programează-te'"></span>
+            </button>
+        </form>
+    </div>
+
+    <!-- Footer -->
+    <footer th:if="${pacientHome.numarTerapeut != null}">
+        <p>Aveți nevoie de ajutor? Contactați-vă terapeutul:
+            <a href="tel:+{{pacientHome.numarTerapeut}}" class="contact-phone">
+                <span th:text="${pacientHome.numarTerapeut}"></span>
+            </a>
+        </p>
+    </footer>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        var select = document.getElementById("oraSelect");
+        for (var h = 8; h <= 19; h++) {
+            var option1 = document.createElement("option");
+            option1.value = (h < 10 ? '0' + h : h) + ":00";
+            option1.text = (h < 10 ? '0' + h : h) + ":00";
+            select.appendChild(option1);
+            var option2 = document.createElement("option");
+            option2.value = (h < 10 ? '0' + h : h) + ":30";
+            option2.text = (h < 10 ? '0' + h : h) + ":30";
+            select.appendChild(option2);
+        }
+        var optionFinal = document.createElement("option");
+        optionFinal.value = "20:00";
+        optionFinal.text = "20:00";
+        select.appendChild(optionFinal);
+    });
+</script>
+
+</body>
+</html>
