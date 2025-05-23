@@ -89,7 +89,7 @@ class EvaluareServiceIntegrationTest extends AbstractIntegrationTest{
         EvaluareDTO dto = TestUtils.createValidEvaluareDTO(pacient.getId());
         assertThatThrownBy(() -> evaluareService.adaugaEvaluare(dto, "email.inexistent@test.com"))
                 .isInstanceOf(EntityNotFoundException.class)
-                .hasMessageContaining("Terapeut nu există");
+                .hasMessageContaining("Terapeutul nu există");
     }
 
     @Test
@@ -97,7 +97,7 @@ class EvaluareServiceIntegrationTest extends AbstractIntegrationTest{
         EvaluareDTO dto = TestUtils.createValidEvaluareDTO(999L);
         assertThatThrownBy(() -> evaluareService.adaugaEvaluare(dto, terapeut.getUser().getEmail()))
                 .isInstanceOf(EntityNotFoundException.class)
-                .hasMessageContaining("Pacient nu există");
+                .hasMessageContaining("Pacientul nu există");
     }
 
     @Test

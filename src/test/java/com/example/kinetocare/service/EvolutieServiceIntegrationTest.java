@@ -70,7 +70,7 @@ class EvolutieServiceIntegrationTest extends AbstractIntegrationTest{
         EvolutieDTO dto = TestUtils.createValidEvolutieDTO(pacient.getId());
         assertThatThrownBy(() -> evolutieService.adaugaEvolutie(dto, "invalid@email.com"))
                 .isInstanceOf(EntityNotFoundException.class)
-                .hasMessageContaining("Terapeut nu există");
+                .hasMessageContaining("Terapeutul nu există");
     }
 
     @Test
@@ -78,7 +78,7 @@ class EvolutieServiceIntegrationTest extends AbstractIntegrationTest{
         EvolutieDTO dto = TestUtils.createValidEvolutieDTO(999L);
         assertThatThrownBy(() -> evolutieService.adaugaEvolutie(dto, terapeut.getUser().getEmail()))
                 .isInstanceOf(EntityNotFoundException.class)
-                .hasMessageContaining("Pacient nu există");
+                .hasMessageContaining("Pacientul nu există");
     }
 
     @Test

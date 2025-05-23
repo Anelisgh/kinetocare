@@ -5,6 +5,7 @@ import com.example.kinetocare.domain.Programare;
 import com.example.kinetocare.domain.Serviciu;
 import com.example.kinetocare.domain.Terapeut;
 import com.example.kinetocare.repository.*;
+import com.example.kinetocare.scheduler.ProgramareScheduler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
@@ -62,6 +63,9 @@ public abstract class AbstractIntegrationTest {
 
     @Autowired
     protected EvolutieRepository evolutieRepository;
+
+    @Autowired
+    protected ProgramareScheduler scheduler;
 
     protected Pacient pacient;
     protected Terapeut terapeut;

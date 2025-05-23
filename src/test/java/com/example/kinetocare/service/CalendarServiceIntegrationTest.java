@@ -130,6 +130,6 @@ class CalendarServiceIntegrationTest extends AbstractIntegrationTest{
     void getProgramariForTerapeut_InvalidEmail_ShouldThrow() {
         assertThatThrownBy(() -> calendarService.getProgramariForTerapeut("invalid@email.com"))
                 .isInstanceOf(EntityNotFoundException.class)
-                .hasMessageContaining("Terapeut nu există");
+                .hasMessageContaining("Terapeutul nu există");
     }
 }
