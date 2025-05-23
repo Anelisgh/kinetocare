@@ -29,6 +29,8 @@ public class ProgramareService {
     private final ProgramareMapper programareMapper;
     private final PacientService pacientService;
 
+// PACIENT CREEAZA PROGRAMARE
+// ‧˚₊꒷꒦︶︶︶︶︶꒷꒦︶︶︶︶︶꒦꒷‧₊˚⊹
     @Transactional
     public ProgramareDTO creazaProgramare(@Valid ProgramareDTO programareDTO, String emailPacient) {
         log.info("Creating appointment for {}", emailPacient);
@@ -92,6 +94,8 @@ public class ProgramareService {
         return programareMapper.toDto(saved);
     }
 
+// PACIENT MODIFICA PROGRAMARE
+//‧˚₊꒷꒦︶︶︶︶︶꒷꒦︶︶︶︶︶꒦꒷‧₊˚⊹
     @Transactional
     public ProgramareDTO modificaProgramare(@Valid ProgramareDTO programareDTO, String emailPacient) {
         log.info("Modifying appointment {}", programareDTO.getId());
@@ -129,13 +133,15 @@ public class ProgramareService {
         return programareMapper.toDto(updated);
     }
 
+// PACIENT STERGE PROGRAMARE
+//‧˚₊꒷꒦︶︶︶︶︶꒷꒦︶︶︶︶︶꒦꒷‧₊˚⊹
     @Transactional
     public void stergeProgramare(Long programareId, String emailPacient) {
         log.info("Deleting appointment {}", programareId);
         Programare programare = programareRepository.findById(programareId)
                 .orElseThrow(() -> {
                     log.error("Appointment {} not found for deletion", programareId);
-                    return new EntityNotFoundException("Programare nu există");
+                    return new EntityNotFoundException("Programarea nu există");
                 });
 
         if (!programare.getPacient().getUser().getEmail().equals(emailPacient)) {
@@ -149,7 +155,7 @@ public class ProgramareService {
 
     public Programare getProgramareById(Long id) {
         return programareRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Programare nu există"));
+                .orElseThrow(() -> new EntityNotFoundException("Programarea nu există"));
     }
 }
 

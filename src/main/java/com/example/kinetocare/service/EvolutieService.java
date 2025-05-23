@@ -21,10 +21,12 @@ public class EvolutieService {
     private final TerapeutRepository terapeutRepository;
     private final EvolutieRepository evolutieRepository;
 
+// ADĂUGARE EVOLUȚIE
+//‧˚₊꒷꒦︶︶︶︶︶꒷꒦︶︶︶︶︶꒦꒷‧₊˚⊹
     @Transactional
     public void adaugaEvolutie(@Valid EvolutieDTO evolutieDTO, String emailTerapeut) {
         Terapeut terapeut = terapeutRepository.findByUserEmail(emailTerapeut)
-                .orElseThrow(() -> new EntityNotFoundException("Terapeut nu există"));
+                .orElseThrow(() -> new EntityNotFoundException("Terapeutul nu există"));
         Evolutie evolutie = evolutieMapper.toEvolutie(evolutieDTO, terapeut);
         evolutieRepository.save(evolutie);
     }

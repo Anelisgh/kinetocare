@@ -44,9 +44,10 @@ public class ProgramareScheduler {
         programareRepository.deleteAll(deSters);
     }
 
+// SE CREEAZA PLATA AUTOMAT
+//‧˚₊꒷꒦︶︶︶︶︶꒷꒦︶︶︶︶︶꒦꒷‧₊˚⊹
     private void creazaPlataDacaNuExista(Programare programare) {
-        if (programare.getServiciu() == null ||
-                plataRepository.existsByProgramare(programare)) {
+        if (programare.getServiciu() == null || plataRepository.existsByProgramare(programare)) {
             return;
         }
 

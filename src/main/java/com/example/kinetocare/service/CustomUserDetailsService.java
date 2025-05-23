@@ -16,9 +16,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @Transactional
 public class CustomUserDetailsService implements UserDetailsService {
-
     private final UserRepository userRepository;
-
     public CustomUserDetailsService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }

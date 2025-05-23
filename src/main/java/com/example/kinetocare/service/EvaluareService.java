@@ -28,17 +28,16 @@ public class EvaluareService {
     private final TerapeutRepository terapeutRepository;
     private final PacientRepository pacientRepository;
 
+// ADĂUGARE EVALUARE
+//‧˚₊꒷꒦︶︶︶︶︶꒷꒦︶︶︶︶︶꒦꒷‧₊˚⊹
     @Transactional
     public void adaugaEvaluare(@Valid EvaluareDTO evaluareDTO, String emailTerapeut) {
         Terapeut terapeut = terapeutRepository.findByUserEmail(emailTerapeut)
-                .orElseThrow(() -> new EntityNotFoundException("Terapeut nu există"));
-
+                .orElseThrow(() -> new EntityNotFoundException("Terapeutul nu există"));
         Diagnostic diagnostic = evaluareMapper.toDiagnostic(evaluareDTO, terapeut);
-
         Pacient pacient = diagnostic.getPacient();
         pacient.setTerapeut(terapeut);
         pacientRepository.save(pacient);
-
         diagnosticRepository.save(diagnostic);
         Evaluare evaluare = evaluareMapper.toEvaluare(evaluareDTO, diagnostic);
         evaluare.setPacient(pacient);

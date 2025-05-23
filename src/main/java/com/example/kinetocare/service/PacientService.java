@@ -31,8 +31,9 @@ public class PacientService {
     private final PacientMapper pacientMapper;
     private final PacientHomeMapper pacientHomeMapper;
 
-    // Datele pe care le vede terapeutul despre pacienti
-    public List<PacientDTO> getPacientiPentruTerapeut(String email) {
+// DATELE PE CARE LE VEDE TERAPEUTUL DESPRE PACIENȚI
+//‧˚₊꒷꒦︶︶︶︶︶꒷꒦︶︶︶︶︶꒦꒷‧₊˚⊹
+    public List<PacientDTO> getPacientiForTerapeut(String email) {
         log.info("Fetching patients for therapist {}", email);
         Terapeut terapeut = terapeutRepository.findByUserEmail(email)
                 .orElseThrow(() -> new EntityNotFoundException("Terapeutul nu există"));
@@ -41,7 +42,8 @@ public class PacientService {
                 .map(pacientMapper::toPacientDTO)
                 .toList();
     }
-
+// PENTRU PAGINA PACIENTI VIZIBILA TERAPEUTULUI
+//‧˚₊꒷꒦︶︶︶︶︶꒷꒦︶︶︶︶︶꒦꒷‧₊˚⊹
     public PacientDetaliiDTO getDetaliiPacient(Long pacientId) {
         log.debug("Fetching details for patient {}", pacientId);
         Pacient pacient = pacientRepository.findById(pacientId)
@@ -56,7 +58,8 @@ public class PacientService {
         return pacientMapper.toPacientDetaliiDTO(pacient, evaluari, evolutii);
     }
 
-    // Datele pe care le vede pacientul
+// DETALIILE PACIENTULUI DIN HOMEPAGE
+//‧˚₊꒷꒦︶︶︶︶︶꒷꒦︶︶︶︶︶꒦꒷‧₊˚⊹
     public PacientHomeDTO getPacientHomeDTO(String email) {
         log.info("Building homepage for {}", email);
         Pacient pacient = pacientRepository.findByUserEmail(email)
@@ -67,9 +70,10 @@ public class PacientService {
         return pacientHomeMapper.mapToDto(pacient);
     }
 
+//‧˚₊꒷꒦︶︶︶︶︶꒷꒦︶︶︶︶︶꒦꒷‧₊˚⊹
     public Pacient getPacientByEmail(String email) {
         return pacientRepository.findByUserEmail(email)
-                .orElseThrow(() -> new RuntimeException("Pacient nu există"));
+                .orElseThrow(() -> new RuntimeException("Pacientul nu există"));
     }
 
     public String getFormAction(PacientHomeDTO dto) {

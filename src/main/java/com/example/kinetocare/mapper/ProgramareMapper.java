@@ -1,16 +1,14 @@
 package com.example.kinetocare.mapper;
 
 import com.example.kinetocare.domain.Programare;
-import com.example.kinetocare.domain.Status;
 import com.example.kinetocare.dto.ProgramareDTO;
 import com.example.kinetocare.dto.ServiciuDTO;
 import com.example.kinetocare.repository.ServiciuRepository;
 import com.example.kinetocare.repository.TerapeutRepository;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-// Adica programarea pe care o vede pacientul; a nu se incurca cu CalendarMapper -> cum vede terapeutul programarile
+// Adica programarea pe care o vede pacientul; a nu se confunda cu CalendarMapper -> cum vede terapeutul programarile
 @Component
 @RequiredArgsConstructor
 public class ProgramareMapper {

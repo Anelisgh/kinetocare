@@ -16,7 +16,7 @@ public class EvaluareMapper {
 
     public Diagnostic toDiagnostic(EvaluareDTO dto, Terapeut terapeut) {
         Pacient pacient = pacientRepository.findById(dto.getPacientId())
-                .orElseThrow(() -> new EntityNotFoundException("Pacient nu există"));
+                .orElseThrow(() -> new EntityNotFoundException("Pacientul nu există"));
 
         Serviciu serviciu = serviciuRepository.findByTipServiciu(dto.getTipServiciu())
                 .orElseThrow(() -> new EntityNotFoundException("Serviciu invalid"));

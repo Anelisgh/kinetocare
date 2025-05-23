@@ -22,6 +22,8 @@ public class PlataService {
     private final PlataMapper plataMapper;
     private final PacientService pacientService;
 
+// PAGINA PENTRU FACTURI
+//‧˚₊꒷꒦︶︶︶︶︶꒷꒦︶︶︶︶︶꒦꒷‧₊˚⊹
     public Map<String, Object> getPlatiPentruPacient(String email, Pageable pageable) {
         Pacient pacient = pacientService.getPacientByEmail(email);
 
@@ -40,12 +42,12 @@ public class PlataService {
         );
     }
 
+// SE CREEAZA PLATA AUTOMAT
+//‧˚₊꒷꒦︶︶︶︶︶꒷꒦︶︶︶︶︶꒦꒷‧₊˚⊹
     public void creazaPlata(Programare programare) {
-        if (programare.getServiciu() == null ||
-                plataRepository.existsByProgramare(programare)) {
+        if (programare.getServiciu() == null || plataRepository.existsByProgramare(programare)) {
             return;
         }
-
         Plata plata = Plata.builder()
                 .data(LocalDate.now())
                 .suma(programare.getServiciu().getPret())
@@ -53,7 +55,6 @@ public class PlataService {
                 .programare(programare)
                 .pacient(programare.getPacient())
                 .build();
-
         plataRepository.save(plata);
     }
 }

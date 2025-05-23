@@ -78,11 +78,11 @@ class CalendarServiceIntegrationTest extends AbstractIntegrationTest{
     }
 
     @Test
-    void getProgramariPentruCalendar_ShouldFilterByDateRange() {
+    void getProgramariForCalendar_ShouldFilterByDateRange() {
         LocalDate startDate = LocalDate.now().plusDays(1);
         TestUtils.createProgramare(terapeut, pacient, startDate, LocalTime.of(10, 0), serviciu, programareRepository);
         TestUtils.createProgramare(terapeut, pacient, LocalDate.now().plusDays(5), LocalTime.of(14, 0), serviciu, programareRepository);
-        List<ProgramareTerapeutDTO> result = calendarService.getProgramariPentruCalendar(
+        List<ProgramareTerapeutDTO> result = calendarService.getProgramariForCalendar(
                 terapeut.getUser().getEmail(),
                 startDate,
                 startDate.plusDays(3)

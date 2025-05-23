@@ -57,7 +57,7 @@ class PacientServiceIntegrationTest extends AbstractIntegrationTest{
     }
 
     @Test
-    void getPacientiPentruTerapeut_shouldReturnOrderedPacienti() {
+    void getPacientiForTerapeut_shouldReturnOrderedPacienti() {
         Pacient p1 = new Pacient();
         p1.setNume("Z");
         p1.setTerapeut(terapeut);
@@ -68,7 +68,7 @@ class PacientServiceIntegrationTest extends AbstractIntegrationTest{
         p2.setTerapeut(terapeut);
         pacientRepository.save(p2);
 
-        List<PacientDTO> result = pacientService.getPacientiPentruTerapeut("terapeut@gmail.com");
+        List<PacientDTO> result = pacientService.getPacientiForTerapeut("terapeut@gmail.com");
 
         assertThat(result)
                 .extracting(PacientDTO::getNume)

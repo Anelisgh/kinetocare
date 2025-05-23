@@ -118,7 +118,7 @@ public class TerapeutController {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String email = ((org.springframework.security.core.userdetails.User) auth.getPrincipal()).getUsername();
 
-        List<PacientDTO> pacienti = pacientService.getPacientiPentruTerapeut(email);
+        List<PacientDTO> pacienti = pacientService.getPacientiForTerapeut(email);
         model.addAttribute("pacienti", pacienti);
         return "terapeut/pacienti";
     }
@@ -162,14 +162,14 @@ public class TerapeutController {
 
     @GetMapping("/programari")
     @ResponseBody
-    public List<Map<String, Object>> getProgramariPentruCalendar(
+    public List<Map<String, Object>> getProgramariForCalendar(
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime start,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime end) {
 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String email = auth.getName();
 
-        List<ProgramareTerapeutDTO> programari = calendarService.getProgramariPentruCalendar(
+        List<ProgramareTerapeutDTO> programari = calendarService.getProgramariForCalendar(
                 email, start.toLocalDate(), end.toLocalDate());
 
         return programari.stream()

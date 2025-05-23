@@ -17,7 +17,7 @@ public class CalendarMapper {
 
     public ProgramareTerapeutDTO toProgramareTerapeutDTO(Programare programare) {
         Serviciu serviciu = serviciuRepository.findById(programare.getServiciu().getId())
-                .orElseThrow(() -> new EntityNotFoundException("Serviciu nu există"));
+                .orElseThrow(() -> new EntityNotFoundException("Serviciul nu există"));
 
         LocalTime oraEnd = programare.getOra().plusMinutes(serviciu.getDurataMinute());
 

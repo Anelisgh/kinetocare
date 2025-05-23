@@ -16,7 +16,7 @@ public class EvolutieMapper {
 
     public Evolutie toEvolutie(EvolutieDTO dto, Terapeut terapeut) {
         Pacient pacient = pacientRepository.findById(dto.getPacientId())
-                .orElseThrow(() -> new EntityNotFoundException("Pacient nu există"));
+                .orElseThrow(() -> new EntityNotFoundException("Pacientul nu există"));
 
         return Evolutie.builder()
                 .data(dto.getDataEvolutie())
