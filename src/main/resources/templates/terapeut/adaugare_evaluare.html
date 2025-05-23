@@ -15,7 +15,6 @@
 <h1>Evaluare nouă</h1>
 
 <form th:action="@{/terapeut/adaugare_evaluare}" th:object="${evaluareDTO}" method="post">
-    <!-- Dropdown Pacienți -->
     <div>
         <label>Pacient:</label>
         <select th:field="*{pacientId}" required>
@@ -26,8 +25,6 @@
         </select>
         <span th:if="${#fields.hasErrors('pacientId')}" th:errors="*{pacientId}"></span>
     </div>
-
-    <!-- Tip Evaluare -->
     <div>
         <label>Tip Evaluare:</label>
         <select th:field="*{tipEvaluare}" required>
@@ -38,29 +35,21 @@
         </select>
         <span th:if="${#fields.hasErrors('tipEvaluare')}" th:errors="*{tipEvaluare}"></span>
     </div>
-
-    <!-- Data -->
     <div>
         <label>Data:</label>
         <input type="date" th:field="*{dataEvaluare}" required>
         <span th:if="${#fields.hasErrors('dataEvaluare')}" th:errors="*{dataEvaluare}"></span>
     </div>
-
-    <!-- Diagnostic -->
     <div>
         <label>Diagnostic:</label>
         <input type="text" th:field="*{numeDiagnostic}" required>
         <span th:if="${#fields.hasErrors('numeDiagnostic')}" th:errors="*{numeDiagnostic}"></span>
     </div>
-
-    <!-- sedinte Recomandate -->
     <div>
         <label>Sedințe până la Reevaluare:</label>
         <input type="number" th:field="*{sedinteRecomandate}" min="1" required>
         <span th:if="${#fields.hasErrors('sedinteRecomandate')}" th:errors="*{sedinteRecomandate}"></span>
     </div>
-
-    <!-- Serviciu Recomandat -->
     <div>
         <label>Serviciu Recomandat:</label>
         <select th:field="*{tipServiciu}" required>
@@ -71,8 +60,6 @@
         </select>
         <span th:if="${#fields.hasErrors('tipServiciu')}" th:errors="*{tipServiciu}"></span>
     </div>
-
-    <!-- Observații -->
     <div>
         <label>Observații:</label>
         <textarea th:field="*{observatii}"></textarea>

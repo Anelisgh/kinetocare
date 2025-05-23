@@ -15,7 +15,6 @@
 <h1>Evoluție nouă</h1>
 
 <form th:action="@{/terapeut/adaugare_evolutie}" th:object="${evolutieDTO}" method="post">
-    <!-- Dropdown Pacienti -->
     <div>
         <label>Pacient:</label>
         <select th:field="*{pacientId}" required>
@@ -26,16 +25,12 @@
         </select>
         <span th:if="${#fields.hasErrors('pacientId')}" th:errors="*{pacientId}"></span>
     </div>
-
-    <!-- Data -->
     <div>
         <label>Data:</label>
         <input type="date" th:field="*{dataEvolutie}" required
                th:value="${evolutieDTO.dataEvolutie != null} ? ${#temporals.format(evolutieDTO.dataEvolutie, 'yyyy-MM-dd')} : ''">
         <span th:if="${#fields.hasErrors('dataEvolutie')}" th:errors="*{dataEvolutie}"></span>
     </div>
-
-    <!-- Observatii -->
     <div>
         <label>Observații:</label>
         <textarea th:field="*{observatii}"></textarea>

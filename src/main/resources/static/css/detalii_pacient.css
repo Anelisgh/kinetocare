@@ -1,6 +1,6 @@
 body {
     font-family: "Nunito", sans-serif;
-    color: #1a202c; /* un negru-albastru închis, clar */
+    color: #1a202c;
 }
 
 h1, h2 {
@@ -43,7 +43,7 @@ table {
 }
 
 thead {
-    background-color: #dbe4ff; /* un bleu mai viu */
+    background-color: #dbe4ff;
     color: #1c2e75;
 }
 

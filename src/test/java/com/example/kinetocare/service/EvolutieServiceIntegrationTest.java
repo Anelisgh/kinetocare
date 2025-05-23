@@ -53,13 +53,8 @@ class EvolutieServiceIntegrationTest extends AbstractIntegrationTest{
 
     @Test
     void adaugaEvolutie_Success() {
-        // Given
         EvolutieDTO dto = TestUtils.createValidEvolutieDTO(pacient.getId());
-
-        // When
         evolutieService.adaugaEvolutie(dto, terapeut.getUser().getEmail());
-
-        // Then
         List<Evolutie> evolutii = evolutieRepository.findAll();
         assertThat(evolutii).hasSize(1);
 
@@ -72,10 +67,7 @@ class EvolutieServiceIntegrationTest extends AbstractIntegrationTest{
 
     @Test
     void adaugaEvolutie_TerapeutNotFound_ShouldThrow() {
-        // Given
         EvolutieDTO dto = TestUtils.createValidEvolutieDTO(pacient.getId());
-
-        // When & Then
         assertThatThrownBy(() -> evolutieService.adaugaEvolutie(dto, "invalid@email.com"))
                 .isInstanceOf(EntityNotFoundException.class)
                 .hasMessageContaining("Terapeut nu există");
@@ -83,10 +75,7 @@ class EvolutieServiceIntegrationTest extends AbstractIntegrationTest{
 
     @Test
     void adaugaEvolutie_PacientInvalid_ShouldThrow() {
-        // Given
         EvolutieDTO dto = TestUtils.createValidEvolutieDTO(999L);
-
-        // When & Then
         assertThatThrownBy(() -> evolutieService.adaugaEvolutie(dto, terapeut.getUser().getEmail()))
                 .isInstanceOf(EntityNotFoundException.class)
                 .hasMessageContaining("Pacient nu există");
@@ -94,11 +83,8 @@ class EvolutieServiceIntegrationTest extends AbstractIntegrationTest{
 
     @Test
     void adaugaEvolutie_DataViitoare_ShouldFailValidation() {
-        // Given
         EvolutieDTO dto = TestUtils.createValidEvolutieDTO(pacient.getId());
         dto.setDataEvolutie(LocalDate.now().plusDays(1));
-
-        // When & Then
         assertThatThrownBy(() -> evolutieService.adaugaEvolutie(dto, terapeut.getUser().getEmail()))
                 .isInstanceOf(ConstraintViolationException.class);
     }

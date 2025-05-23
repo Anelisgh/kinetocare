@@ -11,13 +11,9 @@
 <div class="container">
     <h2 class="title">Istoricul de Plăți</h2>
 
-    <!-- Controls Section -->
     <div class="controls">
-        <!-- Sorting Controls -->
         <div class="sorting">
             <span>Sortează după:</span>
-
-            <!-- Sortare Data -->
             <a th:href="@{/pacient/facturi(page=0, size=${pageSize}, sort=${sort.startsWith('data') ? (sort.endsWith('desc') ? 'data,asc' : 'data,desc') : 'data,desc'})}"
                th:classappend="${sort.startsWith('data')} ? 'active'">
                 Data
@@ -25,7 +21,6 @@
                 <span th:if="${sort == 'data,asc'}">🡡</span>
             </a>
 
-            <!-- Sortare Sumă -->
             <a th:href="@{/pacient/facturi(page=0, size=${pageSize}, sort=${sort.startsWith('suma') ? (sort.endsWith('desc') ? 'suma,asc' : 'suma,desc') : 'suma,desc'})}"
                th:classappend="${sort.startsWith('suma')} ? 'active'">
                 Sumă
@@ -34,7 +29,6 @@
             </a>
         </div>
 
-        <!-- Page Size Selector -->
         <div class="page-size">
             <span>Elemente pe pagină:</span>
             <select id="pageSize" onchange="changePageSize(this)">
@@ -70,8 +64,7 @@
         </tr>
         </tbody>
     </table>
-
-    <!-- Pagination Controls -->
+    
     <div th:if="${plati.totalPages > 1}" class="pagination">
         <a th:href="@{/pacient/facturi(page=${plati.number - 1}, size=${pageSize}, sort=${sort})}"
            th:if="${!plati.first}" class="page-link">

@@ -224,9 +224,9 @@ public class TestUtils {
         return programare;
     }
 
-    public static Plata createPlata(Programare programare, BigDecimal suma, StarePlata stare, PlataRepository plataRepository) {
+    public static Plata createPlata(Programare programare, BigDecimal suma, StarePlata stare, LocalDate date, PlataRepository plataRepository) {
         Plata plata = Plata.builder()
-                .data(LocalDate.now())
+                .data(date)
                 .suma(suma)
                 .starePlata(stare)
                 .programare(programare)

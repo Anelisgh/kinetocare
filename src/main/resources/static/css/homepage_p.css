@@ -72,7 +72,7 @@ input[type="date"] {
     background-color: #ffffff;
     color: #333;
     transition: border-color 0.2s ease-in-out;
-    box-sizing: border-box; /* Asigură că padding-ul și border-ul sunt incluse în lățime */
+    box-sizing: border-box;
 }
 
 select:focus,

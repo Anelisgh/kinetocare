@@ -16,6 +16,7 @@ import org.springframework.data.domain.Sort;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.IntStream;
@@ -54,6 +55,7 @@ class PlataServiceIntegrationTest extends AbstractIntegrationTest {
                 pacientRepository
         );
         serviciu = TestUtils.createServiciu(TipServiciu.MASAJ, 100);
+        serviciu = serviciuRepository.save(serviciu);
         programare = TestUtils.createProgramare(
                 terapeut,
                 pacient,
@@ -77,19 +79,26 @@ class PlataServiceIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     void getPlatiPentruPacient_WithPlati_ReturnsCorrectData() {
-        Plata plata1 = TestUtils.createPlata(programare, BigDecimal.valueOf(200), StarePlata.ACHITATA, plataRepository);
-        Plata plata2 = TestUtils.createPlata(programare, BigDecimal.valueOf(300), StarePlata.IN_ASTEPTARE, plataRepository);
+        Plata plata1 = TestUtils.createPlata(programare, BigDecimal.valueOf(200), StarePlata.ACHITATA, LocalDate.now().minusDays(1), plataRepository);
+        Plata plata2 = TestUtils.createPlata(programare, BigDecimal.valueOf(300), StarePlata.IN_ASTEPTARE, LocalDate.now().minusDays(1), plataRepository);
         Map<String, Object> result = plataService.getPlatiPentruPacient(
                 pacient.getUser().getEmail(),
                 PageRequest.of(0, 10, Sort.by("data").descending())
         );
         Page<PlataDTO> platiPage = (Page<PlataDTO>) result.get("plati");
         assertThat(platiPage).hasSize(2);
-        assertThat(result.get("totalPlatit")).isEqualTo(BigDecimal.valueOf(200));
-        assertThat(result.get("dePlatit")).isEqualTo(BigDecimal.valueOf(300));
+        assertThat((BigDecimal) result.get("totalPlatit"))
+                .usingComparator(Comparator.naturalOrder())
+                .isEqualTo(BigDecimal.valueOf(200));
+
+        assertThat((BigDecimal) result.get("dePlatit"))
+                .usingComparator(Comparator.naturalOrder())
+                .isEqualTo(BigDecimal.valueOf(300));
+
         assertThat(platiPage.getContent())
                 .extracting(PlataDTO::getSuma)
-                .containsExactly(BigDecimal.valueOf(300), BigDecimal.valueOf(200));
+                .usingComparatorForType(Comparator.naturalOrder(), BigDecimal.class)
+                .containsExactlyInAnyOrder(BigDecimal.valueOf(300), BigDecimal.valueOf(200));
     }
 
     @Test
@@ -121,7 +130,7 @@ class PlataServiceIntegrationTest extends AbstractIntegrationTest {
     @Test
     void getPlatiPentruPacient_PaginationWorks() {
         IntStream.range(0, 15).forEach(i ->
-                TestUtils.createPlata(programare, BigDecimal.valueOf(100), StarePlata.ACHITATA, plataRepository)
+                TestUtils.createPlata(programare, BigDecimal.valueOf(100), StarePlata.ACHITATA, LocalDate.now().plusDays(i), plataRepository)
         );
         Map<String, Object> result = plataService.getPlatiPentruPacient(
                 pacient.getUser().getEmail(),

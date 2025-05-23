@@ -10,7 +10,6 @@
 <h1>Înregistrare</h1>
 
 <form th:action="@{/register}" th:object="${registrationDTO}" method="post">
-    <!-- Afișare erori globale -->
     <div th:if="${#fields.hasErrors('*')}" class="error-message">
         <ul>
             <li th:each="err : ${#fields.detailedErrors()}">
@@ -19,8 +18,6 @@
             </li>
         </ul>
     </div>
-
-    <!-- Câmpuri comune -->
     <div th:classappend="${#fields.hasErrors('email')} ? 'error-field'">
         <input type="email" th:field="*{email}" placeholder="Email" required/>
         <small th:errors="*{email}"></small>
@@ -41,8 +38,6 @@
         </select>
         <small th:errors="*{roleType}"></small>
     </div>
-
-    <!-- Câmpuri pacient -->
     <div id="pacientFields" th:if="${registrationDTO.pacientDetails != null}" style="display:none;">
         <h3>Detalii pacient</h3>
 
@@ -97,7 +92,6 @@
         </div>
     </div>
 
-    <!-- Câmpuri terapeut -->
     <div id="terapeutFields" th:if="${registrationDTO.terapeutDetails != null}" style="display:none;">
         <h3>Detalii terapeut</h3>
 

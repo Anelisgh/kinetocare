@@ -29,7 +29,9 @@ public class PacientController {
     private final PacientService pacientService;
     private final ProgramareService programareService;
     private final PlataService plataService;
-
+//─── ⋆⋅☆⋅⋆ ────── ⋆⋅☆⋅⋆ ────── ⋆⋅☆⋅⋆ ──────
+// HOMEPAGE
+//─── ⋆⋅☆⋅⋆ ────── ⋆⋅☆⋅⋆ ────── ⋆⋅☆⋅⋆ ──────
     @GetMapping("/homepage")
     public String showHomePage(Model model, Principal principal) {
         log.info("User {} accessed patient homepage", principal.getName());
@@ -40,7 +42,9 @@ public class PacientController {
         model.addAttribute("areProgramare", pacientService.hasProgramare(pacientHomeDTO));
         return "pacient/homepage";
     }
-
+//─── ⋆⋅☆⋅⋆ ────── ⋆⋅☆⋅⋆ ────── ⋆⋅☆⋅⋆ ──────
+// CREEAZA PROGRAMARE
+//─── ⋆⋅☆⋅⋆ ────── ⋆⋅☆⋅⋆ ────── ⋆⋅☆⋅⋆ ──────
     @PostMapping("/programari/creaza")
     public String creazaProgramare(
             @Valid @ModelAttribute("pacientHome") PacientHomeDTO pacientHomeDTO,
@@ -70,7 +74,9 @@ public class PacientController {
 
         return "redirect:/pacient/homepage";
     }
-
+//─── ⋆⋅☆⋅⋆ ────── ⋆⋅☆⋅⋆ ────── ⋆⋅☆⋅⋆ ──────
+// MODIFICA PROGRAMARE
+//─── ⋆⋅☆⋅⋆ ────── ⋆⋅☆⋅⋆ ────── ⋆⋅☆⋅⋆ ──────
     @PostMapping("/programari/modifica")
     public String modificaProgramare(
             @Valid @ModelAttribute("nouaProgramare") ProgramareDTO programareDTO,
@@ -98,7 +104,9 @@ public class PacientController {
 
         return "redirect:/pacient/homepage";
     }
-
+//─── ⋆⋅☆⋅⋆ ────── ⋆⋅☆⋅⋆ ────── ⋆⋅☆⋅⋆ ──────
+// STERGE PROGRAMARE
+//─── ⋆⋅☆⋅⋆ ────── ⋆⋅☆⋅⋆ ────── ⋆⋅☆⋅⋆ ──────
     @PostMapping("/programari/sterge/{id}")
     public String stergeProgramare(@PathVariable Long id, Principal principal) {
         log.info("Deleting appointment {} for user {}", id, principal.getName());
@@ -110,7 +118,9 @@ public class PacientController {
         }
         return "redirect:/pacient/homepage";
     }
-
+//─── ⋆⋅☆⋅⋆ ────── ⋆⋅☆⋅⋆ ────── ⋆⋅☆⋅⋆ ──────
+// FACTURI
+//─── ⋆⋅☆⋅⋆ ────── ⋆⋅☆⋅⋆ ────── ⋆⋅☆⋅⋆ ──────
     @GetMapping("/facturi")
     public String getFacturi(Model model, Principal principal,
                              @RequestParam(defaultValue = "0") int page,
