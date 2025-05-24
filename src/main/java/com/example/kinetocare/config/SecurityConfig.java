@@ -25,8 +25,9 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http, UserDetailsService userDetailsService) throws Exception {
         http
                 .csrf(csrf -> csrf.disable())
+                .headers(headers -> headers.frameOptions(frame -> frame.sameOrigin())) // pentru h2-console, altfel nu ne permite spring security sa-l accesam
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/", "/login", "/register", "/css/**").permitAll()
+                        .requestMatchers("/", "/login", "/register", "/css/**", "/h2-console/**").permitAll()
                         .requestMatchers("/pacient/**").hasRole("PACIENT")
                         .requestMatchers("/terapeut/**").hasRole("TERAPEUT")
                         .anyRequest().authenticated()
