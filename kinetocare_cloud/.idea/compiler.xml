@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile default="true" name="Default" enabled="true" />
+      <profile name="Annotation profile for kinetocare_cloud" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="false">
+          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.38/lombok-1.18.38.jar" />
+        </processorPath>
+        <module name="evolutie" />
+        <module name="Plata" />
+        <module name="Programare" />
+        <module name="user" />
+        <module name="plata" />
+        <module name="evaluare" />
+      </profile>
+      <profile name="Annotation profile for kinetocare-common" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="false">
+          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.32/lombok-1.18.32.jar" />
+        </processorPath>
+        <module name="kinetocare-common" />
+      </profile>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="api-gateway" />
+        <module name="eureka-server" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="Evolutii" target="21" />
+    </bytecodeTargetLevel>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="Evolutii" options="-parameters" />
+      <module name="Plata" options="-parameters" />
+      <module name="Programare" options="-parameters" />
+      <module name="api-gateway" options="-parameters" />
+      <module name="eureka-server" options="-parameters" />
+      <module name="evaluare" options="-parameters" />
+      <module name="evolutie" options="-parameters" />
+      <module name="kinetocare-common" options="-parameters" />
+      <module name="plata" options="-parameters" />
+      <module name="user" options="-parameters" />
+    </option>
+  </component>
+</project>

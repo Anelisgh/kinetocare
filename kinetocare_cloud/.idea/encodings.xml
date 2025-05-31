@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="Encoding">
+    <file url="file://$PROJECT_DIR$/api-gateway/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/eureka-server/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/evaluare/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/evolutie/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/evolutii/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/kinetocare-common/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/plata/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/programare/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/user/src/main/java" charset="UTF-8" />
+  </component>
+</project>

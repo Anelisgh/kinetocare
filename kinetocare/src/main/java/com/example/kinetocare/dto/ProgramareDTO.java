@@ -18,7 +18,7 @@ import java.time.LocalTime;
 public class ProgramareDTO {
     private Long id;
     @NotNull(message = "Data este obligatorie")
-    @FutureOrPresent(message = "Data nu poate fi din viitor")
+    @FutureOrPresent(message = "Data nu poate fi în trecut")
     private LocalDate data;
 
     @NotNull(message = "Ora este obligatorie")
