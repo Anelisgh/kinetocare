@@ -1,0 +1,13 @@
+package com.example.programare.feign;
+
+import com.example.common.dto.ServiciuDTO;
+import com.example.programare.config.FeignConfig;
+import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+
+@FeignClient(name = "evaluare", configuration = FeignConfig.class)
+public interface ServiciuFeignClient {
+    @GetMapping("/api/evaluare/servicii/{id}")
+    ServiciuDTO getServiciuById(@PathVariable Long id);
+}

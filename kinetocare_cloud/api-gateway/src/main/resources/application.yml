@@ -1,0 +1,70 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
+      routes:
+        - id: user
+          uri: lb://user
+          predicates:
+            - Path=/api/auth/**,/api/pacienti/**,/api/terapeuti/**
+          filters:
+            - StripPrefix=0
+        - id: evaluare
+          uri: lb://evaluare
+          predicates:
+            - Path=/api/evaluare/**
+          filters:
+            - StripPrefix=0
+          metadata:
+            sensitive-headers: [] # pentru ca antetul Authorization sa nu fie eliminat inainte de a ajunge unde trebuie
+        - id: evolutie
+          uri: lb://evolutie
+          predicates:
+            - Path=/api/evolutie/**
+          filters:
+            - StripPrefix=0
+          metadata:
+            sensitive-headers: []
+        - id: programare
+          uri: lb://programare
+          predicates:
+            - Path=/api/programare/**
+          filters:
+            - StripPrefix=0
+          metadata:
+            sensitive-headers: [ ]
+        - id: plata
+          uri: lb://plata
+          predicates:
+            - Path=/api/plata/**
+          filters:
+            - StripPrefix=0
+          metadata:
+            sensitive-headers: [ ]
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+    register-with-eureka: true
+    fetch-registry: true
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,gateway
+  endpoint:
+    health:
+      show-details: always
+
+logging:
+  level:
+    org.springframework.cloud.gateway: DEBUG
+    org.springframework.cloud.netflix: DEBUG

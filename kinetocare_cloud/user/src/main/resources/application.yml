@@ -1,0 +1,23 @@
+spring:
+  application:
+    name: user
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+    fetch-registry: true
+    register-with-eureka: true
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: always
+
+logging:
+  level:
+    com.myapp.user: DEBUG
+    org.springframework.cloud.netflix: DEBUG
