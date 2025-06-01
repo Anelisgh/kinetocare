@@ -14,7 +14,7 @@ spring:
         - id: user
           uri: lb://user
           predicates:
-            - Path=/api/auth/**,/api/pacienti/**,/api/terapeuti/**
+            - Path=/api/auth/**,/api/pacienti/**,/api/terapeuti/**,/port
           filters:
             - StripPrefix=0
         - id: evaluare
@@ -59,7 +59,7 @@ management:
   endpoints:
     web:
       exposure:
-        include: health,info,gateway
+        include: health, info, metrics, loggers
   endpoint:
     health:
       show-details: always

@@ -1,6 +1,9 @@
 package com.example.plata.service;
 
-import com.example.common.dto.*;
+import com.example.common.dto.PlataDTO;
+import com.example.common.dto.ProgramareDetaliiDTO;
+import com.example.common.dto.ServiciuDTO;
+import com.example.common.dto.UpdateStarePlataDTO;
 import com.example.common.enums.StarePlata;
 import com.example.plata.domain.Plata;
 import com.example.plata.feign.PacientFeignClient;
@@ -11,7 +14,6 @@ import com.example.plata.repository.PlataRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;

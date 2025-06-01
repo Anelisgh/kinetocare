@@ -21,8 +21,8 @@ public class PlataController {
 
     @PostMapping("/programare/{programareId}")
     public ResponseEntity<PlataDTO> creazaPlata(@PathVariable Long programareId) {
-        plataService.creazaPlata(programareId);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        PlataDTO plataDTO = plataService.creazaPlata(programareId);
+        return ResponseEntity.status(HttpStatus.CREATED).body(plataDTO);
     }
 
     @PatchMapping("/{id}/stare")

@@ -1,7 +1,12 @@
 spring:
   application:
     name: evolutie
-
+    boot:
+      admin:
+        client:
+          url: http://localhost:8080
+          username: admin
+          password: admin
 eureka:
   client:
     service-url:
@@ -12,11 +17,36 @@ management:
   endpoints:
     web:
       exposure:
-        include: health,info
+        include: health, info, metrics, loggers
   endpoint:
     health:
       show-details: always
-
+resilience4j:
+  circuitbreaker:
+    configs:
+      # adica daca 1 din cele 2 apeluri esueaza se va deschide circuitul
+      # si la al 3-lea apel se utilizeaza fallback-ul (getPacientiSafely)
+      default:
+        registerHealthIndicator: true
+        slidingWindowSize: 2
+        minimumNumberOfCalls: 2    # cel putin 2 apeluri inainte sa se calculeze rata
+        failureRateThreshold: 50   # daca 50% din ultimele apeluri au esuat, se deschide circuitul
+        waitDurationInOpenState: 5000  #cat sta OPEN inainte sa devine HALF-OPEN
+    instances:
+      getPacientiCB:
+        baseConfig: default
+      getPacientByIdCB:
+        baseConfig: default
+  retry:
+    configs:
+      default:
+        maxAttempts: 2
+        waitDuration: 1000
+    instances:
+      getPacientiRetry:
+        baseConfig: default
+      getPacientByIdRetry:
+        baseConfig: default
 logging:
   level:
     com.myapp.user: DEBUG

@@ -1,12 +1,8 @@
 package com.example.evaluare.mapper;
 
 import com.example.common.dto.EvaluareDTO;
-import com.example.common.dto.PacientDTO;
-import com.example.common.dto.ServiciuDTO;
-import com.example.common.dto.TerapeutDTO;
 import com.example.evaluare.domain.Diagnostic;
 import com.example.evaluare.domain.Evaluare;
-import com.example.common.enums.TipServiciu;
 import com.example.evaluare.domain.Serviciu;
 import com.example.evaluare.repository.DiagnosticRepository;
 import com.example.evaluare.repository.ServiciuRepository;

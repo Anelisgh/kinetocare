@@ -1,12 +1,14 @@
 package com.example.evaluare.controller;
 
-import com.example.common.dto.*;
+import com.example.common.dto.EvaluareDTO;
+import com.example.common.dto.PacientDTO;
+import com.example.common.dto.ServiciuDTO;
 import com.example.common.enums.TipEvaluare;
 import com.example.common.enums.TipServiciu;
+import com.example.common.security.JwtUtil;
 import com.example.evaluare.domain.Serviciu;
 import com.example.evaluare.feign.PacientFeignClient;
 import com.example.evaluare.feign.TerapeutFeignClient;
-import com.example.common.security.JwtUtil;
 import com.example.evaluare.repository.ServiciuRepository;
 import com.example.evaluare.service.EvaluareService;
 import jakarta.persistence.EntityNotFoundException;
@@ -16,7 +18,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;

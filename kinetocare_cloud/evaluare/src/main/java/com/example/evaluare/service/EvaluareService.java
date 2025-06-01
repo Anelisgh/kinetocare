@@ -1,6 +1,9 @@
 package com.example.evaluare.service;
 
-import com.example.common.dto.*;
+import com.example.common.dto.EvaluareDTO;
+import com.example.common.dto.PacientDTO;
+import com.example.common.dto.ProgramareDetaliiDTO;
+import com.example.common.dto.TerapeutDTO;
 import com.example.common.enums.TipServiciu;
 import com.example.evaluare.domain.Diagnostic;
 import com.example.evaluare.domain.Evaluare;

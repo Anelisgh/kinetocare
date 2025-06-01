@@ -1,11 +1,12 @@
 package com.example.evaluare.domain;
 
+import com.example.common.enums.TipServiciu;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import com.example.common.enums.TipServiciu;
+
 import java.math.BigDecimal;
 
 @Entity

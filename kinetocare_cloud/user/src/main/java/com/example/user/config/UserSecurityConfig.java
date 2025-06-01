@@ -1,6 +1,6 @@
 package com.example.user.config;
 
-import com.example.common.security.config.*;
+import com.example.common.security.config.JwtSecurityConfig;
 import com.example.common.security.filter.JwtAuthFilter;
 import com.example.user.service.CustomUserDetailsService;
 import org.springframework.context.annotation.Bean;
@@ -21,8 +21,9 @@ public class UserSecurityConfig extends JwtSecurityConfig {
     protected void configureMicroserviceSpecificRules(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/actuator/**").permitAll()
                         .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers("/api/terapeuti/**", "/api/pacienti/**").authenticated()
+                        .requestMatchers("/port").permitAll()
                         .anyRequest().authenticated()
                 )
                 .authenticationProvider(authenticationProvider());

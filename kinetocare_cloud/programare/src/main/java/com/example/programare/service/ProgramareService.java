@@ -5,7 +5,6 @@ import com.example.common.dto.ProgramareDetaliiDTO;
 import com.example.common.dto.ServiciuDTO;
 import com.example.common.dto.TerapeutDTO;
 import com.example.common.enums.Status;
-import com.example.common.enums.TipServiciu;
 import com.example.programare.domain.Programare;
 import com.example.programare.feign.ServiciuFeignClient;
 import com.example.programare.feign.TerapeutFeignClient;

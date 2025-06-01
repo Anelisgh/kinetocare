@@ -1,8 +1,6 @@
 package com.example.plata.mapper;
 
-import com.example.common.dto.PacientDTO;
 import com.example.common.dto.PlataDTO;
-import com.example.common.dto.ProgramareDTO;
 import com.example.plata.domain.Plata;
 import com.example.plata.feign.PacientFeignClient;
 import com.example.plata.feign.ProgramareFeignClient;

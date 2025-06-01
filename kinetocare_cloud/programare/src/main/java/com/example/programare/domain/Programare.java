@@ -1,12 +1,12 @@
 package com.example.programare.domain;
 
-import com.example.common.enums.TipServiciu;
+import com.example.common.enums.Status;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import com.example.common.enums.Status;
+
 import java.time.LocalDate;
 import java.time.LocalTime;
 

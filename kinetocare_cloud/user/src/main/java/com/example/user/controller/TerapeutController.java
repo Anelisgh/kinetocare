@@ -1,10 +1,8 @@
 package com.example.user.controller;
 
 import com.example.common.dto.TerapeutDTO;
-import com.example.user.domain.Terapeut;
 import com.example.user.repository.TerapeutRepository;
 import com.example.user.service.TerapeutService;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

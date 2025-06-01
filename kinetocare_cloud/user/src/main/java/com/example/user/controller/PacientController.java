@@ -1,8 +1,6 @@
 package com.example.user.controller;
 
 import com.example.common.dto.PacientDTO;
-import com.example.common.enums.Gen;
-import com.example.common.enums.TipSport;
 import com.example.user.domain.Pacient;
 import com.example.user.mapper.PacientMapper;
 import com.example.user.repository.PacientRepository;

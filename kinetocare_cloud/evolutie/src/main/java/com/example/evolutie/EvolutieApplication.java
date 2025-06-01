@@ -10,9 +10,9 @@ import org.springframework.context.annotation.ComponentScan;
 @EnableDiscoveryClient
 @EnableFeignClients(basePackages = {"com.example.evolutie.feign"})
 @ComponentScan(basePackages = {"com.example.common", "com.example.evolutie"})
-public class EvolutiiApplication {
+public class EvolutieApplication {
 	public static void main(String[] args) {
-		SpringApplication.run(EvolutiiApplication.class, args);
+		SpringApplication.run(EvolutieApplication.class, args);
 	}
 
 }

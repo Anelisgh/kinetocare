@@ -16,16 +16,13 @@ public class EvolutieMapper {
     private final PacientFeignClient pacientClient;
     private final TerapeutFeignClient terapeutClient;
 
-    public Evolutie toEvolutie(EvolutieDTO dto, String emailTerapeut) {
-        TerapeutDTO terapeut = terapeutClient.getTerapeutByEmail(emailTerapeut);
+    public Evolutie toEvolutie(EvolutieDTO dto, PacientDTO pacient, TerapeutDTO terapeut) {
         if (terapeut == null) {
             throw new EntityNotFoundException("Terapeutul nu există");
         }
-        PacientDTO pacient = pacientClient.getPacientById(dto.getPacientId());
         if (pacient == null) {
             throw new EntityNotFoundException("Pacientul nu există");
         }
-
         return Evolutie.builder()
                 .data(dto.getDataEvolutie())
                 .observatii(dto.getObservatii())

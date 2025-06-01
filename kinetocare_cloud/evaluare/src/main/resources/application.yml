@@ -1,7 +1,12 @@
 spring:
   application:
     name: evaluare
-
+    boot:
+      admin:
+        client:
+          url: http://localhost:8080
+          username: admin
+          password: admin
 eureka:
   client:
     service-url:
@@ -12,11 +17,10 @@ management:
   endpoints:
     web:
       exposure:
-        include: health,info
+        include: health, info, metrics, loggers
   endpoint:
     health:
       show-details: always
-
 logging:
   level:
     com.myapp.user: DEBUG

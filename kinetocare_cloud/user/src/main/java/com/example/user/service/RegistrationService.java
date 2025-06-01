@@ -9,7 +9,6 @@ import com.example.user.mapper.RegistrationMapper;
 import com.example.user.repository.PacientRepository;
 import com.example.user.repository.TerapeutRepository;
 import com.example.user.repository.UserRepository;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
