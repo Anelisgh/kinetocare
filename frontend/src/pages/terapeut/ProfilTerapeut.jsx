@@ -1,0 +1,207 @@
+import { useState, useEffect } from 'react';
+import { useAuth } from '../../context/AuthContext';
+import { profileService } from '../../services/profileService';
+
+import PozaProfil from '../../components/terapeut/profil/PozaProfil';
+import ManagementDisponibilitate from '../../components/terapeut/profil/ManagementDisponibilitate';
+import ManagementConcedii from '../../components/terapeut/profil/ManagementConcedii';
+import '../../styles/profil.css';
+
+export default function ProfilTerapeut() {
+  const { userInfo } = useAuth();
+  const [profile, setProfile] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [isEditing, setIsEditing] = useState(false);
+
+  const [formData, setFormData] = useState({
+    nume: '',
+    prenume: '',
+    email: '',
+    telefon: '',
+    gen: '',
+    specializare: '',
+    pozaProfil: '',
+  });
+
+  const [error, setError] = useState(null);
+  const [successMessage, setSuccessMessage] = useState('');
+
+  useEffect(() => {
+    fetchProfile();
+  }, []);
+
+  const fetchProfile = async () => {
+    try {
+      setLoading(true);
+      const data = await profileService.getProfile();
+      setProfile(data);
+
+      setFormData({
+        nume: data.nume || '',
+        prenume: data.prenume || '',
+        email: data.email || '',
+        telefon: data.telefon || '',
+        gen: data.gen || 'MASCULIN',
+        specializare: data.specializare || 'ADULTI',
+        pozaProfil: data.pozaProfil || '',
+      });
+    } catch (error) {
+      console.error('Eroare la încărcarea profilului:', error);
+      setError('Nu s-a putut încărca profilul. Încearcă din nou.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError(null);
+    setSuccessMessage('');
+
+    try {
+      const updatedProfile = await profileService.updateProfile(formData);
+      setProfile(updatedProfile);
+      setFormData(prev => ({ ...prev, pozaProfil: updatedProfile.pozaProfil }));
+
+      setIsEditing(false);
+      setSuccessMessage('Profil actualizat cu succes!');
+      setTimeout(() => setSuccessMessage(''), 3000);
+    } catch (error) {
+      console.error('Eroare la actualizare:', error);
+      setError(error.message || 'Nu s-a putut actualiza profilul.');
+    }
+  };
+
+  const handleCancel = () => {
+    setFormData({
+      nume: profile.nume || '',
+      prenume: profile.prenume || '',
+      email: profile.email || '',
+      telefon: profile.telefon || '',
+      gen: profile.gen || 'MASCULIN',
+      specializare: profile.specializare || 'ADULTI',
+      pozaProfil: profile.pozaProfil || '',
+    });
+    setIsEditing(false);
+    setError(null);
+  };
+
+  if (loading) {
+    return (
+      <div className="profil-container">
+        <div className="loading-spinner">Se încarcă...</div>
+      </div>
+    );
+  }
+
+  if (!profile) {
+    return (
+      <div className="profil-container">
+        <div className="error-message">Nu s-a putut încărca profilul.</div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="profil-container">
+      <div className="profil-header">
+        <h1>Profil Terapeut</h1>
+        {!isEditing && (
+          <button className="btn-edit" onClick={() => setIsEditing(true)}>
+            Editează Profilul
+          </button>
+        )}
+      </div>
+
+      {successMessage && <div className="success-message">{successMessage}</div>}
+      {error && <div className="error-message">{error}</div>}
+
+      <div className="profil-layout">
+        <PozaProfil
+          pozaProfil={formData.pozaProfil}
+          isEditing={isEditing}
+          onChange={handleChange}
+        />
+
+        {isEditing ? (
+          <form onSubmit={handleSubmit} className="profil-form-principal">
+            <div className="form-group">
+              <label htmlFor="nume">Nume *</label>
+              <input type="text" id="nume" name="nume" value={formData.nume} onChange={handleChange} required />
+            </div>
+            <div className="form-group">
+              <label htmlFor="prenume">Prenume *</label>
+              <input type="text" id="prenume" name="prenume" value={formData.prenume} onChange={handleChange} required />
+            </div>
+            <div className="form-group">
+              <label htmlFor="gen">Gen *</label>
+              <select id="gen" name="gen" value={formData.gen} onChange={handleChange} required>
+                <option value="MASCULIN">Masculin</option>
+                <option value="FEMININ">Feminin</option>
+              </select>
+            </div>
+            <div className="form-group">
+              <label htmlFor="email">Email *</label>
+              <input type="email" id="email" name="email" value={formData.email} onChange={handleChange} required />
+            </div>
+            <div className="form-group">
+              <label htmlFor="telefon">Telefon *</label>
+              <input type="tel" id="telefon" name="telefon" value={formData.telefon} onChange={handleChange} required pattern="[0-9]{10}" />
+            </div>
+            <div className="form-group">
+              <label htmlFor="specializare">Specializare *</label>
+              <select id="specializare" name="specializare" value={formData.specializare} onChange={handleChange} required>
+                <option value="ADULTI">Adulți</option>
+                <option value="PEDIATRIE">Pediatrie</option>
+              </select>
+            </div>
+
+            <div className="form-actions">
+              <button type="submit" className="btn-save">Salvează</button>
+              <button type="button" className="btn-cancel" onClick={handleCancel}>Anulează</button>
+            </div>
+          </form>
+        ) : (
+          <div className="profil-info">
+            <div className="info-item"><span className="info-label">Nume:</span><span className="info-value">{profile.nume}</span></div>
+            <div className="info-item"><span className="info-label">Prenume:</span><span className="info-value">{profile.prenume}</span></div>
+            <div className="info-item">
+              <span className="info-label">Gen:</span>
+              <span className="info-value">
+                {profile.gen === 'MASCULIN' ? 'Masculin' : (profile.gen === 'FEMININ' ? 'Feminin' : 'Nedefinit')}
+              </span>
+            </div>
+            <div className="info-item">
+              <span className="info-label">Email:</span><span className="info-value">{profile.email}</span>
+            </div>
+            <div className="info-item">
+              <span className="info-label">Telefon:</span><span className="info-value">{profile.telefon}</span>
+            </div>
+            <div className="info-item">
+              <span className="info-label">Specializare:</span>
+              <span className="info-value">
+                {profile.specializare === 'ADULTI' ? 'Adulți' : (profile.specializare === 'PEDIATRIE' ? 'Pediatrie' : 'Nedefinit')}
+              </span>
+            </div>
+          </div>
+        )}
+      </div>
+
+      <hr className="section-divider" />
+
+      <ManagementDisponibilitate />
+
+      <hr className="section-divider" />
+
+      <ManagementConcedii />
+    </div>
+  );
+}

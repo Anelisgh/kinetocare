@@ -1,0 +1,210 @@
+.terapeut-section {
+    margin-top: var(--space-xl, 2rem);
+}
+
+.terapeut-section h2::before {
+    content: '👨‍⚕️';
+}
+
+.my-terapeut {
+    margin-top: var(--space-lg, 1.5rem);
+}
+
+.terapeut-actions {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 1.5rem;
+    width: 100%;
+}
+
+.btn-change-terapeut,
+.btn-remove-terapeut {
+    width: auto !important; 
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 10px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: 'Nunito', sans-serif;
+    gap: 0.75rem;
+}
+
+.btn-change-terapeut {
+    background: linear-gradient(135deg, var(--color-primary, #0369a1) 0%, var(--color-primary-light, #0ea5e9) 100%);
+    color: white;
+}
+
+.btn-change-terapeut::before {
+    content: '🔄';
+}
+
+.btn-change-terapeut:hover {
+    background: linear-gradient(135deg, var(--color-primary-dark, #075985) 0%, var(--color-primary, #0369a1) 100%);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md, 0 4px 6px -1px rgb(0 0 0 / 0.1));
+}
+
+.btn-remove-terapeut {
+    background: var(--color-error, #ef4444);
+    color: white;
+}
+
+.btn-remove-terapeut::before {
+    content: '🗑️';
+}
+
+.btn-remove-terapeut:hover {
+    background: #dc2626;
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md, 0 4px 6px -1px rgb(0 0 0 / 0.1));
+}
+
+.no-terapeut {
+    text-align: center;
+    padding: var(--space-2xl, 3rem) var(--space-xl, 2rem);
+    background: linear-gradient(135deg, var(--color-primary-subtle, #e0f2fe) 0%, white 100%);
+    border-radius: var(--radius-lg, 16px);
+    margin-top: var(--space-lg, 1.5rem);
+    border: 2px dashed var(--color-primary-light, #0ea5e9);
+}
+
+.no-terapeut::before {
+    content: '🔍';
+    font-size: 4rem;
+    display: block;
+    margin-bottom: var(--space-lg, 1.5rem);
+    opacity: 0.7;
+}
+
+.info-message {
+    font-size: 1.1rem;
+    color: var(--color-text-secondary, #475569);
+    margin-bottom: var(--space-lg, 1.5rem);
+    line-height: 1.6;
+}
+
+.btn-search-terapeut {
+    padding: 1rem 2rem;
+    background: linear-gradient(135deg, var(--color-secondary, #0d9488) 0%, var(--color-secondary-light, #14b8a6) 100%);
+    color: white;
+    border: none;
+    border-radius: var(--radius-md, 10px);
+    font-size: 1.05rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--transition-base, 200ms ease-in-out);
+    font-family: 'Nunito', sans-serif;
+    box-shadow: var(--shadow-md, 0 4px 6px -1px rgb(0 0 0 / 0.1));
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-sm, 0.75rem);
+}
+
+.btn-search-terapeut::before {
+    font-size: 1.2rem;
+}
+
+.btn-search-terapeut:hover {
+    background: linear-gradient(135deg, var(--color-secondary-dark, #0f766e) 0%, var(--color-secondary, #0d9488) 100%);
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-lg, 0 10px 15px -3px rgb(0 0 0 / 0.1));
+}
+
+.terapeut-search {
+    margin-top: var(--space-xl, 2rem);
+    animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.search-results {
+    margin-top: var(--space-xl, 2rem);
+    animation: fadeIn 0.4s ease-out;
+}
+
+.search-results h3 {
+    margin-bottom: var(--space-lg, 1.5rem);
+    font-size: 1.4rem;
+    color: var(--color-primary-dark, #075985);
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm, 0.75rem);
+}
+
+.search-results h3::before {
+    font-size: 1.5rem;
+}
+
+.terapeuti-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: var(--space-lg, 1.5rem);
+    margin-bottom: var(--space-xl, 2rem);
+}
+
+@media (max-width: 768px) {
+    .terapeuti-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.confirm-choice {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 2rem;
+    padding: 1rem;
+}
+
+.confirm-choice {
+    height: 48px;
+    padding: 0 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: 'Nunito', sans-serif;
+    box-sizing: border-box;
+}
+
+.search-actions-bottom {
+    text-align: center;
+    margin-top: var(--space-xl, 2rem);
+    padding-top: var(--space-lg, 1.5rem);
+    border-top: 2px solid var(--color-border, #e2e8f0);
+}
+
+@media (max-width: 768px) {
+    .terapeut-actions {
+        flex-direction: row; 
+        justify-content: space-between;
+    }
+
+    .btn-change-terapeut,
+    .btn-remove-terapeut {
+        flex: 1; 
+        justify-content: center;
+        width: auto;
+        padding: 0.75rem 0.5rem;
+    }
+}

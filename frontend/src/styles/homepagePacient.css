@@ -1,0 +1,785 @@
+/* HomepagePacient Styles */
+.homepage-pacient-container {
+    max-width: 90rem;
+    margin: 0 auto;
+    min-height: 100vh;
+    padding-bottom: 2.5rem;
+    animation: fadeIn 0.6s ease-out;
+}
+
+/* Loading and Error States */
+.homepage-loading,
+.homepage-error {
+    padding: var(--space-md, 1rem);
+}
+
+.homepage-loading {
+    color: var(--color-text-secondary, #475569);
+    text-align: center;
+    padding: var(--space-xl, 1.75rem);
+}
+
+.homepage-error {
+    color: var(--color-error, #ef4444);
+    background: var(--color-error-bg, #fee2e2);
+    border-radius: var(--radius-md, 10px);
+    border-left: 4px solid var(--color-error, #ef4444);
+    padding: var(--space-md, 1rem);
+    margin: var(--space-md, 1rem);
+}
+
+/* Header Section */
+.homepage-header {
+    background: var(--color-surface, white);
+    padding: var(--space-xl, 1.75rem);
+    border-radius: 0 0 1.5rem 1.5rem;
+    box-shadow: var(--shadow-md, 0 4px 6px -1px rgb(0 0 0 / 0.1));
+    margin-bottom: var(--space-xl, 1.75rem);
+    position: relative;
+    overflow: hidden;
+}
+
+.homepage-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--color-primary, #0369a1) 0%, var(--color-secondary, #0d9488) 100%);
+}
+
+/* .homepage-header h1 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--color-text-primary, #0f172a);
+    margin: 0 0 var(--space-md, 1rem) 0;
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm, 0.5rem);
+}
+
+/* Patient Info Section */
+.homepage-patient-info {
+    margin-top: var(--space-md, 1rem);
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: var(--space-md, 1rem);
+}
+
+.homepage-patient-details {
+    flex: 1;
+}
+
+.homepage-patient-label {
+    font-size: 0.875rem;
+    color: var(--color-text-secondary, #475569);
+    margin: 0 0 var(--space-xs, 0.25rem) 0;
+    font-weight: 500;
+}
+
+.homepage-patient-name {
+    font-weight: 600;
+    color: var(--color-text-primary, #0f172a);
+    font-size: 1.1rem;
+    margin: 0;
+}
+
+.homepage-diagnostic-section {
+    text-align: right;
+}
+
+.homepage-diagnostic-label {
+    font-size: 0.875rem;
+    color: var(--color-text-secondary, #475569);
+    margin: 0 0 var(--space-xs, 0.25rem) 0;
+    font-weight: 500;
+}
+
+.homepage-diagnostic-badge {
+    background: var(--color-primary-subtle, #e0f2fe);
+    color: var(--color-primary-dark, #075985);
+    font-size: 0.75rem;
+    padding: 0.375rem 0.75rem;
+    border-radius: var(--radius-full, 9999px);
+    font-weight: 600;
+    display: inline-block;
+    border: 1px solid var(--color-primary-light, #0ea5e9);
+}
+
+/* Therapist Info Card */
+.homepage-therapist-card {
+    margin-top: var(--space-md, 1rem);
+    padding: var(--space-md, 1rem);
+    background: linear-gradient(135deg, var(--color-primary-subtle, #e0f2fe) 0%, rgba(255, 255, 255, 0.8) 100%);
+    border-radius: var(--radius-xl, 20px);
+    display: flex;
+    align-items: center;
+    gap: var(--space-md, 1rem);
+    border: 2px solid var(--color-primary-light, #0ea5e9);
+    box-shadow: var(--shadow-sm, 0 1px 2px 0 rgb(0 0 0 / 0.05));
+    transition: all var(--transition-base, 200ms ease-in-out);
+}
+
+.homepage-therapist-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md, 0 4px 6px -1px rgb(0 0 0 / 0.1));
+    border-color: var(--color-primary, #0369a1);
+}
+
+.homepage-therapist-content {
+    flex: 1;
+}
+
+.homepage-therapist-label {
+    font-size: 0.75rem;
+    color: var(--color-primary-dark, #075985);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin: 0 0 var(--space-xs, 0.25rem) 0;
+}
+
+.homepage-therapist-name {
+    font-weight: 600;
+    color: var(--color-text-primary, #0f172a);
+    font-size: 1.1rem;
+    margin: 0 0 var(--space-xs, 0.25rem) 0;
+}
+
+.homepage-location {
+    font-size: 1rem;
+    color: var(--color-text-secondary, #475569);
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs, 0.25rem);
+}
+
+.homepage-therapist-empty {
+    color: var(--color-text-secondary, #475569);
+    font-style: italic;
+    margin: 0;
+}
+
+/* Action Area */
+.homepage-action-area {
+    padding: 0 var(--space-md, 1rem);
+}
+
+/* State A: No Therapist */
+.homepage-no-therapist-card {
+    background: var(--color-surface, white);
+    padding: var(--space-xl, 1.75rem);
+    border-radius: var(--radius-xl, 20px);
+    box-shadow: var(--shadow-md, 0 4px 6px -1px rgb(0 0 0 / 0.1));
+    text-align: center;
+    border: 2px solid var(--color-border, #e2e8f0);
+    transition: all var(--transition-base, 200ms ease-in-out);
+}
+
+.homepage-no-therapist-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg, 0 10px 15px -3px rgb(0 0 0 / 0.1));
+    border-color: var(--color-primary-light, #0ea5e9);
+}
+
+.homepage-no-therapist-card h3 {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--color-text-primary, #0f172a);
+    margin: 0 0 var(--space-sm, 0.5rem) 0;
+}
+
+.homepage-no-therapist-card p {
+    color: var(--color-text-secondary, #475569);
+    margin: 0 0 var(--space-md, 1rem) 0;
+    line-height: 1.6;
+}
+
+.homepage-find-therapist-btn {
+    width: 100%;
+    background: linear-gradient(135deg, var(--color-primary, #0369a1) 0%, var(--color-primary-light, #0ea5e9) 100%);
+    color: white;
+    padding: 0.875rem 1.5rem;
+    border-radius: var(--radius-xl, 20px);
+    font-weight: 600;
+    font-size: 1rem;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(3, 105, 161, 0.25);
+    transition: all var(--transition-base, 200ms ease-in-out);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-sm, 0.5rem);
+    text-decoration: none;
+}
+
+.homepage-find-therapist-btn:hover {
+    background: linear-gradient(135deg, var(--color-primary-dark, #075985) 0%, var(--color-primary, #0369a1) 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(3, 105, 161, 0.35);
+}
+
+.homepage-find-therapist-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(3, 105, 161, 0.25);
+}
+
+.homepage-find-therapist-btn::before {
+    content: '🔍';
+    font-size: 1.125rem;
+}
+
+/* State B: Upcoming Appointment */
+.homepage-appointment-card {
+    background: var(--color-surface, white);
+    padding: var(--space-xl, 1.75rem);
+    border-radius: var(--radius-xl, 20px);
+    box-shadow: var(--shadow-md, 0 4px 6px -1px rgb(0 0 0 / 0.1));
+    border-left: 4px solid var(--color-success, #10b981);
+    position: relative;
+    overflow: hidden;
+    transition: all var(--transition-base, 200ms ease-in-out);
+    animation: slideIn 0.4s ease-out;
+}
+
+.homepage-appointment-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 100px;
+    height: 100px;
+    background: radial-gradient(circle, rgba(16, 185, 129, 0.1) 0%, transparent 70%);
+    border-radius: 50%;
+    transform: translate(30%, -30%);
+}
+
+.homepage-appointment-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg, 0 10px 15px -3px rgb(0 0 0 / 0.1));
+}
+
+.homepage-appointment-card h3 {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: var(--color-text-primary, #0f172a);
+    margin: 0 0 var(--space-md, 1rem) 0;
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm, 0.5rem);
+}
+
+.homepage-appointment-card h3::before {
+    content: '📅';
+    font-size: 1.25rem;
+}
+
+.homepage-appointment-time-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-md, 1rem);
+    gap: var(--space-md, 1rem);
+}
+
+.homepage-appointment-time {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--color-primary, #0369a1);
+    line-height: 1;
+}
+
+.homepage-appointment-date-section {
+    text-align: right;
+    flex: 1;
+}
+
+.homepage-appointment-date {
+    font-weight: 600;
+    color: var(--color-text-primary, #0f172a);
+    font-size: 1rem;
+    margin: 0 0 var(--space-xs, 0.25rem) 0;
+}
+
+.homepage-appointment-service {
+    font-size: 0.875rem;
+    color: var(--color-text-secondary, #475569);
+    margin: 0;
+}
+
+.homepage-appointment-footer {
+    border-top: 2px solid var(--color-border, #e2e8f0);
+    padding-top: var(--space-md, 1rem);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: var(--space-md, 1rem);
+}
+
+.homepage-appointment-price {
+    font-weight: 700;
+    color: var(--color-text-primary, #0f172a);
+    font-size: 1.125rem;
+}
+
+.homepage-cancel-btn {
+    color: var(--color-error, #ef4444);
+    font-size: 0.875rem;
+    font-weight: 600;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: var(--space-xs, 0.25rem) var(--space-sm, 0.5rem);
+    border-radius: var(--radius-md, 10px);
+    transition: all var(--transition-base, 200ms ease-in-out);
+    text-decoration: none;
+}
+
+.homepage-cancel-btn:hover {
+    background: var(--color-error-bg, #fee2e2);
+    text-decoration: underline;
+    transform: translateY(-1px);
+}
+
+.homepage-cancel-btn:active {
+    transform: translateY(0);
+}
+
+/* ============================================ */
+/* BOOKING WIDGET STYLES - REDESIGNED */
+/* ============================================ */
+
+/* Main Booking Widget */
+.booking-widget {
+    background: var(--color-surface, white);
+    padding: 24px;
+    border-radius: 24px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    transition: all var(--transition-base, 200ms ease-in-out);
+    animation: slideIn 0.4s ease-out;
+}
+
+.booking-widget:hover {
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+}
+
+/* Widget Header */
+.booking-widget-header {
+    margin-bottom: 24px;
+}
+
+.booking-widget-header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+    gap: 16px;
+}
+
+.booking-widget-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--color-text-primary, #0f172a);
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.booking-widget-icon {
+    width: 24px;
+    height: 24px;
+    color: var(--color-primary, #0369a1);
+    flex-shrink: 0;
+}
+
+.booking-widget-service-badge {
+    background: linear-gradient(135deg, #e0f2fe 0%, #dbeafe 100%);
+    color: var(--color-primary-dark, #075985);
+    font-size: 12px;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-weight: 600;
+    border: 1px solid var(--color-primary-light, #0ea5e9);
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.booking-widget-subtitle {
+    color: #64748b;
+    font-size: 14px;
+    margin: 0;
+}
+
+.booking-widget-loading {
+    background: var(--color-surface, white);
+    padding: var(--space-xl, 1.75rem);
+    border-radius: var(--radius-xl, 20px);
+    box-shadow: var(--shadow-md, 0 4px 6px -1px rgb(0 0 0 / 0.1));
+    text-align: center;
+    color: var(--color-text-secondary, #475569);
+}
+
+/* Date Navigator */
+.booking-date-navigator {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+.booking-nav-arrow {
+    background: white;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    padding: 0;
+    flex-shrink: 0;
+}
+
+.booking-nav-arrow svg {
+    width: 20px;
+    height: 20px;
+    color: #475569;
+}
+
+.booking-nav-arrow:hover:not(.disabled) {
+    background: #f8fafc;
+    border-color: #0ea5e9;
+    transform: scale(1.05);
+}
+
+.booking-nav-arrow.disabled {
+    background: #f1f5f9;
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+/* Dates Grid */
+.booking-dates-grid {
+    flex: 1;
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 8px;
+}
+
+.booking-date-card {
+    background: white;
+    border: 2px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 12px 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: center;
+    position: relative;
+    min-height: 80px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.booking-date-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border-color: #0ea5e9;
+}
+
+.booking-date-card.today {
+    background: #f0f9ff;
+    border-color: #0ea5e9;
+}
+
+.booking-date-card.selected {
+    background: linear-gradient(135deg, #0369a1 0%, #0ea5e9 100%);
+    border: 2px solid #0369a1;
+    box-shadow: 0 4px 12px rgba(3, 105, 161, 0.3);
+}
+
+.booking-date-card.selected:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(3, 105, 161, 0.4);
+}
+
+.booking-date-card.weekend {
+    opacity: 0.5;
+}
+
+.booking-date-day {
+    font-size: 11px;
+    font-weight: 600;
+    color: #64748b;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.booking-date-card.selected .booking-date-day {
+    color: white;
+}
+
+.booking-date-number {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--color-text-primary, #0f172a);
+    line-height: 1;
+}
+
+.booking-date-card.selected .booking-date-number {
+    color: white;
+}
+
+.booking-date-today-badge {
+    font-size: 9px;
+    color: #0369a1;
+    margin-top: 4px;
+    font-weight: 600;
+}
+
+/* Separator */
+.booking-separator {
+    height: 1px;
+    background: linear-gradient(90deg, transparent 0%, #e2e8f0 50%, transparent 100%);
+    margin: 24px 0;
+}
+
+/* Slots Section */
+.booking-slots-section {
+    animation: fadeInUp 0.3s ease-out;
+}
+
+.booking-slots-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.booking-slots-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--color-text-primary, #0f172a);
+    margin: 0;
+}
+
+.booking-slots-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 12px;
+}
+
+.booking-slot-btn {
+    background: white;
+    border: 2px solid #0ea5e9;
+    border-radius: 12px;
+    padding: 16px 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 16px;
+    font-weight: 600;
+    color: #075985;
+}
+
+.booking-slot-btn:hover {
+    background: linear-gradient(135deg, #0369a1 0%, #0ea5e9 100%);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(3, 105, 161, 0.25);
+}
+
+.booking-slot-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 4px 8px rgba(3, 105, 161, 0.2);
+}
+
+/* Slots Loading */
+.booking-widget-slots-loading {
+    text-align: center;
+    padding: var(--space-md, 1rem) 0;
+    color: var(--color-text-muted, #94a3b8);
+}
+
+/* Empty State */
+.booking-empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: #94a3b8;
+}
+
+.booking-empty-icon {
+    width: 48px;
+    height: 48px;
+    color: #cbd5e1;
+    margin: 0 auto 16px;
+}
+
+.booking-empty-text {
+    margin: 0;
+    font-size: 15px;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.homepage-no-therapist-card {
+    animation: slideIn 0.4s ease-out;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .homepage-pacient-container {
+        max-width: 100%;
+        padding: 0 var(--space-sm, 0.5rem);
+    }
+
+    .homepage-header {
+        padding: var(--space-lg, 1.25rem);
+        border-radius: 0 0 1.25rem 1.25rem;
+    }
+
+    .homepage-patient-info {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .homepage-diagnostic-section {
+        text-align: left;
+        width: 100%;
+    }
+
+    .homepage-appointment-time-section {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--space-sm, 0.5rem);
+    }
+
+    .homepage-appointment-date-section {
+        text-align: left;
+        width: 100%;
+    }
+
+    .homepage-appointment-time {
+        font-size: 1.75rem;
+    }
+
+    .homepage-appointment-footer {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--space-sm, 0.5rem);
+    }
+
+    /* Booking Widget Responsive */
+    .booking-dates-grid {
+        grid-template-columns: repeat(5, 1fr);
+    }
+
+    .booking-slots-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .booking-widget-header-top {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+}
+
+@media (max-width: 480px) {
+    .homepage-header {
+        padding: var(--space-md, 1rem);
+    }
+
+    .homepage-appointment-card,
+    .homepage-no-therapist-card {
+        padding: var(--space-lg, 1.25rem);
+    }
+
+    .booking-widget {
+        padding: var(--space-lg, 1.25rem);
+    }
+
+    .booking-dates-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+
+    .booking-slots-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .booking-date-card {
+        min-height: 70px;
+        padding: 8px 4px;
+    }
+
+    .booking-date-day {
+        font-size: 10px;
+    }
+
+    .booking-date-number {
+        font-size: 18px;
+    }
+}
+
+@media (max-width: 360px) {
+    .booking-dates-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .booking-slots-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .booking-nav-arrow {
+        width: 36px;
+        height: 36px;
+    }
+
+    .booking-nav-arrow svg {
+        width: 18px;
+        height: 18px;
+    }
+}

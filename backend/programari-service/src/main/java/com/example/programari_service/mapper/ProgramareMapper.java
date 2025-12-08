@@ -1,0 +1,62 @@
+package com.example.programari_service.mapper;
+
+import com.example.programari_service.dto.CreeazaProgramareRequest;
+import com.example.programari_service.dto.DetaliiServiciuDTO;
+import com.example.programari_service.dto.UrmatoareaProgramareDTO;
+import com.example.programari_service.entity.Programare;
+import com.example.programari_service.entity.StatusProgramare;
+import org.springframework.stereotype.Component;
+
+import java.time.LocalTime;
+import java.time.OffsetDateTime;
+
+@Component
+public class ProgramareMapper {
+    public UrmatoareaProgramareDTO toUrmatoareaProgramareDTO(Programare programare) {
+        if (programare == null)
+            return null;
+
+        return UrmatoareaProgramareDTO.builder()
+                .id(programare.getId())
+                .serviciuId(programare.getServiciuId())
+                .tipServiciu(programare.getTipServiciu())
+                .pret(programare.getPret())
+                .data(programare.getData())
+                .oraInceput(programare.getOraInceput())
+                .oraSfarsit(programare.getOraSfarsit())
+                .locatieId(programare.getLocatieId())
+                .terapeutId(programare.getTerapeutId())
+                .build();
+    }
+
+    public Programare toEntity(CreeazaProgramareRequest request,
+            DetaliiServiciuDTO serviciuInfo,
+            LocalTime oraSfarsitCalculata,
+            boolean isPrimaIntalnire) {
+
+        Programare programare = new Programare();
+
+        programare.setPacientId(request.getPacientId());
+        programare.setTerapeutId(request.getTerapeutId());
+        programare.setLocatieId(request.getLocatieId());
+        programare.setData(request.getData());
+        programare.setOraInceput(request.getOraInceput());
+        // calculate
+        programare.setOraSfarsit(oraSfarsitCalculata);
+        programare.setPrimaIntalnire(isPrimaIntalnire);
+
+        // din feign
+        programare.setServiciuId(serviciuInfo.getId());
+        programare.setTipServiciu(serviciuInfo.getNume());
+        programare.setPret(serviciuInfo.getPret());
+        programare.setDurataMinute(serviciuInfo.getDurataMinute());
+
+        programare.setStatus(StatusProgramare.PROGRAMATA);
+        programare.setAreEvaluare(false);
+        programare.setAreJurnal(false);
+        programare.setCreatedAt(OffsetDateTime.now());
+        programare.setUpdatedAt(OffsetDateTime.now());
+
+        return programare;
+    }
+}

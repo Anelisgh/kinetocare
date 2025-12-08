@@ -1,0 +1,142 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@200..1000&display=swap');
+
+.auth-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 2rem;
+  color: #333;
+}
+
+.auth-title {
+  font-family: "Nunito", sans-serif;
+  font-weight: 600;
+  color: #2a4365;
+  margin-bottom: 2rem;
+  font-size: 2.5rem;
+  text-align: center;
+}
+
+.auth-form {
+  background-color: white;
+  padding: 2.5rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 400px;
+  margin-bottom: 1.5rem;
+  transition: box-shadow 0.3s ease;
+}
+
+.auth-form:hover {
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+}
+
+.auth-input,
+.auth-select {
+  width: 100%;
+  padding: 0.8rem;
+  margin-bottom: 1.2rem;
+  border: 2px solid #DEECFF;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+  background-color: white;
+  font-family: "Nunito", sans-serif;
+}
+
+.auth-select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%232a4365' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.8rem center;
+  background-size: 1rem;
+  padding-right: 2.5rem;
+  cursor: pointer;
+}
+
+.auth-input:focus,
+.auth-select:focus {
+  outline: none;
+  border-color: #C6CFFF;
+  box-shadow: 0 0 0 3px rgba(198, 207, 255, 0.3);
+}
+
+.auth-input::placeholder {
+  color: #a0aec0;
+}
+
+.error-field .auth-input,
+.error-field .auth-select {
+  border-color: #e53e3e;
+}
+
+.error-text {
+  color: #e53e3e;
+  font-size: 0.875rem;
+  display: block;
+  margin-top: -1rem;
+  margin-bottom: 1rem;
+}
+
+.auth-btn {
+  background-color: #C6CFFF;
+  color: #2a4365;
+  border: none;
+  padding: 0.8rem 1.5rem;
+  font-size: 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: 100%;
+  font-family: "Nunito", sans-serif;
+  margin-top: 0.5rem;
+  font-weight: 600;
+}
+
+.auth-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.auth-link {
+  color: #4a6fa5;
+  text-decoration: none;
+  transition: color 0.3s ease;
+  display: inline-block;
+  margin-top: 1rem;
+  text-align: center;
+  font-family: "Nunito", sans-serif;
+  font-weight: 600;
+  width: 100%;
+}
+
+.auth-link:hover {
+  color: #2a4365;
+  text-decoration: underline;
+}
+
+.error-message {
+  color: #e53e3e;
+  background-color: #fed7d7;
+  padding: 0.8rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+  text-align: center;
+  width: 100%;
+  max-width: 400px;
+}
+
+.success-message {
+  color: #2f855a;
+  background-color: #c6f6d5;
+  padding: 0.8rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+  text-align: center;
+  width: 100%;
+  max-width: 400px;
+}

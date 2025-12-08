@@ -1,0 +1,245 @@
+.terapeut-search-form {
+    width: 100%;
+    max-width: 800px;
+    margin: 2rem auto;
+    
+    background: linear-gradient(135deg, var(--color-surface, white) 0%, var(--color-primary-subtle, #e0f2fe) 100%);
+    padding: var(--space-xl, 2rem);
+    border-radius: var(--radius-lg, 16px);
+    border: 2px solid var(--color-border, #e2e8f0);
+    box-shadow: var(--shadow-md, 0 4px 6px -1px rgb(0 0 0 / 0.1));
+}
+
+.terapeut-search-form .form-group {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+}
+
+.terapeut-search-form label {
+    margin-bottom: 0.5rem;
+}
+
+.specializare-info {
+    background: var(--color-surface, white);
+    padding: var(--space-lg, 1.5rem);
+    border-radius: var(--radius-md, 10px);
+    margin-bottom: var(--space-xl, 2rem);
+    border-left: 4px solid var(--color-secondary, #0d9488);
+    font-size: 1.05rem;
+    color: var(--color-text-secondary, #475569);
+    display: flex;
+    align-items: center;
+    gap: var(--space-md, 1rem);
+}
+
+.specializare-info::before {
+    content: 'ℹ️';
+    font-size: 1.5rem;
+    flex-shrink: 0;
+}
+
+.specializare-info strong {
+    color: var(--color-primary, #0369a1);
+    font-weight: 700;
+}
+
+.search-filters .form-group {
+    margin-bottom: 20px;
+}
+
+.search-filters label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: var(--space-sm, 0.75rem);
+    color: var(--color-text-primary, #0f172a);
+    font-size: 0.95rem;
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs, 0.5rem);
+}
+
+.search-filters label[for="judet"]::before {
+    content: '🗺️';
+    font-size: 1.1rem;
+}
+
+.search-filters label[for="oras"]::before {
+    content: '🏙️';
+    font-size: 1.1rem;
+}
+
+.search-filters label[for="locatieId"]::before {
+    content: '🏥';
+    font-size: 1.1rem;
+}
+
+.search-filters label[for="gen"]::before {
+    content: '⚧';
+    font-size: 1.1rem;
+}
+
+.search-filters select {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 2px solid var(--color-border, #e2e8f0);
+    border-radius: var(--radius-md, 10px);
+    font-size: 0.95rem;
+    font-family: 'Nunito', sans-serif;
+    background-color: var(--color-surface, white);
+    color: var(--color-text-primary, #0f172a);
+    cursor: pointer;
+    transition: all var(--transition-base, 200ms ease-in-out);
+    box-shadow: var(--shadow-sm, 0 1px 2px 0 rgb(0 0 0 / 0.05));
+}
+
+.search-filters select:hover:not(:disabled) {
+    border-color: var(--color-primary-light, #0ea5e9);
+}
+
+.search-filters select:focus {
+    outline: none;
+    border-color: var(--color-border-focus, #0ea5e9);
+    box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1);
+    background-color: white;
+}
+
+.search-filters select:disabled {
+    background-color: var(--color-surface-hover, #f8fafc);
+    cursor: not-allowed;
+    opacity: 0.6;
+    border-color: var(--color-border, #e2e8f0);
+}
+
+.search-actions {
+    display: flex;
+    gap: var(--space-md, 1rem);
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.btn-search,
+.btn-reset {
+    padding: 0.6rem 1rem;
+    border: none;
+    border-radius: var(--radius-md, 10px);
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--transition-base, 200ms ease-in-out);
+    font-family: 'Nunito', sans-serif;
+    box-shadow: var(--shadow-md, 0 4px 6px -1px rgb(0 0 0 / 0.1));
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-sm, 0.75rem);
+    min-width: 160px;
+    justify-content: center;
+}
+
+.btn-search {
+    background: linear-gradient(135deg, var(--color-secondary, #0d9488) 0%, var(--color-secondary-light, #14b8a6) 100%);
+    color: white;
+}
+
+.btn-search::before {
+    content: '🔍';
+    font-size: 1.1rem;
+}
+
+.btn-search:hover:not(:disabled) {
+    background: linear-gradient(135deg, var(--color-secondary-dark, #0f766e) 0%, var(--color-secondary, #0d9488) 100%);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg, 0 10px 15px -3px rgb(0 0 0 / 0.1));
+}
+
+.btn-search:disabled {
+    background: linear-gradient(135deg, #d1d5db 0%, #9ca3af 100%);
+    cursor: not-allowed;
+    transform: none;
+    opacity: 0.6;
+}
+
+.btn-reset {
+    background: var(--color-surface, white);
+    color: var(--color-text-secondary, #475569);
+    border: 2px solid var(--color-border, #e2e8f0);
+    box-shadow: var(--shadow-sm, 0 1px 2px 0 rgb(0 0 0 / 0.05));
+}
+
+.btn-reset::before {
+    content: '🔄';
+    font-size: 1.1rem;
+}
+
+.btn-reset:hover:not(:disabled) {
+    background: var(--color-surface-hover, #f8fafc);
+    border-color: var(--color-text-muted, #94a3b8);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md, 0 4px 6px -1px rgb(0 0 0 / 0.1));
+}
+
+.loading-state {
+    text-align: center;
+    padding: var(--space-xl, 2rem);
+    color: var(--color-text-secondary, #475569);
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-md, 1rem);
+}
+
+.loading-state::before {
+    content: '⏳';
+    font-size: 1.5rem;
+    animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.terapeut-search-form .error-message {
+    margin-top: var(--space-lg, 1.5rem);
+    background-color: var(--color-error-bg, #fee2e2);
+    color: #991b1b;
+    padding: var(--space-md, 1rem) var(--space-lg, 1.5rem);
+    border-radius: var(--radius-md, 10px);
+    border-left: 4px solid var(--color-error, #ef4444);
+    display: flex;
+    align-items: center;
+    gap: var(--space-md, 1rem);
+}
+
+.terapeut-search-form .error-message::before {
+    content: '⚠️';
+    font-size: 1.3rem;
+    flex-shrink: 0;
+}
+
+@media (max-width: 768px) {
+    .terapeut-search-form {
+        padding: var(--space-lg, 1.5rem);
+    }
+
+    .search-actions {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .btn-search,
+    .btn-reset {
+        width: 100%;
+    }
+
+    .specializare-info {
+        flex-direction: column;
+        text-align: center;
+    }
+}

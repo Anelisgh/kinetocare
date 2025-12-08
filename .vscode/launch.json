@@ -1,0 +1,113 @@
+{
+    "configurations": [
+        // BACKEND
+        {
+            "type": "java",
+            "name": "Service: Api Gateway",
+            "request": "launch",
+            "mainClass": "com.example.api_gateway.ApiGatewayApplication",
+            "projectName": "api-gateway",
+            "args": "--server.port=8081"
+        },
+        {
+            "type": "java",
+            "name": "Service: Users",
+            "request": "launch",
+            "mainClass": "com.example.user_service.UserServiceApplication",
+            "projectName": "users-service",
+            "args": "--server.port=8082"
+        },
+        {
+            "type": "java",
+            "name": "Service: Pacienti",
+            "request": "launch",
+            "mainClass": "com.example.pacienti_service.PacientiServiceApplication",
+            "projectName": "pacienti-service",
+            "args": "--server.port=8083"
+        },
+        {
+            "type": "java",
+            "name": "Service: Terapeuti",
+            "request": "launch",
+            "mainClass": "com.example.terapeuti_service.TerapeutiServiceApplication",
+            "projectName": "terapeuti-service",
+            "args": "--server.port=8084"
+        },
+        {
+            "type": "java",
+            "name": "Service: Programari",
+            "request": "launch",
+            "mainClass": "com.example.programari_service.ProgramariServiceApplication",
+            "projectName": "programari-service",
+            "args": "--server.port=8085"
+        },
+        {
+            "type": "java",
+            "name": "Service: Servicii",
+            "request": "launch",
+            "mainClass": "com.example.servicii_service.ServiciiServiceApplication",
+            "projectName": "servicii-service",
+            "args": "--server.port=8086"
+        },
+        {
+            "type": "java",
+            "name": "Service: Chat",
+            "request": "launch",
+            "mainClass": "com.example.chat_service.ChatServiceApplication",
+            "projectName": "chat-service",
+            "args": "--server.port=8087"
+        },
+        {
+            "type": "java",
+            "name": "Service: Notificari",
+            "request": "launch",
+            "mainClass": "com.example.notificari_service.NotificariServiceApplication",
+            "projectName": "notificari-service",
+            "args": "--server.port=8088"
+        },
+        // FRONTEND
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Frontend: React",
+            "runtimeExecutable": "npm",
+            "runtimeArgs": [
+                "run",
+                "dev"
+            ],
+            "cwd": "${workspaceFolder}/frontend",
+            "console": "integratedTerminal"
+        },
+        // KEYCLOAK
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Keycloak: Start Dev",
+            "runtimeExecutable": "cmd.exe",
+            "runtimeArgs": [
+                "/c",
+                "kc.bat",
+                "start-dev"
+            ],
+            "cwd": "C:/Users/Aneliss/keycloak-26.3.4/bin",
+            "console": "integratedTerminal"
+        }
+    ],
+    "compounds": [
+        {
+            "name": "Stack: Backend + Frontend + Keycloak",
+            "configurations": [
+                "Keycloak: Start Dev",
+                "Service: Api Gateway",
+                "Service: Users",
+                "Service: Pacienti",
+                "Service: Terapeuti",
+                "Service: Programari",
+                "Service: Servicii",
+                "Service: Chat",
+                "Service: Notificari",
+                "Frontend: React"
+            ]
+        }
+    ]
+}

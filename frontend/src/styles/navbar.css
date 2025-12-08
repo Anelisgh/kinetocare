@@ -1,0 +1,62 @@
+@import url('https://fonts.googleapis.com/css2?family=Belanosima:wght@400;600;700&family=Cambo&family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap');
+
+.navbar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    justify-content: space-between;
+    background-color: #F3F8FF;
+    height: 60px;
+    padding: 0 1.5rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.logo h1 {
+    margin: 0;
+    font-size: 28px;
+    font-family: "Belanosima", sans-serif;
+    font-weight: 400;
+    color: #0a1235;
+}
+
+.logo a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    color: black;
+}
+
+.menu {
+    display: flex;
+    align-items: stretch;
+    height: 100%;
+    font-family: "Nunito", sans-serif;
+    font-weight: 500;
+    font-style: normal;
+    font-size: 14px;
+}
+
+.menu a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    color: black;
+    padding: 0 15px;
+    height: 100%;
+    position: relative;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.menu a:hover {
+    box-shadow: inset 0 -3px 0 #7EB5FF;
+    transform: translateY(-1px);
+}
+
+.logo img {
+    width: 40px;
+    height: 40px;
+    margin-left: 10px;
+}

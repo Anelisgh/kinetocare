@@ -1,0 +1,125 @@
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      server:
+        webflux:
+          routes:
+            - id: auth-proxy
+              uri: no://op # 'no operation' -> fara forward, se gestioneaza local
+              predicates:
+                - Path=/api/auth/**
+              filters:
+                - StripPrefix=2
+
+            - id: profile-service
+              uri: no://op # profile se gestioneaza local (profilecontroller)
+              predicates:
+                - Path=/api/profile/**
+              filters:
+                - StripPrefix=1
+
+            - id: user-service
+              uri: http://localhost:8082 # user service
+              predicates:
+                - Path=/api/users/**
+              filters:
+                - StripPrefix=2
+
+            - id: pacienti-service
+              uri: http://localhost:8083 # pacienti service
+              predicates:
+                - Path=/api/pacient/**
+              filters:
+                - StripPrefix=2
+
+            - id: terapeuti-disponibilitate
+              uri: http://localhost:8084 # rutele specifice pentru terapeuti trebuie sa fie inainte de ruta generala
+              predicates:
+                - Path=/api/disponibilitate/**
+              filters:
+                - StripPrefix=1
+
+            - id: terapeuti-locatii
+              uri: http://localhost:8084
+              predicates:
+                - Path=/api/locatii/**
+              filters:
+                - StripPrefix=1
+
+            - id: terapeuti-concediu
+              uri: http://localhost:8084
+              predicates:
+                - Path=/api/concediu/**
+              filters:
+                - StripPrefix=1
+
+            - id: terapeuti-service
+              uri: http://localhost:8084 # ruta generala pentru terapeuti (trebuie sa fie dupa rutele specifice)
+              predicates:
+                - Path=/api/terapeut/**
+              filters:
+                - StripPrefix=2
+
+            - id: programari-service
+              uri: http://localhost:8085 # programari service
+              predicates:
+                - Path=/api/programari/**
+              filters:
+                - StripPrefix=2
+
+            - id: servicii-service
+              uri: http://localhost:8086 # servicii service
+              predicates:
+                - Path=/api/servicii/**
+              filters:
+                - StripPrefix=2
+
+            - id: chat-service
+              uri: http://localhost:8087 # chat service
+              predicates:
+                - Path=/api/chat/**
+              filters:
+                - StripPrefix=2
+
+            - id: notificari-service
+              uri: http://localhost:8088 # notificari service
+              predicates:
+                - Path=/api/notificari/**
+              filters:
+                - StripPrefix=2
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8080/realms/kinetocare
+          jwk-set-uri: http://localhost:8080/realms/kinetocare/protocol/openid-connect/certs
+
+server:
+  port: 8081
+
+keycloak:
+  client-id: react-client
+
+logging:
+  level:
+    root: INFO
+    com.example.api_gateway: DEBUG
+    org.springframework.web: INFO
+    org.springframework.security: DEBUG
+
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+
+  file:
+    name: logs/api-gateway.log
+
+  logback:
+    rollingpolicy:
+      max-file-size: 10MB
+      max-history: 30
+# pentru poza de profil, implicit fiind doar de 256KB
+  codec:
+    max-in-memory-size: 10MB
