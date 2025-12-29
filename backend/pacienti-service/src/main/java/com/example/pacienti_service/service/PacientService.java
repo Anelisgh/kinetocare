@@ -1,6 +1,7 @@
 package com.example.pacienti_service.service;
 
 import com.example.pacienti_service.dto.PacientCompleteProfileRequest;
+import com.example.pacienti_service.dto.PacientKeycloakDTO;
 import com.example.pacienti_service.dto.PacientRequest;
 import com.example.pacienti_service.dto.PacientResponse;
 import com.example.pacienti_service.entity.Pacient;
@@ -23,6 +24,21 @@ public class PacientService {
         Pacient pacient = pacientRepository.findByKeycloakId(keycloakId)
                 .orElseThrow(() -> new RuntimeException("Pacient nu a fost găsit"));
         return pacientMapper.toResponse(pacient);
+    }
+
+    // in -> pacientId; out -> keycloakId
+    public PacientKeycloakDTO getKeycloakIdById(Long id) {
+        Pacient pacient = pacientRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Pacientul nu există"));
+
+        return new PacientKeycloakDTO(pacient.getId(), pacient.getKeycloakId());
+    }
+
+    // Called by programari-service via Feign client
+    public PacientKeycloakDTO getPacientById(Long id) {
+        Pacient pacient = pacientRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Pacientul nu există"));
+        return new PacientKeycloakDTO(pacient.getId(), pacient.getKeycloakId());
     }
 
     @Transactional

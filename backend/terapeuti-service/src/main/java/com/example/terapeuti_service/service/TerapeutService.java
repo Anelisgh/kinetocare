@@ -36,6 +36,12 @@ public class TerapeutService {
         return dto;
     }
 
+    public String getKeycloakIdById(Long terapeutId) {
+        return terapeutRepository.findById(terapeutId)
+                .map(Terapeut::getKeycloakId)
+                .orElse(null);
+    }
+
     @Transactional
     public TerapeutDTO createTerapeut(String keycloakId) {
         if (terapeutRepository.existsByKeycloakId(keycloakId)) {
@@ -83,13 +89,16 @@ public class TerapeutService {
                 .build();
     }
 
-    public List<TerapeutSearchDTO> searchTerapeuti(Specializare specializare, String judet, String oras, Long locatieId) {
+    public List<TerapeutSearchDTO> searchTerapeuti(Specializare specializare, String judet, String oras,
+            Long locatieId) {
         List<Terapeut> terapeuti = terapeutRepository.findBySpecializareAndActiveTrue(specializare);
-        if (terapeuti.isEmpty()) return List.of();
+        if (terapeuti.isEmpty())
+            return List.of();
 
         List<Long> terapeutIds = terapeuti.stream().map(Terapeut::getId).collect(Collectors.toList());
 
-        List<DisponibilitateTerapeut> disponibilitati = disponibilitateRepository.findByTerapeutIdInAndActiveTrue(terapeutIds);
+        List<DisponibilitateTerapeut> disponibilitati = disponibilitateRepository
+                .findByTerapeutIdInAndActiveTrue(terapeutIds);
 
         Map<Long, Locatie> locatiiMap = getLocatiiMapFromDisponibilitati(disponibilitati);
 
@@ -102,7 +111,7 @@ public class TerapeutService {
                 .collect(Collectors.toList());
     }
 
-// HELPER methods
+    // HELPER methods
     private Terapeut findByKIdOrThrow(String keycloakId) {
         return terapeutRepository.findByKeycloakId(keycloakId)
                 .orElseThrow(() -> new RuntimeException("Terapeutul nu a fost găsit"));
@@ -116,7 +125,8 @@ public class TerapeutService {
     }
 
     private List<DisponibilitateDTO> getDisponibilitatiForTerapeut(Long terapeutId) {
-        List<DisponibilitateTerapeut> disponibilitati = disponibilitateRepository.findByTerapeutIdAndActiveTrue(terapeutId);
+        List<DisponibilitateTerapeut> disponibilitati = disponibilitateRepository
+                .findByTerapeutIdAndActiveTrue(terapeutId);
         Map<Long, Locatie> locatiiMap = getLocatiiMapFromDisponibilitati(disponibilitati);
 
         return disponibilitati.stream()
@@ -148,25 +158,31 @@ public class TerapeutService {
     }
 
     private boolean isTerapeutValidForFilter(Terapeut t,
-                                             Map<Long, List<DisponibilitateTerapeut>> dispByTerapeut,
-                                             Map<Long, Locatie> locatiiMap,
-                                             String judet, String oras, Long locatieId) {
+            Map<Long, List<DisponibilitateTerapeut>> dispByTerapeut,
+            Map<Long, Locatie> locatiiMap,
+            String judet, String oras, Long locatieId) {
         List<DisponibilitateTerapeut> terapeutDisp = dispByTerapeut.get(t.getId());
-        if (terapeutDisp == null || terapeutDisp.isEmpty()) return false;
+        if (terapeutDisp == null || terapeutDisp.isEmpty())
+            return false;
 
         return terapeutDisp.stream().anyMatch(disp -> {
             Locatie loc = locatiiMap.get(disp.getLocatieId());
-            if (loc == null) return false;
+            if (loc == null)
+                return false;
 
             boolean match = true;
-            if (judet != null && !judet.isEmpty()) match &= loc.getJudet().equalsIgnoreCase(judet);
-            if (oras != null && !oras.isEmpty()) match &= loc.getOras().equalsIgnoreCase(oras);
-            if (locatieId != null) match &= loc.getId().equals(locatieId);
+            if (judet != null && !judet.isEmpty())
+                match &= loc.getJudet().equalsIgnoreCase(judet);
+            if (oras != null && !oras.isEmpty())
+                match &= loc.getOras().equalsIgnoreCase(oras);
+            if (locatieId != null)
+                match &= loc.getId().equals(locatieId);
             return match;
         });
     }
 
-    private TerapeutSearchDTO buildSearchDTO(Terapeut t, List<DisponibilitateTerapeut> disponibilitati, Map<Long, Locatie> locatiiMap) {
+    private TerapeutSearchDTO buildSearchDTO(Terapeut t, List<DisponibilitateTerapeut> disponibilitati,
+            Map<Long, Locatie> locatiiMap) {
         List<LocatieDisponibilaDTO> locatiiDisp = disponibilitati.stream()
                 .map(DisponibilitateTerapeut::getLocatieId)
                 .distinct()

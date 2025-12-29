@@ -9,7 +9,7 @@ const PozaProfil = ({ pozaProfil, isEditing, onChange }) => {
       setPreview(pozaProfil);
     }
   }, [pozaProfil]);
-// Handle image file selection and convert to base64
+  // Handle image file selection and convert to base64
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -34,7 +34,7 @@ const PozaProfil = ({ pozaProfil, isEditing, onChange }) => {
       />
       {isEditing && (
         <div className="form-group">
-          <label htmlFor="pozaProfil">Schimbă poza</label>
+          {/* <label htmlFor="pozaProfil">Schimbă poza</label> */}
           <input
             type="file"
             id="pozaProfil"

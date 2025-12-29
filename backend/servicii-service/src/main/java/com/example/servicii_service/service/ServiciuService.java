@@ -16,12 +16,22 @@ public class ServiciuService {
     private final ServiciuRepository serviciuRepository;
     private final ServiciuMapper serviciuMapper;
 
+    // Metoda pentru a returna toate serviciile
+    public List<ServiciuDTO> getAllServicii() {
+        return serviciuRepository.findAll()
+                .stream()
+                .map(serviciuMapper::toDto)
+                .toList();
+    }
+
     public ServiciuDTO getDetaliiServiciu(Long id) {
         Serviciu serviciu = serviciuRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Serviciul nu există"));
         return serviciuMapper.toDto(serviciu);
     }
-// pentru programarile facute de pacienti (in principiu pentru a trece prima programare dintre un p si un t ca evaluare initiala)
+
+    // pentru programarile facute de pacienti (in principiu pentru a trece prima
+    // programare dintre un p si un t ca evaluare initiala)
     public ServiciuDTO cautaDupaNume(String nume) {
         List<Serviciu> rezultate = serviciuRepository
                 .findByTipServiciu_NumeContainingIgnoreCase(nume);

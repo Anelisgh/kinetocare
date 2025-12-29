@@ -14,7 +14,7 @@
             "name": "Service: Users",
             "request": "launch",
             "mainClass": "com.example.user_service.UserServiceApplication",
-            "projectName": "users-service",
+            "projectName": "user-service",
             "args": "--server.port=8082"
         },
         {

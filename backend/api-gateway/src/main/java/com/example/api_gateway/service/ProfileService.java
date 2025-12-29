@@ -175,6 +175,10 @@ public class ProfileService {
                             Map<String, Object> terapeutData = terapeutTuple.getT2();
 
                             Boolean isIncomplete = (Boolean) terapeutData.get("profileIncomplete");
+// il salvam inainte sa ii dam remove
+                            if (terapeutData.containsKey("id")) {
+                                userData.put("terapeutId", terapeutData.get("id"));
+                            }
 
                             // Excludem dublicatele
                             terapeutData.remove("keycloakId");

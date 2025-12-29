@@ -25,6 +25,13 @@ public class UserService {
         return userMapper.toDTO(user);
     }
 
+    // Called by programari-service (pacient_id in programari = user.id)
+    public UserDTO getUserById(Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Utilizator nu a fost găsit"));
+        return userMapper.toDTO(user);
+    }
+
     @Transactional
     public UserDTO updateUser(String keycloakId, UpdateUserDTO updateDTO) {
         User user = userRepository.findByKeycloakId(keycloakId)
@@ -39,12 +46,13 @@ public class UserService {
         try {
             keycloakSyncService.updateKeycloakUser(
                     keycloakId,
-                    updateDTO.getEmail(),      // email nou (sau null dacă nu s-a modificat)
-                    updateDTO.getPrenume(),    // prenume nou
-                    updateDTO.getNume()        // nume nou
+                    updateDTO.getEmail(), // email nou (sau null dacă nu s-a modificat)
+                    updateDTO.getPrenume(), // prenume nou
+                    updateDTO.getNume() // nume nou
             );
         } catch (Exception e) {
-            log.error("CRITICAL: Failed to sync with Keycloak for user {}. Rolling back DB transaction.", keycloakId, e);
+            log.error("CRITICAL: Failed to sync with Keycloak for user {}. Rolling back DB transaction.", keycloakId,
+                    e);
             throw new RuntimeException("Eroare la sincronizarea cu Keycloak: " + e.getMessage(), e);
         }
 

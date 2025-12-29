@@ -3,7 +3,7 @@
 }
 
 .terapeut-section h2::before {
-    content: '👨‍⚕️';
+    content: '🩺';
 }
 
 .my-terapeut {
@@ -21,7 +21,7 @@
 
 .btn-change-terapeut,
 .btn-remove-terapeut {
-    width: auto !important; 
+    width: auto !important;
     display: inline-flex;
     justify-content: center;
     align-items: center;
@@ -126,6 +126,7 @@
         opacity: 0;
         transform: translateY(-20px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -196,13 +197,13 @@
 
 @media (max-width: 768px) {
     .terapeut-actions {
-        flex-direction: row; 
+        flex-direction: row;
         justify-content: space-between;
     }
 
     .btn-change-terapeut,
     .btn-remove-terapeut {
-        flex: 1; 
+        flex: 1;
         justify-content: center;
         width: auto;
         padding: 0.75rem 0.5rem;

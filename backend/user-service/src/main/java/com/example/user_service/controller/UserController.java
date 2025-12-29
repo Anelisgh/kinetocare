@@ -16,8 +16,14 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping("/by-keycloak/{keycloakId}")
-    public ResponseEntity<UserDTO> getUserByKeycloakId(@PathVariable String keycloakId) {
+    public ResponseEntity<UserDTO> getUserByKeycloakId(@PathVariable("keycloakId") String keycloakId) {
         return ResponseEntity.ok(userService.getUserByKeycloakId(keycloakId));
+    }
+
+    // Called by programari-service (pacient_id in programari = user.id)
+    @GetMapping("/{id}")
+    public ResponseEntity<UserDTO> getUserById(@PathVariable("id") Long id) {
+        return ResponseEntity.ok(userService.getUserById(id));
     }
 
     @PatchMapping("/{keycloakId}")

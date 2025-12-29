@@ -11,4 +11,5 @@ public interface PacientRepository extends JpaRepository<Pacient, Long> {
     Optional<Pacient> findByKeycloakId(String keycloakId);
     boolean existsByKeycloakId(String keycloakId);
     boolean existsByCnp(String cnp);
+    Optional<Pacient> findById(Long id);
 }

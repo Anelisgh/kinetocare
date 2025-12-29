@@ -25,23 +25,30 @@ export default function Navbar() {
           <h1>Kinetocare</h1>
         </Link>
       </div>
-      
+
       <div className="menu">
         {/* ADMIN */}
         {roles.includes('ADMIN') && (
           <Link to="/admin/locatii">Administrare Locații</Link>
         )}
-        
+
         {/* PACIENT */}
         {roles.includes('PACIENT') && (
-          <Link to="/pacient/profil">Profil</Link>
+          <>
+            <Link to="/pacient/profil">Profil</Link>
+            <Link to="/pacient/jurnal">Jurnal</Link>
+          </>
         )}
 
         {/* TERAPEUT */}
         {roles.includes('TERAPEUT') && (
-          <Link to="/terapeut/profil">Profil</Link>
+          <>
+            <Link to="/terapeut/profil">Profil</Link>
+            <Link to="/terapeut/evaluari">Evaluari</Link>
+            <Link to="/terapeut/evolutii">Evolutii</Link>
+          </>
         )}
-        
+
         <a href="#" onClick={handleLogout}>Deconectare</a>
       </div>
     </nav>

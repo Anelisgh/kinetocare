@@ -21,6 +21,36 @@
 
 .poza-profil-container input[type="file"] {
     cursor: pointer;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.95rem;
+    color: var(--color-text-secondary);
+}
+
+.poza-profil-container input[type="file"]::file-selector-button,
+.poza-profil-container input[type="file"]::-webkit-file-upload-button {
+    background-color: var(--color-primary-subtle);
+    color: var(--color-primary-dark);
+    padding: 0.6rem 1.2rem;
+    border: 1px solid var(--color-primary-light);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    font-weight: 600;
+    transition: all var(--transition-base);
+    margin-right: var(--space-md);
+    font-family: 'Nunito', sans-serif;
+}
+
+.poza-profil-container input[type="file"]::file-selector-button:hover,
+.poza-profil-container input[type="file"]::-webkit-file-upload-button:hover {
+    background-color: var(--color-primary-light);
+    color: white;
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-sm);
+}
+
+.poza-profil-container input[type="file"]::file-selector-button:active,
+.poza-profil-container input[type="file"]::-webkit-file-upload-button:active {
+    transform: translateY(0);
 }
 
 @media (max-width: 768px) {

@@ -1,6 +1,7 @@
 package com.example.pacienti_service.controller;
 
 import com.example.pacienti_service.dto.PacientCompleteProfileRequest;
+import com.example.pacienti_service.dto.PacientKeycloakDTO;
 import com.example.pacienti_service.dto.PacientRequest;
 import com.example.pacienti_service.dto.PacientResponse;
 import com.example.pacienti_service.service.PacientService;
@@ -17,8 +18,20 @@ public class PacientController {
     private final PacientService pacientService;
 
     @GetMapping("/by-keycloak/{keycloakId}")
-    public ResponseEntity<PacientResponse> getPacientByKeycloakId(@PathVariable String keycloakId) {
+    public ResponseEntity<PacientResponse> getPacientByKeycloakId(@PathVariable("keycloakId") String keycloakId) {
         return ResponseEntity.ok(pacientService.getPacientByKeycloakId(keycloakId));
+    }
+
+    // Called by programari-service to get patient info for calendar
+    @GetMapping("/{id}")
+    public ResponseEntity<PacientKeycloakDTO> getPacientById(@PathVariable("id") Long id) {
+        return ResponseEntity.ok(pacientService.getPacientById(id));
+    }
+
+    // in -> pacientId; out -> keycloakId
+    @GetMapping("/{id}/keycloak-id")
+    public ResponseEntity<PacientKeycloakDTO> getKeycloakId(@PathVariable("id") Long id) {
+        return ResponseEntity.ok(pacientService.getKeycloakIdById(id));
     }
 
     @PostMapping("/initialize/{keycloakId}")

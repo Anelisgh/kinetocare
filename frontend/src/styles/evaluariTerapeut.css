@@ -1,0 +1,329 @@
+/* ============================================ */
+/* EVALUARI TERAPEUT - STYLED TO MATCH APP */
+/* ============================================ */
+
+/* Main Container */
+.evaluari-terapeut-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: var(--space-xl, 1.75rem);
+    font-family: 'Nunito', sans-serif;
+    animation: fadeIn 0.6s ease-out;
+}
+
+/* Loading State */
+.evaluari-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 60vh;
+    text-align: center;
+    padding: var(--space-xl, 1.75rem);
+    color: var(--color-text-secondary, #475569);
+    font-size: 1.125rem;
+    gap: var(--space-md, 1rem);
+}
+
+.evaluari-loading::before {
+    content: '📝';
+    font-size: 3rem;
+    animation: pulse 1.5s ease-in-out infinite;
+}
+
+/* Card Container */
+.evaluari-card {
+    background: var(--color-surface, white);
+    border-radius: var(--radius-xl, 20px);
+    box-shadow: var(--shadow-md, 0 4px 6px -1px rgb(0 0 0 / 0.1));
+    padding: var(--space-xl, 1.75rem);
+    border: 1px solid var(--color-border, #e2e8f0);
+    transition: all var(--transition-base, 200ms ease-in-out);
+}
+
+.evaluari-card:hover {
+    box-shadow: var(--shadow-lg, 0 10px 15px -3px rgb(0 0 0 / 0.1));
+}
+
+/* Header */
+.evaluari-header {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--color-primary-dark, #075985);
+    margin: 0 0 var(--space-xl, 1.75rem) 0;
+    padding-bottom: var(--space-md, 1rem);
+    border-bottom: 2px solid var(--color-primary-subtle, #e0f2fe);
+    display: flex;
+    align-items: center;
+    gap: var(--space-md, 1rem);
+}
+
+.evaluari-header::before {
+    content: '📋';
+    font-size: 1.75rem;
+}
+
+/* Feedback Messages */
+.evaluari-message {
+    padding: var(--space-md, 1rem) var(--space-lg, 1.25rem);
+    border-radius: var(--radius-md, 10px);
+    margin-bottom: var(--space-lg, 1.25rem);
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: var(--space-md, 1rem);
+    animation: slideIn 0.3s ease-out;
+}
+
+.evaluari-message.error {
+    background-color: var(--color-error-bg, #fee2e2);
+    color: #991b1b;
+    border-left: 4px solid var(--color-error, #ef4444);
+}
+
+.evaluari-message.error::before {
+    content: '⚠';
+    font-size: 1.25rem;
+}
+
+.evaluari-message.success {
+    background-color: var(--color-success-bg, #d1fae5);
+    color: #065f46;
+    border-left: 4px solid var(--color-success, #10b981);
+}
+
+.evaluari-message.success::before {
+    content: '✓';
+    font-size: 1.25rem;
+    font-weight: bold;
+}
+
+/* Form Styles */
+.evaluari-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xl, 1.75rem);
+}
+
+/* Grid Layout for Form Fields */
+.evaluari-form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-lg, 1.25rem);
+}
+
+@media (max-width: 768px) {
+    .evaluari-form-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Form Group */
+.evaluari-form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.evaluari-label {
+    font-weight: 600;
+    color: var(--color-text-primary, #0f172a);
+    margin-bottom: var(--space-sm, 0.5rem);
+    font-size: 0.95rem;
+}
+
+.evaluari-input,
+.evaluari-select,
+.evaluari-textarea {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 2px solid var(--color-border, #e2e8f0);
+    border-radius: var(--radius-md, 10px);
+    font-size: 1rem;
+    font-family: 'Nunito', sans-serif;
+    color: var(--color-text-primary, #0f172a);
+    background-color: var(--color-surface, white);
+    transition: all var(--transition-base, 200ms ease-in-out);
+    box-sizing: border-box;
+}
+
+.evaluari-input:focus,
+.evaluari-select:focus,
+.evaluari-textarea:focus {
+    outline: none;
+    border-color: var(--color-border-focus, #0ea5e9);
+    box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.15);
+    background-color: white;
+}
+
+.evaluari-input:hover,
+.evaluari-select:hover,
+.evaluari-textarea:hover {
+    border-color: var(--color-primary-light, #0ea5e9);
+}
+
+.evaluari-textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+.evaluari-hint {
+    font-size: 0.8rem;
+    color: var(--color-text-muted, #94a3b8);
+    margin-top: var(--space-xs, 0.25rem);
+}
+
+/* Treatment Recommendations Section */
+.evaluari-tratament-section {
+    background: var(--color-surface-hover, #f8fafc);
+    padding: var(--space-lg, 1.25rem);
+    border-radius: var(--radius-md, 10px);
+    border: 1px solid var(--color-border, #e2e8f0);
+    border-left: 4px solid var(--color-secondary, #0d9488);
+}
+
+.evaluari-tratament-title {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: var(--color-primary-dark, #075985);
+    margin: 0 0 var(--space-lg, 1.25rem) 0;
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm, 0.5rem);
+}
+
+.evaluari-tratament-title::before {
+    content: '💊';
+    font-size: 1.25rem;
+}
+
+/* Submit Button */
+.evaluari-submit-wrapper {
+    padding-top: var(--space-md, 1rem);
+}
+
+.evaluari-submit-btn {
+    width: 100%;
+    padding: var(--space-md, 1rem) var(--space-lg, 1.25rem);
+    background: linear-gradient(135deg, var(--color-primary, #0369a1) 0%, var(--color-primary-light, #0ea5e9) 100%);
+    color: white;
+    border: none;
+    border-radius: var(--radius-lg, 16px);
+    font-weight: 700;
+    font-size: 1.1rem;
+    font-family: 'Nunito', sans-serif;
+    cursor: pointer;
+    transition: all var(--transition-base, 200ms ease-in-out);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-sm, 0.5rem);
+    box-shadow: 0 4px 12px rgba(3, 105, 161, 0.25);
+}
+
+.evaluari-submit-btn:hover:not(:disabled) {
+    background: linear-gradient(135deg, var(--color-primary-dark, #075985) 0%, var(--color-primary, #0369a1) 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(3, 105, 161, 0.35);
+}
+
+.evaluari-submit-btn:active:not(:disabled) {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(3, 105, 161, 0.25);
+}
+
+.evaluari-submit-btn:disabled {
+    background: linear-gradient(135deg, #94a3b8 0%, #cbd5e1 100%);
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+.evaluari-submit-btn::before {
+    content: '💾';
+    font-size: 1.1rem;
+}
+
+.evaluari-submit-btn.submitting::before {
+    content: '⏳';
+    animation: pulse 1s infinite;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes pulse {
+
+    0%,
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+
+    50% {
+        transform: scale(1.1);
+        opacity: 0.8;
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .evaluari-terapeut-container {
+        padding: var(--space-md, 1rem);
+    }
+
+    .evaluari-card {
+        padding: var(--space-lg, 1.25rem);
+        border-radius: var(--radius-lg, 16px);
+    }
+
+    .evaluari-header {
+        font-size: 1.5rem;
+    }
+
+    .evaluari-tratament-section {
+        padding: var(--space-md, 1rem);
+    }
+}
+
+@media (max-width: 480px) {
+    .evaluari-terapeut-container {
+        padding: var(--space-sm, 0.5rem);
+    }
+
+    .evaluari-card {
+        padding: var(--space-md, 1rem);
+        border-radius: var(--radius-md, 10px);
+    }
+
+    .evaluari-header {
+        font-size: 1.25rem;
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .evaluari-submit-btn {
+        padding: var(--space-sm, 0.5rem) var(--space-md, 1rem);
+        font-size: 1rem;
+    }
+}

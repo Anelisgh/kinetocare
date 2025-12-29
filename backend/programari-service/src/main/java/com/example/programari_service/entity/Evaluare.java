@@ -41,7 +41,7 @@ public class Evaluare {
     private TipEvaluare tip;
 
     @Column(nullable = false)
-    private LocalDate data;
+    private LocalDate data; // data programarii
 
     @Column(columnDefinition = "TEXT", nullable = false)
     private String diagnostic;

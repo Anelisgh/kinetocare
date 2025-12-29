@@ -1,5 +1,6 @@
 package com.example.programari_service.mapper;
 
+import com.example.programari_service.dto.CalendarProgramareDTO;
 import com.example.programari_service.dto.CreeazaProgramareRequest;
 import com.example.programari_service.dto.DetaliiServiciuDTO;
 import com.example.programari_service.dto.UrmatoareaProgramareDTO;
@@ -58,5 +59,25 @@ public class ProgramareMapper {
         programare.setUpdatedAt(OffsetDateTime.now());
 
         return programare;
+    }
+
+    public CalendarProgramareDTO toCalendarDTO(Programare programare,
+                                               String numePacient,
+                                               String telefonPacient,
+                                               String numeLocatie) {
+        if (programare == null) return null;
+
+        return CalendarProgramareDTO.builder()
+                .id(programare.getId())
+                .title(numePacient)
+                .start(java.time.LocalDateTime.of(programare.getData(), programare.getOraInceput()))
+                .end(java.time.LocalDateTime.of(programare.getData(), programare.getOraSfarsit()))
+                .numeLocatie(numeLocatie)
+                .tipServiciu(programare.getTipServiciu())
+                .status(programare.getStatus())
+                .motivAnulare(programare.getMotivAnulare())
+                .primaIntalnire(Boolean.TRUE.equals(programare.getPrimaIntalnire()))
+                .telefonPacient(telefonPacient)
+                .build();
     }
 }

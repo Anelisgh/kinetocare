@@ -6,12 +6,20 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/servicii")
 @RequiredArgsConstructor
 public class ServiciuController {
 
     private final ServiciuService serviciuService;
+
+    // Endpoint pentru a returna toate serviciile
+    @GetMapping
+    public ResponseEntity<List<ServiciuDTO>> getAllServicii() {
+        return ResponseEntity.ok(serviciuService.getAllServicii());
+    }
 
     @GetMapping("/{id}")
     public ResponseEntity<ServiciuDTO> getServiciu(@PathVariable Long id) {

@@ -36,4 +36,12 @@ public class TerapeutController {
         log.info("Updating terapeut with keycloakId: {}", keycloakId);
         return ResponseEntity.ok(terapeutService.updateTerapeut(keycloakId, updateDTO));
     }
+
+    // Endpoint pentru a obține keycloakId după terapeut ID (folosit de
+    // programari-service)
+    @GetMapping("/id/{terapeutId}/keycloak-id")
+    public ResponseEntity<String> getKeycloakIdById(@PathVariable Long terapeutId) {
+        String keycloakId = terapeutService.getKeycloakIdById(terapeutId);
+        return keycloakId != null ? ResponseEntity.ok(keycloakId) : ResponseEntity.notFound().build();
+    }
 }

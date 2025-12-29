@@ -43,9 +43,6 @@ public class RelatiePacientTerapeut {
     @Column(name = "data_sfarsit")
     private LocalDate dataSfarsit;
 
-    @Column(name = "locatie_preferata_id")
-    private Long locatiePreferataId;
-
     @Column(nullable = false)
     @Builder.Default
     private Boolean activa = true;
