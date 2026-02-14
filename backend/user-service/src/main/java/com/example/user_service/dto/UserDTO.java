@@ -10,10 +10,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserDTO {
-    public Long id;
-    public String nume;
-    public String prenume;
-    public String email;
+    private Long id;
+    private String nume;
+    private String prenume;
+    private String email;
     private String telefon;
     private Gen gen;
 }

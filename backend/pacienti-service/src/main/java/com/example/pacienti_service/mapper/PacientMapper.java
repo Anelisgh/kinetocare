@@ -54,9 +54,7 @@ public class PacientMapper {
             } else if (request.getDetaliiSport() != null) {
                 pacient.setDetaliiSport(request.getDetaliiSport());
             }
-        }
-
-        if (request.getDetaliiSport() != null) {
+        } else if (request.getDetaliiSport() != null) {
             pacient.setDetaliiSport(request.getDetaliiSport());
         }
 

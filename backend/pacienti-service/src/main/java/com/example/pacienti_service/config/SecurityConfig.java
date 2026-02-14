@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 @EnableWebSecurity
 @EnableMethodSecurity
 public class SecurityConfig {
-
+    // protejeaza endpoint-urile
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
@@ -38,6 +38,8 @@ public class SecurityConfig {
                 .build();
     }
 
+    // extrage rolurile din JWT specific MVC
+    // converter pt a transforma rolurile din JWT in SimpleGrantedAuthority pt a putea fi folosite de Spring Security
     @Bean
     public JwtAuthenticationConverter jwtAuthenticationConverter() {
         JwtAuthenticationConverter converter = new JwtAuthenticationConverter();

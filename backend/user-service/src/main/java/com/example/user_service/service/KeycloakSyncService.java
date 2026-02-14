@@ -18,6 +18,7 @@ public class KeycloakSyncService {
     @Value("${keycloak.realm}")
     private String realm;
 
+    // primeste datele, le compara cu ce exista in keycloak si face update doar daca e nevoie
     public void updateKeycloakUser(String keycloakId, String email, String firstName, String lastName) {
         try {
             UserResource userResource = keycloak.realm(realm).users().get(keycloakId);
@@ -26,6 +27,11 @@ public class KeycloakSyncService {
             boolean hasChanges = false;
 
             if (email != null && !email.equals(user.getEmail())) {
+                // verificam daca email-ul exista deja in keycloak (exclusiv user-ul curent), fara aceasta metoda keycloak va returna o eroare (de obicei 409 conflict)
+                if (emailExistsInKeycloak(email, keycloakId)) {
+                    log.warn("Tentativa de update cu email duplicat: {}", email);
+                    throw new RuntimeException("Email-ul " + email + " este deja utilizat de un alt cont!");
+                }
                 user.setEmail(email);
                 user.setUsername(email);
                 user.setEmailVerified(true);
@@ -56,6 +62,7 @@ public class KeycloakSyncService {
         }
     }
 
+    // verifica daca email-ul exista deja in keycloak (exclude user-ul curent)
     public boolean emailExistsInKeycloak(String email, String excludeUserId) {
         try {
             var users = keycloak.realm(realm).users().search(email, true);

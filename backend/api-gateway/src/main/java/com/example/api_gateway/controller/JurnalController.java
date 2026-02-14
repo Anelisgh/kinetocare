@@ -17,11 +17,12 @@ import java.util.Map;
 @RequestMapping("/api/pacienti")
 @RequiredArgsConstructor
 @Slf4j
-public class PacientController {
+public class JurnalController {
 
     private final WebClient.Builder webClientBuilder;
     private static final String PACIENTI_SERVICE_URL = "http://localhost:8083";
 
+    // salveaza un jurnal nou pentru un pacient -> pacienti-service
     @PostMapping("/{pacientId}/jurnal")
     public Mono<ResponseEntity<Void>> adaugaJurnal(
             @PathVariable Long pacientId,
@@ -34,7 +35,7 @@ public class PacientController {
                 .header("Authorization", "Bearer " + jwt.getTokenValue())
                 .bodyValue(jurnalRequest)
                 .retrieve()
-                .toBodilessEntity() // Nu așteptăm răspuns body, doar status 200 OK
+                .toBodilessEntity() // fara response body, doar status (200 OK)
                 .map(response -> ResponseEntity.ok().<Void>build())
                 .onErrorResume(e -> {
                     log.error("Eroare la salvarea jurnalului: {}", e.getMessage());
@@ -42,7 +43,7 @@ public class PacientController {
                 });
     }
 
-    // Endpoint nou: Istoric Jurnal
+    // returneaza istoricul jurnalelor unui pacient -> pacienti-service
     @GetMapping("/{pacientId}/jurnal/istoric")
     public Mono<ResponseEntity<List<Map<String, Object>>>> getIstoricJurnal(
             @PathVariable Long pacientId,

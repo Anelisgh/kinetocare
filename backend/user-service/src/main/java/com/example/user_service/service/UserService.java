@@ -25,7 +25,6 @@ public class UserService {
         return userMapper.toDTO(user);
     }
 
-    // Called by programari-service (pacient_id in programari = user.id)
     public UserDTO getUserById(Long id) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Utilizator nu a fost găsit"));

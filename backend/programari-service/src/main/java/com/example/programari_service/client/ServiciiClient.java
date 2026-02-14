@@ -8,9 +8,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 @FeignClient(name = "servicii-service", url = "http://localhost:8086")
 public interface ServiciiClient {
+    // extrage detaliile unui serviciu (nume, pret, durata)
     @GetMapping("/servicii/{id}")
     DetaliiServiciuDTO getServiciuById(@PathVariable("id") Long id);
 
+    // cauta un serviciu dupa nume
     @GetMapping("/servicii/search")
     DetaliiServiciuDTO gasesteServiciuDupaNume(@RequestParam("nume") String nume);
 }

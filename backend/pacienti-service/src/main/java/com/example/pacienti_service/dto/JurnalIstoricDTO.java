@@ -16,7 +16,6 @@ public class JurnalIstoricDTO {
     private Integer dificultateExercitii;
     private Integer nivelOboseala;
     private String comentarii;
-
     // Date despre sedinta (populate prin Feign din programari-service)
     private String tipServiciu;
     private String numeTerapeut;

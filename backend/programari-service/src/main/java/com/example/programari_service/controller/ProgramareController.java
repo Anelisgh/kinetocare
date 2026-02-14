@@ -2,8 +2,10 @@ package com.example.programari_service.controller;
 
 import com.example.programari_service.dto.*;
 import com.example.programari_service.entity.Programare;
+import com.example.programari_service.mapper.ProgramareMapper;
 import com.example.programari_service.service.ProgramareService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,16 +16,22 @@ import java.util.List;
 @RestController
 @RequestMapping("/programari")
 @RequiredArgsConstructor
+@Slf4j
 public class ProgramareController {
 
     private final ProgramareService programareService;
+    private final ProgramareMapper programareMapper;
 
+    // creaza o programare noua (det automat serviciul corect, calc ora de sf, verifica suprapuneri)
+    // api-gateway -> creeazaProgramare (ProgramariController)
     @PostMapping
-    public ResponseEntity<Programare> creeazaProgramare(@RequestBody CreeazaProgramareRequest request) {
+    public ResponseEntity<ProgramareResponseDTO> creeazaProgramare(@RequestBody CreeazaProgramareRequest request) {
         Programare noua = programareService.creeazaProgramare(request);
-        return ResponseEntity.ok(noua);
+        return ResponseEntity.ok(programareMapper.toResponseDTO(noua));
     }
 
+    // returneaza urmatoarea programare activa a pacientului (cea mai apropiata)
+    // api-gateway -> getHomepage (HomepageController)
     @GetMapping("/pacient/{id}/next")
     public ResponseEntity<UrmatoareaProgramareDTO> getUrmatoareaProgramare(@PathVariable("id") Long pacientId) {
         return programareService.getUrmatoareaProgramare(pacientId)
@@ -31,12 +39,16 @@ public class ProgramareController {
                 .orElse(ResponseEntity.noContent().build());
     }
 
+    // anulare de pacient (seteaza status ANULAT + motiv ANULAT_DE_PACIENT)
+    // api-gateway -> anuleazaProgramare (ProgramariController)
     @PatchMapping("/{id}/cancel")
     public ResponseEntity<Void> anuleazaProgramare(@PathVariable Long id, @RequestParam Long pacientId) {
         programareService.anuleazaProgramare(id, pacientId);
         return ResponseEntity.noContent().build();
     }
 
+    // marcheaza neprezentare (seteaza status ANULATA + motiv NEPREZENTARE)
+    // api-gateway -> marcheazaNeprezentare (ProgramariController)
     @PatchMapping("/{id}/neprezentare")
     public ResponseEntity<Void> marcheazaNeprezentare(
             @PathVariable Long id,
@@ -47,6 +59,8 @@ public class ProgramareController {
         return ResponseEntity.noContent().build();
     }
 
+    // calculeaza sloturile orare libere pentru o zi specifica (verifica concedii, orar, programari existente si genereaza intervalele disponibile)
+    // api-gateway -> getSloturiDisponibile (ProgramariController)
     @GetMapping("/disponibilitate")
     public ResponseEntity<List<LocalTime>> getDisponibilitate(
             @RequestParam Long terapeutId,
@@ -60,13 +74,16 @@ public class ProgramareController {
         return ResponseEntity.ok(sloturi);
     }
 
+    // determina autoamt serviciul corect pentru urmatoarea programare
+    // api-gateway -> getServiciuRecomandat (ProgramariController)
     @GetMapping("/serviciu-recomandat")
     public ResponseEntity<DetaliiServiciuDTO> getServiciuRecomandat(@RequestParam Long pacientId) {
         DetaliiServiciuDTO serviciu = programareService.determinaServiciulCorect(pacientId);
         return ResponseEntity.ok(serviciu);
     }
 
-    // calendarul pacientului
+    // returneaza programarile intr-un interval (exclude anularile, dar pastreaza neprezentarile)
+    // api-gateway -> getCalendarTerapeut (ProgramariController)
     @GetMapping("/calendar")
     public ResponseEntity<List<CalendarProgramareDTO>> getCalendar(
             @RequestParam Long terapeutId,
@@ -77,12 +94,13 @@ public class ProgramareController {
         LocalDate startDate = LocalDate.parse(start);
         LocalDate endDate = LocalDate.parse(end);
 
-        List<CalendarProgramareDTO> calendarData = programareService.getCalendarAppointments(terapeutId, startDate,
-                endDate, locatieId);
+        List<CalendarProgramareDTO> calendarData = programareService.getCalendarAppointments(terapeutId, startDate, endDate, locatieId);
 
         return ResponseEntity.ok(calendarData);
     }
 
+    // anulare de terapeut (seteaza status ANULAT + motiv ANULAT_DE_TERAPEUT)
+    // api-gateway -> anuleazaProgramareTerapeut (ProgramariController)
     @PatchMapping("/{id}/cancel-terapeut")
     public ResponseEntity<Void> anuleazaProgramareTerapeut(
             @PathVariable Long id,
@@ -92,20 +110,23 @@ public class ProgramareController {
         return ResponseEntity.noContent().build();
     }
 
-    // JURNAL PACIENT
+    // returneaza programarile finalizate pentru care pacientul nu a completat jurnalul
+    // api-gateway -> getProgramariFaraJurnal (ProgramariController)
     @GetMapping("/pacient/{id}/necompletate")
     public ResponseEntity<List<ProgramareJurnalDTO>> getProgramariFaraJurnal(@PathVariable Long id) {
         return ResponseEntity.ok(programareService.getProgramariFaraJurnal(id));
     }
 
+    // marcheaza programarea ca avand jurnal completat
+    // pacienti-service -> marcheazaJurnal (ProgramariClient)
     @PostMapping("/{id}/mark-jurnal")
     public ResponseEntity<Void> marcheazaJurnal(@PathVariable Long id) {
         programareService.marcheazaProgramareCuJurnal(id);
         return ResponseEntity.ok().build();
     }
 
-    // Endpoint pentru a obține detalii programare (folosit de pacienti-service
-    // pentru jurnal)
+    // returneaza detalii programare complete
+    // pacienti-service -> getDetaliiProgramare (ProgramariClient)
     @GetMapping("/{id}/detalii")
     public ResponseEntity<ProgramareJurnalDTO> getDetaliiProgramare(@PathVariable Long id) {
         return ResponseEntity.ok(programareService.getDetaliiProgramare(id));

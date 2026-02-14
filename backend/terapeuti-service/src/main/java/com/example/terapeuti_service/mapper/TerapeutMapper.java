@@ -1,13 +1,24 @@
 package com.example.terapeuti_service.mapper;
 
-import com.example.terapeuti_service.dto.TerapeutDTO;
+import com.example.terapeuti_service.dto.*;
 import com.example.terapeuti_service.dto.UpdateTerapeutDTO;
 import com.example.terapeuti_service.entity.Terapeut;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @Component
 public class TerapeutMapper {
 
+    // keycloakId -> entity gol (pentru createTerapeut si initializeEmptyTerapeut)
+    public Terapeut toNewEntity(String keycloakId) {
+        return Terapeut.builder()
+                .keycloakId(keycloakId)
+                .active(true)
+                .build();
+    }
+
+    // entity -> TerapeutDTO (campuri directe)
     public TerapeutDTO toDTO(Terapeut terapeut) {
         if (terapeut == null) {
             return null;
@@ -24,6 +35,30 @@ public class TerapeutMapper {
                 .build();
     }
 
+    // entity + date suplimentare -> TerapeutDetaliDTO
+    public TerapeutDetaliDTO toDetaliDTO(Terapeut terapeut,
+                                          List<DisponibilitateDTO> disponibilitati,
+                                          List<LocatieDisponibilaDTO> locatiiUnice) {
+        return TerapeutDetaliDTO.builder()
+                .keycloakId(terapeut.getKeycloakId())
+                .pozaProfil(terapeut.getPozaProfil())
+                .specializare(terapeut.getSpecializare() != null ? terapeut.getSpecializare().name() : null)
+                .disponibilitati(disponibilitati)
+                .locatiiDisponibile(locatiiUnice)
+                .build();
+    }
+
+    // entity + locatii -> TerapeutSearchDTO
+    public TerapeutSearchDTO toSearchDTO(Terapeut terapeut, List<LocatieDisponibilaDTO> locatiiDisp) {
+        return TerapeutSearchDTO.builder()
+                .keycloakId(terapeut.getKeycloakId())
+                .pozaProfil(terapeut.getPozaProfil())
+                .specializare(terapeut.getSpecializare().name())
+                .locatiiDisponibile(locatiiDisp)
+                .build();
+    }
+
+    // updateaza entity din UpdateTerapeutDTO
     public void updateEntity(Terapeut terapeut, UpdateTerapeutDTO dto) {
         if (dto.getSpecializare() != null) {
             terapeut.setSpecializare(dto.getSpecializare());

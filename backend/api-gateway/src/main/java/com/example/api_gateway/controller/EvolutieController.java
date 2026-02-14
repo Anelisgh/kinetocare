@@ -20,6 +20,7 @@ public class EvolutieController {
     private final WebClient.Builder webClientBuilder;
     private static final String PROGRAMARI_SERVICE_URL = "http://localhost:8085";
 
+    // adauga o nota de evolutie pentru un pacient -> programari-service
     @PostMapping
     public Mono<ResponseEntity<Map<String, Object>>> adaugaEvolutie(
             @RequestBody Map<String, Object> request,
@@ -34,6 +35,7 @@ public class EvolutieController {
                 .map(ResponseEntity::ok);
     }
 
+    // returneaza istoricul evolutiei unui pacient -> programari-service
     @GetMapping
     public Mono<ResponseEntity<List<Map<String, Object>>>> getIstoric(
             @RequestParam Long pacientId,

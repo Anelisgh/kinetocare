@@ -22,6 +22,7 @@ public class HomepageController {
     private final HomepageService homepageService;
     private final SecurityUtils securityUtils;
 
+    // returneaza datele pentru homepage (profil + urmatoarea programare) -> HomepageService
     @GetMapping
     public Mono<ResponseEntity<Map<String, Object>>> getHomepage(@AuthenticationPrincipal Jwt jwt) {
         String keycloakId = jwt.getSubject();

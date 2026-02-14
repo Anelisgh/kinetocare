@@ -226,7 +226,7 @@ public class ProfileService {
                 updates.add(userUpdateMono);
             }
 
-            // Update/Create pentru pacienti
+            // Update pentru pacienti
             if ("PACIENT".equals(role) && !pacientUpdate.isEmpty()) {
                 log.debug("Updating patient fields: {}", pacientUpdate.keySet());
                 Mono<Void> pacientUpdateMono = webClientBuilder.build()

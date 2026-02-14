@@ -20,6 +20,7 @@ public class PacientService {
     private final PacientRepository pacientRepository;
     private final PacientMapper pacientMapper;
 
+    // in -> keycloakId; out -> datele pacientului
     public PacientResponse getPacientByKeycloakId(String keycloakId) {
         Pacient pacient = pacientRepository.findByKeycloakId(keycloakId)
                 .orElseThrow(() -> new RuntimeException("Pacient nu a fost găsit"));
@@ -30,17 +31,18 @@ public class PacientService {
     public PacientKeycloakDTO getKeycloakIdById(Long id) {
         Pacient pacient = pacientRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Pacientul nu există"));
-
         return new PacientKeycloakDTO(pacient.getId(), pacient.getKeycloakId());
     }
 
-    // Called by programari-service via Feign client
+    // gaseste dupa id
+    // folosit si in programari-service (PacientiClient)
     public PacientKeycloakDTO getPacientById(Long id) {
         Pacient pacient = pacientRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Pacientul nu există"));
         return new PacientKeycloakDTO(pacient.getId(), pacient.getKeycloakId());
     }
 
+    // completarea datelor pentru a intregi profilul (la prima logare, imediat dupa register)
     @Transactional
     public PacientResponse createPacient(String keycloakId, PacientCompleteProfileRequest request) { // DTO schimbat
         if (pacientRepository.existsByKeycloakId(keycloakId)) {
@@ -56,6 +58,7 @@ public class PacientService {
         return pacientMapper.toResponse(saved);
     }
 
+    // update profil pacient
     @Transactional
     public PacientResponse updatePacient(String keycloakId, PacientRequest request) {
         Pacient pacient = pacientRepository.findByKeycloakId(keycloakId)
@@ -67,6 +70,7 @@ public class PacientService {
         return pacientMapper.toResponse(updated);
     }
 
+    // cream un pacient nou gol (dupa register)
     @Transactional
     public void initializeEmptyPacient(String keycloakId) {
         // verificam daca profil exista deja
@@ -83,6 +87,7 @@ public class PacientService {
         log.info("Empty patient profile initialized for: {}", keycloakId);
     }
 
+    // alegerea terapeutului
     @Transactional
     public PacientResponse chooseTerapeut(String pacientKeycloakId, String terapeutKeycloakId, Long locatieId) {
         Pacient pacient = pacientRepository.findByKeycloakId(pacientKeycloakId)
@@ -91,10 +96,11 @@ public class PacientService {
         pacient.setLocatiePreferataId(locatieId);
         Pacient updated = pacientRepository.save(pacient);
 
-        log.info("Patient {} chose terapeut {}", pacientKeycloakId, terapeutKeycloakId, locatieId);
+        log.info("Patient {} chose terapeut {} at location {}", pacientKeycloakId, terapeutKeycloakId, locatieId);
         return pacientMapper.toResponse(updated);
     }
 
+    // stergerea terapeutului
     @Transactional
     public PacientResponse removeTerapeut(String pacientKeycloakId) {
         Pacient pacient = pacientRepository.findByKeycloakId(pacientKeycloakId)

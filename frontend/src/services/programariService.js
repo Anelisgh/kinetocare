@@ -1,11 +1,5 @@
-import api from './api';
+import api, { handleApiError } from './api';
 
-const handleError = (error, defaultMessage) => {
-  console.error('API Error:', error);
-  // extragem mesajul de eroare din backend
-  const msg = error.response?.data?.message || error.response?.data?.error || defaultMessage;
-  throw new Error(msg);
-};
 // PENTRU PACIENT
 export const programariService = {
   createProgramare: async (data) => {
@@ -14,7 +8,7 @@ export const programariService = {
       const response = await api.post('/api/programari', data);
       return response.data;
     } catch (error) {
-      handleError(error, 'Nu s-a putut crea programarea');
+      handleApiError(error, 'Nu s-a putut crea programarea');
     }
   },
 
@@ -26,7 +20,7 @@ export const programariService = {
       });
       return response.data; // { id, nume, durataMinute, pret }
     } catch (error) {
-      handleError(error, 'Nu s-a putut determina serviciul necesar');
+      handleApiError(error, 'Nu s-a putut determina serviciul necesar');
     }
   },
 
@@ -43,7 +37,7 @@ export const programariService = {
       });
       return response.data;
     } catch (error) {
-      handleError(error, 'Eroare la verificarea disponibilității');
+      handleApiError(error, 'Eroare la verificarea disponibilității');
     }
   },
 
@@ -51,7 +45,7 @@ export const programariService = {
     try {
       await api.patch(`/api/programari/${programareId}/cancel`);
     } catch (error) {
-      handleError(error, 'Nu s-a putut anula programarea');
+      handleApiError(error, 'Nu s-a putut anula programarea');
     }
   },
 
@@ -70,8 +64,7 @@ export const programariService = {
       const response = await api.get(`/api/programari/calendar?${params.toString()}`);
       return response.data;
     } catch (error) {
-      console.error("Eroare la incarcarea calendarului:", error);
-      throw error;
+      handleApiError(error, 'Eroare la încărcarea calendarului');
     }
   },
 
@@ -82,7 +75,7 @@ export const programariService = {
 
       await api.patch(`/api/programari/${programareId}/cancel-terapeut?${params.toString()}`);
     } catch (error) {
-      throw new Error(error.response?.data?.message || 'Eroare la anularea programării.');
+      handleApiError(error, 'Eroare la anularea programării');
     }
   },
 
@@ -93,8 +86,7 @@ export const programariService = {
       // Apelăm endpoint-ul de Neprezentare
       await api.patch(`/api/programari/${programareId}/neprezentare?${params.toString()}`);
     } catch (error) {
-      // Extragem mesajul de eroare frumos
-      throw new Error(error.response?.data?.message || 'Eroare la marcarea neprezentării.');
+      handleApiError(error, 'Eroare la marcarea neprezentării');
     }
   }
 

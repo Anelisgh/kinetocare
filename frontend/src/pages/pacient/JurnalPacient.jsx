@@ -27,7 +27,6 @@ const JurnalPacient = () => {
         const initData = async () => {
             try {
                 const profile = await profileService.getProfile();
-                console.log('JurnalPacient - profile:', profile);
                 const id = profile.id;
                 setPacientId(id);
             } catch (err) {

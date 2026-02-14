@@ -21,6 +21,7 @@ public class EvaluareController {
     private final WebClient.Builder webClientBuilder;
     private static final String PROGRAMARI_SERVICE_URL = "http://localhost:8085";
 
+    // returneaza pacientii recenti ai unui terapeut (pentru dropdown evaluare) -> programari-service
     @GetMapping("/pacienti-recenti")
     public Mono<ResponseEntity<List<Map<String, Object>>>> getPacientiTerapeut(
             @RequestParam Long terapeutId,
@@ -35,6 +36,7 @@ public class EvaluareController {
                 .map(ResponseEntity::ok);
     }
 
+    // creeaza o evaluare noua pentru un pacient -> programari-service
     @PostMapping
     public Mono<ResponseEntity<Map<String, Object>>> creeazaEvaluare(
             @RequestBody Map<String, Object> request,

@@ -15,17 +15,26 @@ public class UserController {
 
     private final UserService userService;
 
+    // cauta un user dupa keycloakId
+    // folosit in:
+    // - api-gateway (SearchTerapeutService & ProfileService)
+    // - programari-service (UserClient)
     @GetMapping("/by-keycloak/{keycloakId}")
     public ResponseEntity<UserDTO> getUserByKeycloakId(@PathVariable("keycloakId") String keycloakId) {
         return ResponseEntity.ok(userService.getUserByKeycloakId(keycloakId));
     }
 
-    // Called by programari-service (pacient_id in programari = user.id)
+    // cauta un user dupa id
+    // folosit in:
+    // - programari-service (UserClient)
     @GetMapping("/{id}")
     public ResponseEntity<UserDTO> getUserById(@PathVariable("id") Long id) {
         return ResponseEntity.ok(userService.getUserById(id));
     }
 
+    // actualizeaza un user
+    // folosit in:
+    // - api-gateway (ProfileService)
     @PatchMapping("/{keycloakId}")
     public ResponseEntity<UserDTO> updateUser(
             @PathVariable String keycloakId,

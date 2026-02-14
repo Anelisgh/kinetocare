@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 @FeignClient(name = "pacienti-service", url = "http://localhost:8083")
 public interface PacientiClient {
+    // ia datele pacientului. returneaza keycloakId-ul pacientului
     @GetMapping("/pacient/{id}")
     PacientKeycloakDTO getPacientById(@PathVariable("id") Long id);
 }

@@ -15,17 +15,22 @@ public class ServiciuController {
 
     private final ServiciuService serviciuService;
 
-    // Endpoint pentru a returna toate serviciile
+    // returneaza toate serviciile
+    // TODO: UTILIZAT DE ADMIN
     @GetMapping
     public ResponseEntity<List<ServiciuDTO>> getAllServicii() {
         return ResponseEntity.ok(serviciuService.getAllServicii());
     }
 
+    // returneaza un serviciu dupa id
+    // programari-service -> getServiciuById (ServiciiClient)
     @GetMapping("/{id}")
     public ResponseEntity<ServiciuDTO> getServiciu(@PathVariable Long id) {
         return ResponseEntity.ok(serviciuService.getDetaliiServiciu(id));
     }
 
+    // cauta serviciu dupa nume
+    // programari-service -> gasesteServiciuDupaNume (ServiciiClient)
     @GetMapping("/search")
     public ResponseEntity<ServiciuDTO> cautaServiciuDupaNume(
             @RequestParam String nume) {

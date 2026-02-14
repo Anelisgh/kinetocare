@@ -11,9 +11,10 @@ import java.util.List;
 
 @Repository
 public interface ConcediuRepository extends JpaRepository<ConcediuTerapeut, Long> {
+    // returneaza toate concediile unui terapeut
     List<ConcediuTerapeut> findByTerapeutId(Long terapeutId);
 
-    // Găsește concediile care se suprapun cu perioada specificată
+    // returneaza concediile care se suprapun cu perioada specificata
     @Query("SELECT c FROM ConcediuTerapeut c WHERE c.terapeutId = :terapeutId " +
             "AND c.dataSfarsit >= :dataInceput AND c.dataInceput <= :dataSfarsit")
     List<ConcediuTerapeut> findOverlappingConcedii(
@@ -22,7 +23,7 @@ public interface ConcediuRepository extends JpaRepository<ConcediuTerapeut, Long
             @Param("dataSfarsit") LocalDate dataSfarsit
     );
 
-    // Găsește concediile viitoare și curente
+    // returneaza concediile viitoare si curente ordonate contrologic
     @Query("SELECT c FROM ConcediuTerapeut c WHERE c.terapeutId = :terapeutId " +
             "AND c.dataSfarsit >= :currentDate ORDER BY c.dataInceput")
     List<ConcediuTerapeut> findFutureAndCurrentConcedii(
@@ -30,6 +31,11 @@ public interface ConcediuRepository extends JpaRepository<ConcediuTerapeut, Long
             @Param("currentDate") LocalDate currentDate
     );
 
-    boolean existsByTerapeutIdAndDataInceputLessThanEqualAndDataSfarsitGreaterThanEqual(
-            Long terapeutId, LocalDate dataInceput, LocalDate dataSfarsit);
+    // returneaza daca exista un concediu care se suprapune cu perioada specificata
+    @Query("SELECT COUNT(c) > 0 FROM ConcediuTerapeut c WHERE c.terapeutId = :terapeutId " +
+            "AND c.dataInceput <= :dataStart AND c.dataSfarsit >= :dataEnd")
+    boolean isTerapeutInConcediu(
+            @Param("terapeutId") Long terapeutId,
+            @Param("dataStart") LocalDate dataStart,
+            @Param("dataEnd") LocalDate dataEnd);
 }

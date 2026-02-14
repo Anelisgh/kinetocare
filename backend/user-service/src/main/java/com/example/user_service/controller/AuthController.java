@@ -17,7 +17,9 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
 
     private final KeycloakService keycloakService;
-// !nu avem login pentru ca se ocupa keycloak
+
+    // !nu avem login pentru ca se ocupa keycloak
+    // folosit in authService.js
     @PostMapping("/register")
     public ResponseEntity<?> register(@Valid @RequestBody RegisterRequestDTO request) {
         try {
@@ -29,7 +31,10 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(new ErrorResponse(e.getMessage()));
         }
-    } // nu mai verificam daca email-ul deja exista, pentru ca keycloak nu accepta 2 users cu acelasi username (in cazul nostru mail-ul)
-    // Helper class pentru răspunsuri
-    record ErrorResponse(String message) {}
+    } // nu mai verificam daca email-ul deja exista, pentru ca keycloak nu accepta 2
+      // users cu acelasi username (in cazul nostru mail-ul)
+      // Helper class pentru răspunsuri
+
+    record ErrorResponse(String message) {
+    }
 }

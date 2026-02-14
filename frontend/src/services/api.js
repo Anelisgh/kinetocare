@@ -43,3 +43,14 @@ api.interceptors.response.use(
 );
 
 export default api;
+
+// Funcție centralizată de tratare a erorilor API — folosită de toate service-urile
+export const handleApiError = (error, defaultMessage) => {
+  console.error('API Error:', error);
+  const msg =
+    error.response?.data?.message ||
+    error.response?.data?.error ||
+    error.message ||
+    defaultMessage;
+  throw new Error(msg);
+};

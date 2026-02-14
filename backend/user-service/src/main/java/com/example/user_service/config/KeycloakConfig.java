@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+// oferim aplicatiei un client keycloak cu drepturi de admin pentru a avea drepturile necesare in a crea si gestiona useri (spre exemplu pentru a putea crea admin-ul la pornirea aplicatiei ca in AdminInitializer)
 @Configuration
 public class KeycloakConfig {
 

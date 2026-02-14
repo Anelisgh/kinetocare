@@ -1,14 +1,4 @@
-import api from './api';
-
-const handleError = (error, defaultMessage) => {
-  console.error('API Error:', error);
-  const message =
-    error.response?.data?.message ||
-    error.response?.data?.error ||
-    error.message ||
-    defaultMessage;
-  throw new Error(message);
-};
+import api, { handleApiError } from './api';
 
 export const profileService = {
   //  PROFIL 
@@ -17,7 +7,7 @@ export const profileService = {
       const response = await api.get('/api/profile');
       return response.data;
     } catch (error) {
-      handleError(error, 'Eroare la încărcarea profilului');
+      handleApiError(error, 'Eroare la încărcarea profilului');
     }
   },
 
@@ -26,7 +16,7 @@ export const profileService = {
       const response = await api.patch('/api/profile', data);
       return response.data;
     } catch (error) {
-      handleError(error, 'Eroare la actualizarea profilului');
+      handleApiError(error, 'Eroare la actualizarea profilului');
     }
   },
 
@@ -43,7 +33,7 @@ export const profileService = {
     
     return response.data;
     } catch (error) {
-      handleError(error, 'Eroare la căutarea terapeuților');
+      handleApiError(error, 'Eroare la căutarea terapeuților');
     }
   },
 
@@ -58,7 +48,7 @@ export const profileService = {
       const response = await api.post(url);
       return response.data;
     } catch (error) {
-      handleError(error, 'Eroare la alegerea terapeutului');
+      handleApiError(error, 'Eroare la alegerea terapeutului');
     }
   },
 
@@ -67,7 +57,7 @@ export const profileService = {
       const response = await api.delete('/api/terapeut/remove-terapeut');
       return response.data;
     } catch (error) {
-      handleError(error, 'Eroare la ștergerea terapeutului');
+      handleApiError(error, 'Eroare la ștergerea terapeutului');
     }
   },
 
@@ -76,7 +66,7 @@ export const profileService = {
       const response = await api.get('/api/terapeut/my-terapeut');
       return response.data;
     } catch (error) {
-      handleError(error, 'Eroare la încărcarea terapeutului');
+      handleApiError(error, 'Eroare la încărcarea terapeutului');
     }
   },
 
@@ -86,7 +76,7 @@ export const profileService = {
       const response = await api.get('/api/terapeut/locatii');
       return response.data;
     } catch (error) {
-      handleError(error, 'Eroare la încărcarea locațiilor');
+      handleApiError(error, 'Eroare la încărcarea locațiilor');
     }
   },
 
@@ -96,7 +86,7 @@ export const profileService = {
       const response = await api.get('/api/terapeut/disponibilitate');
       return response.data;
     } catch (error) {
-      handleError(error, 'Eroare la încărcarea disponibilităților');
+      handleApiError(error, 'Eroare la încărcarea disponibilităților');
     }
   },
 
@@ -105,7 +95,7 @@ export const profileService = {
       const response = await api.post('/api/terapeut/disponibilitate', data);
       return response.data;
     } catch (error) {
-      handleError(error, 'Eroare la adăugarea disponibilității');
+      handleApiError(error, 'Eroare la adăugarea disponibilității');
     }
   },
 
@@ -113,7 +103,7 @@ export const profileService = {
     try {
       await api.delete(`/api/terapeut/disponibilitate/${id}`);
     } catch (error) {
-      handleError(error, 'Eroare la ștergerea disponibilității');
+      handleApiError(error, 'Eroare la ștergerea disponibilității');
     }
   },
 
@@ -123,7 +113,7 @@ export const profileService = {
       const response = await api.get('/api/terapeut/concediu');
       return response.data;
     } catch (error) {
-      handleError(error, 'Eroare la încărcarea concediilor');
+      handleApiError(error, 'Eroare la încărcarea concediilor');
     }
   },
 
@@ -132,7 +122,7 @@ export const profileService = {
       const response = await api.post('/api/terapeut/concediu', data);
       return response.data;
     } catch (error) {
-      handleError(error, 'Eroare la adăugarea concediului');
+      handleApiError(error, 'Eroare la adăugarea concediului');
     }
   },
 
@@ -140,7 +130,7 @@ export const profileService = {
     try {
       await api.delete(`/api/terapeut/concediu/${id}`);
     } catch (error) {
-      handleError(error, 'Eroare la ștergerea concediului');
+      handleApiError(error, 'Eroare la ștergerea concediului');
     }
   },
 };

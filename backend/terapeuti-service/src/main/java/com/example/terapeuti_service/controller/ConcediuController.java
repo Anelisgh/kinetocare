@@ -22,12 +22,16 @@ public class ConcediuController {
     private final ConcediuService concediuService;
     private final ConcediuRepository concediuRepository;
 
+    // returneaza concediile unui terapeut 
+    // api-gateway -> getConcedii (ConcediuController)
     @GetMapping("/terapeut/{keycloakId}")
     public ResponseEntity<List<ConcediuDTO>> getConcedii(@PathVariable String keycloakId) {
         log.info("Getting concedii for terapeut: {}", keycloakId);
         return ResponseEntity.ok(concediuService.getConcediiByKeycloakId(keycloakId));
     }
 
+    // adauga un concediu pentru un terapeut 
+    // api-gateway -> addConcediu (ConcediuController)
     @PostMapping("/terapeut/{keycloakId}")
     public ResponseEntity<ConcediuDTO> addConcediu(
             @PathVariable String keycloakId,
@@ -36,6 +40,8 @@ public class ConcediuController {
         return ResponseEntity.ok(concediuService.addConcediu(keycloakId, dto));
     }
 
+    // sterge un concediu pentru un terapeut 
+    // api-gateway -> deleteConcediu (ConcediuController)
     @DeleteMapping("/{concediuId}/terapeut/{keycloakId}")
     public ResponseEntity<Void> deleteConcediu(
             @PathVariable String keycloakId,
@@ -45,16 +51,15 @@ public class ConcediuController {
         return ResponseEntity.noContent().build();
     }
 
-    // verificam daca o data specifica este in concediu pentru un terapeut dat
+    // verifica daca terapeutul e in concediu la o data specifica
+    // programari-service -> checkConcediu (TerapeutiClient) 
     @GetMapping("/check/terapeut/{terapeutId}/data/{data}")
     public ResponseEntity<Boolean> isTerapeutInConcediu(
             @PathVariable Long terapeutId,
             @PathVariable String data) { // Format yyyy-mm-dd
-
         LocalDate date = LocalDate.parse(data);
-        boolean inConcediu = concediuRepository.existsByTerapeutIdAndDataInceputLessThanEqualAndDataSfarsitGreaterThanEqual(
+        boolean inConcediu = concediuRepository.isTerapeutInConcediu(
                 terapeutId, date, date);
-
         return ResponseEntity.ok(inConcediu);
     }
 }

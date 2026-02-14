@@ -1,8 +1,8 @@
 package com.example.user_service.config;
 
 import com.example.user_service.entity.User;
-import com.example.user_service.entity.UserRole; // Asigură-te că ai acest Enum
-import com.example.user_service.entity.Gen;      // Asigură-te că ai acest Enum
+import com.example.user_service.entity.UserRole;
+import com.example.user_service.entity.Gen;
 import com.example.user_service.repository.UserRepository;
 import jakarta.ws.rs.core.Response;
 import lombok.RequiredArgsConstructor;
@@ -20,9 +20,11 @@ import org.springframework.stereotype.Component;
 import java.util.Collections;
 import java.util.List;
 
+// crearea unui user de tip admin in db local, dar si in keycloak (daca nu exista deja)
 @Component
 @RequiredArgsConstructor
 @Slf4j
+// CommandLineRunner -> se executa automat la pornirea aplicatiei
 public class AdminInitializer implements CommandLineRunner {
 
     private final UserRepository userRepository;
@@ -31,10 +33,27 @@ public class AdminInitializer implements CommandLineRunner {
     @Value("${keycloak.realm}")
     private String realm;
 
+    @Value("${app.admin.email}")
+    private String adminEmail;
+
+    @Value("${app.admin.password}")
+    private String adminPassword;
+
+    @Value("${app.admin.first-name}")
+    private String adminFirstName;
+
+    @Value("${app.admin.last-name}")
+    private String adminLastName;
+
+    @Value("${app.admin.phone}")
+    private String adminPhone;
+
+    @Value("${app.keycloak.admin-role}")
+    private String adminRole;
+
+    // verificam daca exista adminul in db local
     @Override
     public void run(String... args) {
-        String adminEmail = "admin@kinetocare.com";
-
         // verificam in db-ul local
         if (userRepository.existsByEmail(adminEmail)) {
             log.info("ADMIN user deja există în baza de date locală.");
@@ -42,41 +61,43 @@ public class AdminInitializer implements CommandLineRunner {
         }
 
         log.info("ADMIN user nu există local.");
-        createAdmin(adminEmail);
+        createAdmin();
     }
 
-    private void createAdmin(String email) {
+    // daca nu exista deja:
+    private void createAdmin() {
         String keycloakId = null;
-
+        // verificam daca exista deja in keycloak
         try {
+            // ne conectam la keycloak
             RealmResource realmResource = keycloak.realm(realm);
             UsersResource usersResource = realmResource.users();
 
             // verificam in keycloak
-            List<UserRepresentation> existing = usersResource.search(email, true);
-
+            List<UserRepresentation> existing = usersResource.search(adminEmail, true);
+            // daca exista deja in keycloak -> il refolosim
             if (!existing.isEmpty()) {
                 log.info("Userul admin există deja în Keycloak. Îl refolosim.");
                 keycloakId = existing.get(0).getId();
             } else {
-                // cream userul in keycloak
+                // daca nu exista deja -> il cream
                 UserRepresentation admin = new UserRepresentation();
-                admin.setUsername(email);
-                admin.setEmail(email);
-                admin.setFirstName("Kinetocare");
-                admin.setLastName("Admin");
+                admin.setUsername(adminEmail);
+                admin.setEmail(adminEmail);
+                admin.setFirstName(adminFirstName);
+                admin.setLastName(adminLastName);
                 admin.setEnabled(true);
                 admin.setEmailVerified(true);
 
                 // setam parola
                 CredentialRepresentation cred = new CredentialRepresentation();
                 cred.setType(CredentialRepresentation.PASSWORD);
-                cred.setValue("admin123");
+                cred.setValue(adminPassword);
                 cred.setTemporary(false);
                 admin.setCredentials(Collections.singletonList(cred));
 
                 Response response = usersResource.create(admin);
-
+                // daca s-a creat cu succes extragem id-ul din headerul location
                 if (response.getStatus() == 201) {
                     String location = response.getHeaderString("Location");
                     keycloakId = location.substring(location.lastIndexOf('/') + 1);
@@ -87,20 +108,21 @@ public class AdminInitializer implements CommandLineRunner {
                 }
             }
 
-            // adaugam rolul admin in keycloak
+            // ii asignam rolul admin in keycloak
             assignAdminRole(realmResource, usersResource, keycloakId);
 
             // salvam in db
             User dbUser = new User();
             dbUser.setKeycloakId(keycloakId);
-            dbUser.setEmail(email);
-            dbUser.setNume("Admin");
-            dbUser.setPrenume("Kinetocare");
+            dbUser.setEmail(adminEmail);
+            dbUser.setNume(adminLastName);
+            dbUser.setPrenume(adminFirstName);
             dbUser.setActive(true);
 
-            // setam valori valide pt db, pentru a nu crapa din cauza costrangerilor not null
+            // setam valori valide pt db, pentru a nu crapa din cauza costrangerilor not
+            // null
             dbUser.setRole(UserRole.ADMIN);
-            dbUser.setTelefon("0000000000");
+            dbUser.setTelefon(adminPhone);
             dbUser.setGen(Gen.MASCULIN);
 
             userRepository.save(dbUser);
@@ -111,10 +133,10 @@ public class AdminInitializer implements CommandLineRunner {
         }
     }
 
+    // metoda care ii asigna rolul admin in keycloak
     private void assignAdminRole(RealmResource realmResource, UsersResource usersResource, String userId) {
         try {
-            String roleName = "admin";
-            RoleRepresentation role = realmResource.roles().get(roleName).toRepresentation();
+            RoleRepresentation role = realmResource.roles().get(adminRole).toRepresentation();
 
             usersResource.get(userId).roles().realmLevel().add(Collections.singletonList(role));
             log.info("Rolul 'admin' a fost asignat.");

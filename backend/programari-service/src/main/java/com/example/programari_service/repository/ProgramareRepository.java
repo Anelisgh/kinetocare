@@ -20,8 +20,8 @@ public interface ProgramareRepository extends JpaRepository<Programare, Long> {
                         "ORDER BY p.data ASC, p.oraInceput ASC")
         List<Programare> gasesteUrmatoareaProgramare(@Param("pacientId") Long pacientId, PageRequest pageRequest);
 
-        // numara programarile active pentru un pacient si terapeut pentru
-        // primaIntalnire
+        // numara programarile active pentru un pacient si terapeut
+        // pentru primaIntalnire
         long countByPacientIdAndTerapeutId(Long pacientId, Long terapeutId);
 
         // verifica suprapunerea programarilor
@@ -67,8 +67,7 @@ public interface ProgramareRepository extends JpaRepository<Programare, Long> {
         List<Programare> findExpiredAppointments(@Param("currentDate") LocalDate currentDate,
                         @Param("currentTime") LocalTime currentTime);
 
-        // pentru dropdown-ul din evaluari. gaseste toti pacientii cu care terapeutul
-        // are programari
+        // pentru dropdown-ul din evaluari. gaseste toti pacientii cu care terapeutul are programari
         @Query("SELECT DISTINCT p.pacientId FROM Programare p WHERE p.terapeutId = :terapeutId")
         List<Long> findPacientiIdByTerapeutId(@Param("terapeutId") Long terapeutId);
 

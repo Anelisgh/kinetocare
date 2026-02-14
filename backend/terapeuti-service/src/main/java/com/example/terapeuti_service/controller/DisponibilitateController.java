@@ -22,12 +22,16 @@ public class DisponibilitateController {
     private final DisponibilitateService disponibilitateService;
     private final DisponibilitateRepository disponibilitateRepository;
 
+    // returneaza disponibilitatile active ale unui terapeut
+    // api-gateway -> getDisponibilitati (DisponibilitateController)
     @GetMapping("/terapeut/{keycloakId}")
     public ResponseEntity<List<DisponibilitateDTO>> getDisponibilitati(@PathVariable String keycloakId) {
         log.info("Getting disponibilitati for terapeut: {}", keycloakId);
         return ResponseEntity.ok(disponibilitateService.getDisponibilitatiByKeycloakId(keycloakId));
     }
 
+    // adauga o noua disponibilitate pentru un terapeut
+    // api-gateway -> addDisponibilitate (DisponibilitateController)
     @PostMapping("/terapeut/{keycloakId}")
     public ResponseEntity<DisponibilitateDTO> addDisponibilitate(
             @PathVariable String keycloakId,
@@ -36,6 +40,8 @@ public class DisponibilitateController {
         return ResponseEntity.ok(disponibilitateService.addDisponibilitate(keycloakId, dto));
     }
 
+    // sterge o disponibilitate a unui terapeut
+    // api-gateway -> deleteDisponibilitate (DisponibilitateController)
     @DeleteMapping("/{disponibilitateId}/terapeut/{keycloakId}")
     public ResponseEntity<Void> deleteDisponibilitate(
             @PathVariable String keycloakId,
@@ -44,7 +50,9 @@ public class DisponibilitateController {
         disponibilitateService.deleteDisponibilitate(keycloakId, disponibilitateId);
         return ResponseEntity.noContent().build();
     }
+    
     // cautam orarul specific pentru o zi a saptamanii si o locatie
+    // programari-service -> getOrar (TerapeutiClient)
     @GetMapping("/terapeut/{terapeutId}/locatie/{locatieId}/zi/{zi}")
     public ResponseEntity<DisponibilitateTerapeut> getOrarSpecific(
             @PathVariable Long terapeutId,

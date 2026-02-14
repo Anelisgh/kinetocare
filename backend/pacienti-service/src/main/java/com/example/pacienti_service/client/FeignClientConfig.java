@@ -8,21 +8,22 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
 
+// se adauga request interceptor pentru a trimite token-ul JWT catre microserviciile apelate
 @Configuration
 @Slf4j
 public class FeignClientConfig {
-
+// pentru fiecare request:
     @Bean
     public RequestInterceptor requestInterceptor() {
         return requestTemplate -> {
-            // 1. Luăm autentificarea curentă din contextul de securitate
+            // se ia autentificarea curenta din contextul de securitate
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-            // 2. Verificăm dacă avem un token JWT valid
+            // se verifica daca avem un token JWT valid
             if (authentication != null && authentication.getPrincipal() instanceof Jwt) {
                 Jwt jwt = (Jwt) authentication.getPrincipal();
 
-                // 3. Adăugăm header-ul Authorization în request-ul Feign
+                // se adauga header-ul Authorization in request-ul Feign
                 requestTemplate.header("Authorization", "Bearer " + jwt.getTokenValue());
                 log.debug("Token JWT atașat la request-ul Feign către microserviciu.");
             } else {
@@ -31,4 +32,3 @@ public class FeignClientConfig {
         };
     }
 }
-

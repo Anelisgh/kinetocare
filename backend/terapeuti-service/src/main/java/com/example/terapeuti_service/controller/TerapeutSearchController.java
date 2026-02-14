@@ -19,6 +19,8 @@ public class TerapeutSearchController {
 
     private final TerapeutService terapeutService;
 
+    // cauta terapeuti activi dupa specializare (oglibatoriu), judet, oras sau locatieId
+    // api-gateway -> searchTerapeuti (SearchTerapeutController)
     @GetMapping("/search")
     public ResponseEntity<List<TerapeutSearchDTO>> searchTerapeuti(
             @RequestParam Specializare specializare,
@@ -33,6 +35,8 @@ public class TerapeutSearchController {
         return ResponseEntity.ok(results);
     }
 
+    // returneaza detaliile completele ale unui terapeut 
+    // api-gateway -> getMyTerapeut (SearchTerapeutController)
     @GetMapping("/{keycloakId}/details")
     public ResponseEntity<TerapeutDetaliDTO> getTerapeutDetails(@PathVariable String keycloakId) {
         log.info("Getting details for terapeut: {}", keycloakId);

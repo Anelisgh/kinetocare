@@ -73,15 +73,17 @@ public class KeycloakService {
 
             return userRegisterMapper.toRegisterResponse(user, "Cont creat cu succes! Te poți autentifica acum.");
         } catch (Exception e) {
-            // daca a aparut o eroare DUPA ce user-ul a fost creat in keycloak
+            // daca a aparut o eroare DUPA ce user-ul a fost creat in keycloak -> facem rollback si il stergem
             if (keycloakId != null) {
-                log.error("Registration failed after Keycloak user creation. Rolling back Keycloak user: {}", keycloakId);
+                log.error("Registration failed after Keycloak user creation. Rolling back Keycloak user: {}",
+                        keycloakId);
                 deleteUserInKeycloak(keycloakId);
             }
             throw new RuntimeException("Eroare la înregistrare: " + e.getMessage(), e);
         }
     }
 
+    // initializeaza profilul gol in serviciul corespunzator (terapeuti-service sau pacienti-service)
     private void initializeRoleSpecificProfile(String keycloakId, UserRole role) {
         try {
             if (role == UserRole.PACIENT) {
@@ -96,9 +98,9 @@ public class KeycloakService {
                     throw new RuntimeException("Eroare la crearea profilului de pacient");
                 }
             } else if (role == UserRole.TERAPEUT) {
-                // endpoint-ul de creare pentru terapeut
-                String url = terapeutiServiceUrl + "/terapeut/by-keycloak/" + keycloakId;
-                ResponseEntity<Object> response = restTemplate.postForEntity(url, null, Object.class);
+                // endpoint-ul de initializare pentru terapeut
+                String url = terapeutiServiceUrl + "/terapeut/initialize/" + keycloakId;
+                ResponseEntity<Void> response = restTemplate.postForEntity(url, null, Void.class);
 
                 if (response.getStatusCode().is2xxSuccessful()) {
                     log.info("Terapeut profile initialized for keycloakId: {}", keycloakId);
@@ -113,6 +115,7 @@ public class KeycloakService {
         }
     }
 
+    // sterge user-ul din keycloak
     private void deleteUserInKeycloak(String keycloakId) {
         try {
             RealmResource realmResource = keycloak.realm(realm);
@@ -123,6 +126,7 @@ public class KeycloakService {
         }
     }
 
+    // creaza user-ul in keycloak
     private String createUserInKeycloak(RegisterRequestDTO request) {
         RealmResource realmResource = keycloak.realm(realm);
         UsersResource usersResource = realmResource.users();
@@ -165,6 +169,7 @@ public class KeycloakService {
         return keycloakId;
     }
 
+    // atribuie rolul user-ului in keycloak
     private void assignRoleInKeycloak(String keycloakId, UserRole role) {
         RealmResource realmResource = keycloak.realm(realm);
 

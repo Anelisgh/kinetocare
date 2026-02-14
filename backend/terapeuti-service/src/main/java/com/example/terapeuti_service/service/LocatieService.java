@@ -20,13 +20,15 @@ public class LocatieService {
     private final LocatieRepository locatieRepository;
     private final LocatieMapper locatieMapper;
 
+    // gaseste locatiile active
     public List<LocatieDTO> getAllActiveLocatii() {
         return locatieRepository.findByActiveTrue()
                 .stream()
                 .map(locatieMapper::toDTO)
                 .collect(Collectors.toList());
     }
-// doar pt admin
+
+    // doar pt admin (include si locatiile inactive)
     public List<LocatieDTO> getAllLocatiiForAdmin() {
         return locatieRepository.findAll()
                 .stream()
@@ -34,12 +36,14 @@ public class LocatieService {
                 .collect(Collectors.toList());
     }
 
+    // gaseste o locatie dupa id
     public LocatieDTO getLocatieById(Long id) {
         Locatie locatie = locatieRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Locația nu a fost găsită"));
         return locatieMapper.toDTO(locatie);
     }
 
+    // adauga o locatie noua (doar pt admin)
     @Transactional
     public LocatieDTO createLocatie(LocatieDTO locatieDTO) {
         Locatie locatie = locatieMapper.toEntity(locatieDTO);
@@ -48,6 +52,7 @@ public class LocatieService {
         return locatieMapper.toDTO(saved);
     }
 
+    // actualizeaza o locatie (doar pt admin)
     @Transactional
     public LocatieDTO updateLocatie(Long id, LocatieDTO locatieDTO) {
         Locatie locatie = locatieRepository.findById(id)
@@ -58,7 +63,8 @@ public class LocatieService {
         log.info("Locatie actualizata: {}", id);
         return locatieMapper.toDTO(updated);
     }
-// o marcam ca inactiva
+
+    // sterge o locatie (soft delete, deci se marcheaza ca invalida)
     @Transactional
     public void deleteLocatie(Long id) {
         Locatie locatie = locatieRepository.findById(id)

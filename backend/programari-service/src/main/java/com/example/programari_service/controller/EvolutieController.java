@@ -16,11 +16,15 @@ public class EvolutieController {
 
     private final EvolutieService evolutieService;
 
+    // adauga evolutie
+    // api-gateway -> adaugaEvolutie (EvolutieController)
     @PostMapping
     public ResponseEntity<EvolutieResponseDTO> adaugaEvolutie(@RequestBody EvolutieRequestDTO request) {
         return ResponseEntity.ok(evolutieService.adaugaEvolutie(request));
     }
 
+    // afiseaza istoricul de evolutii pentru un pacient
+    // api-gateway -> getIstoric (EvolutieController)
     @GetMapping
     public ResponseEntity<List<EvolutieResponseDTO>> getIstoric(
             @RequestParam Long pacientId,

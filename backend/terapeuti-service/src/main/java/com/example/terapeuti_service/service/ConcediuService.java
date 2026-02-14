@@ -25,6 +25,7 @@ public class ConcediuService {
     private final TerapeutRepository terapeutRepository;
     private final ConcediuMapper concediuMapper;
 
+    // gaseste concediile curente si viitoare ale terapeutului
     public List<ConcediuDTO> getConcediiByKeycloakId(String keycloakId) {
         Terapeut terapeut = terapeutRepository.findByKeycloakId(keycloakId)
                 .orElseThrow(() -> new RuntimeException("Terapeutul nu a fost găsit"));
@@ -36,17 +37,18 @@ public class ConcediuService {
                 .collect(Collectors.toList());
     }
 
+    // adauga un concediu nou
     @Transactional
     public ConcediuDTO addConcediu(String keycloakId, CreateConcediuDTO dto) {
         Terapeut terapeut = terapeutRepository.findByKeycloakId(keycloakId)
                 .orElseThrow(() -> new RuntimeException("Terapeutul nu a fost găsit"));
 
-        // Validări
+        // Validari
         if (dto.getDataInceput().isAfter(dto.getDataSfarsit())) {
             throw new RuntimeException("Data de început trebuie să fie înainte de data de sfârșit");
         }
 
-        // Verifică suprapuneri
+        // Verifica suprapuneri
         List<ConcediuTerapeut> overlapping = concediuRepository.findOverlappingConcedii(
                 terapeut.getId(), dto.getDataInceput(), dto.getDataSfarsit());
 
@@ -63,6 +65,7 @@ public class ConcediuService {
         return concediuMapper.toDTO(saved);
     }
 
+    // sterge un concediu
     @Transactional
     public void deleteConcediu(String keycloakId, Long concediuId) {
         Terapeut terapeut = terapeutRepository.findByKeycloakId(keycloakId)
@@ -70,7 +73,7 @@ public class ConcediuService {
         ConcediuTerapeut concediu = concediuRepository.findById(concediuId)
                 .orElseThrow(() -> new RuntimeException("Concediul nu a fost găsit"));
 
-        // Verifică că concediul aparține terapeutului
+        // Verifica ca concediul apartine terapeutului
         if (!concediu.getTerapeutId().equals(terapeut.getId())) {
             throw new RuntimeException("Nu aveți permisiunea să ștergeți acest concediu");
         }

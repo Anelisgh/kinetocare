@@ -21,6 +21,7 @@ public class ProfileController {
     private final ProfileService profileService;
     private final SecurityUtils securityUtils;
 
+    // returneaza profilul complet al userului curent -> ProfileService
     @GetMapping
     public Mono<ResponseEntity<Map<String, Object>>> getProfile(@AuthenticationPrincipal Jwt jwt) {
         String keycloakId = jwt.getSubject();
@@ -34,6 +35,7 @@ public class ProfileController {
                 });
     }
 
+    // actualizeaza campurile din profil (user + pacient/terapeut) -> ProfileService
     @PatchMapping
     public Mono<ResponseEntity<Map<String, Object>>> updateProfile(
             @AuthenticationPrincipal Jwt jwt,

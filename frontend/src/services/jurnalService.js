@@ -1,10 +1,4 @@
-import api from './api';
-
-const handleError = (error, defaultMessage) => {
-    console.error('API Error:', error);
-    const msg = error.response?.data?.message || error.response?.data?.error || defaultMessage;
-    throw new Error(msg);
-};
+import api, { handleApiError } from './api';
 
 export const jurnalService = {
 
@@ -14,7 +8,7 @@ export const jurnalService = {
             const response = await api.get(`/api/programari/pacient/${pacientId}/necompletate`);
             return response.data; // List<ProgramareJurnalDTO>
         } catch (error) {
-            handleError(error, 'Nu s-au putut încărca ședințele necompletate.');
+            handleApiError(error, 'Nu s-au putut încărca ședințele necompletate.');
         }
     },
 
@@ -24,7 +18,7 @@ export const jurnalService = {
             // jurnalData = { programareId, nivelDurere, dificultateExercitii, nivelOboseala, comentarii }
             await api.post(`/api/pacienti/${pacientId}/jurnal`, jurnalData);
         } catch (error) {
-            handleError(error, 'Nu s-a putut salva jurnalul.');
+            handleApiError(error, 'Nu s-a putut salva jurnalul.');
         }
     },
 
@@ -34,7 +28,7 @@ export const jurnalService = {
             const response = await api.get(`/api/pacienti/${pacientId}/jurnal/istoric`);
             return response.data; // List<JurnalIstoricDTO>
         } catch (error) {
-            handleError(error, 'Nu s-a putut încărca istoricul.');
+            handleApiError(error, 'Nu s-a putut încărca istoricul.');
         }
     }
 };

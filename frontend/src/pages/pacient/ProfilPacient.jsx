@@ -69,8 +69,6 @@ export default function ProfilPacient() {
     const handleChange = (e) => {
         const { name, value } = e.target;
 
-        const newValue = name === 'locatiePreferataId' ? value : value;
-
         if (name === 'faceSport' && value === 'NU') {
             setFormData(prev => ({
                 ...prev,
@@ -80,7 +78,7 @@ export default function ProfilPacient() {
         } else {
             setFormData(prev => ({
                 ...prev,
-                [name]: newValue
+                [name]: value
             }));
         }
     };

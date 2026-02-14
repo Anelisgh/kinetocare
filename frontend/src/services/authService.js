@@ -41,8 +41,6 @@ export const authService = {
     }
     
     const tokenData = await response.json();
-
-    localStorage.setItem('access_token', tokenData.access_token);
     
     return tokenData;
   },

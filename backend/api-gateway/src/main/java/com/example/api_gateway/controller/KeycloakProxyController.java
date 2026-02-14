@@ -41,6 +41,7 @@ public class KeycloakProxyController {
                 .build();
     } // in productie se foloseste secure true impreuna cu sameSite none.
 
+    // proxy login/refresh -> trimite cererea catre Keycloak si salveaza refresh_token in cookie httpOnly
     @PostMapping("/api/auth/token")
     public Mono<ResponseEntity<?>> handleTokenRequest(ServerWebExchange exchange) {
         return exchange.getFormData() // extrage campurile trimise in body
@@ -119,6 +120,7 @@ public class KeycloakProxyController {
         return Mono.just(ResponseEntity.status(status).contentType(MediaType.APPLICATION_JSON).body(body));
     }
 
+    // logout -> suprascrie cookie-ul refresh_token cu unul expirat
     @PostMapping("/api/auth/logout")
     public Mono<ResponseEntity<Void>> logout(ServerWebExchange exchange) {
         // browser-ul va sterge cookie-ul vechi prin suprascriere

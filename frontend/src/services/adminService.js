@@ -1,13 +1,4 @@
-import api from './api';
-
-const handleError = (error, defaultMessage) => {
-  console.error('API Error:', error);
-  const message =
-    error.response?.data?.message ||
-    error.message ||
-    defaultMessage;
-  throw new Error(message);
-};
+import api, { handleApiError } from './api';
 
 export const adminService = {
   // Obține TOATE locatiile (inclusiv inactive)
@@ -16,7 +7,7 @@ export const adminService = {
       const response = await api.get('/api/locatii/all');
       return response.data;
     } catch (error) {
-      handleError(error, 'Eroare la încărcarea locațiilor');
+      handleApiError(error, 'Eroare la încărcarea locațiilor');
     }
   },
 
@@ -25,7 +16,7 @@ export const adminService = {
       const response = await api.post('/api/locatii', data);
       return response.data;
     } catch (error) {
-      handleError(error, 'Eroare la crearea locației');
+      handleApiError(error, 'Eroare la crearea locației');
     }
   },
 
@@ -34,7 +25,7 @@ export const adminService = {
       const response = await api.patch(`/api/locatii/${id}`, data);
       return response.data;
     } catch (error) {
-      handleError(error, 'Eroare la actualizarea locației');
+      handleApiError(error, 'Eroare la actualizarea locației');
     }
   },
 
@@ -43,7 +34,7 @@ export const adminService = {
     try {
       await api.delete(`/api/locatii/${id}`);
     } catch (error) {
-      handleError(error, 'Eroare la schimbarea statusului locației');
+      handleApiError(error, 'Eroare la schimbarea statusului locației');
     }
   }
 };

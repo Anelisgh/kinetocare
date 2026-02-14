@@ -27,7 +27,7 @@ public class ProgramariController {
     private final SecurityUtils securityUtils;
     private static final String PROGRAMARI_SERVICE_URL = "http://localhost:8085";
 
-    // pentru PACIENT
+    // creeaza o programare noua (pacient) -> programari-service
     @PostMapping
     public Mono<ResponseEntity<Map<String, Object>>> creeazaProgramare(
             @AuthenticationPrincipal Jwt jwt,
@@ -56,6 +56,7 @@ public class ProgramariController {
                 });
     }
 
+    // determina serviciul recomandat pentru un pacient -> programari-service
     @GetMapping("/serviciu-recomandat")
     public Mono<ResponseEntity<Map<String, Object>>> getServiciuRecomandat(
             @RequestParam Long pacientId,
@@ -80,6 +81,7 @@ public class ProgramariController {
                 });
     }
 
+    // returneaza sloturile orare disponibile pentru o zi -> programari-service
     @GetMapping("/disponibilitate")
     public Mono<ResponseEntity<List<String>>> getDisponibilitate(@RequestParam Long terapeutId,
                                                                  @RequestParam Long locatieId,
@@ -105,7 +107,7 @@ public class ProgramariController {
                 .map(ResponseEntity::ok)
                 .onErrorResume(e -> Mono.just(ResponseEntity.ok(List.of())));
     }
-// PACIENT
+    // pacientul anuleaza o programare (extrage pacientId din profil) -> programari-service
     @PatchMapping("/{programareId}/cancel")
     public Mono<ResponseEntity<Void>> anuleazaProgramare(
             @PathVariable Long programareId,
@@ -144,7 +146,7 @@ public class ProgramariController {
                 });
     }
 
-    // pentru CALENDAR TERAPEUT
+    // returneaza programarile unui terapeut pentru calendar -> programari-service
     @GetMapping("/calendar")
     public Mono<ResponseEntity<List<Map<String, Object>>>> getCalendarTerapeut(
             @RequestParam Long terapeutId,
@@ -179,6 +181,7 @@ public class ProgramariController {
                 });
     }
 
+    // terapeutul anuleaza o programare -> programari-service
     @PatchMapping("/{programareId}/cancel-terapeut")
     public Mono<ResponseEntity<Void>> anuleazaProgramareTerapeut(
             @PathVariable Long programareId,
@@ -202,6 +205,7 @@ public class ProgramariController {
                 });
     }
 
+    // marcheaza neprezentarea unui pacient (terapeut sau admin) -> programari-service
     @PatchMapping("/{programareId}/neprezentare")
     public Mono<ResponseEntity<Void>> marcheazaNeprezentare(
             @PathVariable Long programareId,
@@ -249,7 +253,7 @@ public class ProgramariController {
         );
     }
 
-    // JURNAL PACIENT
+    // returneaza programarile finalizate fara jurnal completat -> programari-service
     @GetMapping("/pacient/{id}/necompletate")
     public Mono<ResponseEntity<List<Map<String, Object>>>> getProgramariFaraJurnal(
             @PathVariable Long id,

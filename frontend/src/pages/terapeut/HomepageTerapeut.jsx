@@ -24,7 +24,6 @@ const HomepageTerapeut = () => {
       try {
         // 1. Profil Terapeut
         const profile = await profileService.getProfile();
-        console.log("Profil Terapeut:", profile);
         setTerapeutId(profile.terapeutId || profile.id);
 
         // 2. Încărcare Locații (pentru dropdown)

@@ -1,10 +1,4 @@
-import api from './api';
-
-const handleError = (error, defaultMessage) => {
-    console.error('API Error:', error);
-    const msg = error.response?.data?.message || error.response?.data?.error || defaultMessage;
-    throw new Error(msg);
-};
+import api, { handleApiError } from './api';
 
 export const evaluariService = {
 
@@ -14,7 +8,7 @@ export const evaluariService = {
             const response = await api.get(`/api/evaluari/pacienti-recenti?terapeutId=${terapeutId}`);
             return response.data;
         } catch (error) {
-            handleError(error, 'Nu s-a putut încărca lista de pacienți.');
+            handleApiError(error, 'Nu s-a putut încărca lista de pacienți.');
         }
     },
 
@@ -24,7 +18,7 @@ export const evaluariService = {
             const response = await api.post('/api/evaluari', evaluareData);
             return response.data;
         } catch (error) {
-            handleError(error, 'Nu s-a putut salva evaluarea.');
+            handleApiError(error, 'Nu s-a putut salva evaluarea.');
         }
     },
 

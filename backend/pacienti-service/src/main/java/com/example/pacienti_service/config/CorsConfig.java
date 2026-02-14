@@ -8,6 +8,7 @@ import org.springframework.web.filter.CorsFilter;
 
 import java.util.Arrays;
 
+// configurare cors pt a permite comunicarea cu frontend-ul
 @Configuration
 public class CorsConfig {
 

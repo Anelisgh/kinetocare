@@ -85,7 +85,7 @@ const EvolutiiTerapeut = () => {
 
     // Get selected patient name for header
     const getSelectedPatientName = () => {
-        const pacient = pacienti.find(p => p.id == selectedPacientId);
+        const pacient = pacienti.find(p => p.id === Number(selectedPacientId));
         return pacient ? `- ${pacient.nume} ${pacient.prenume}` : '';
     };
 

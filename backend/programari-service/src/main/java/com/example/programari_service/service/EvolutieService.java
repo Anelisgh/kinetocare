@@ -6,11 +6,13 @@ import com.example.programari_service.entity.Evolutie;
 import com.example.programari_service.mapper.EvolutieMapper;
 import com.example.programari_service.repository.EvolutieRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class EvolutieService {
@@ -18,7 +20,7 @@ public class EvolutieService {
     private final EvolutieRepository evolutieRepository;
     private final EvolutieMapper evolutieMapper;
 
-    // Adaugare notă nouă
+    // adaugare evolutie noua
     @Transactional
     public EvolutieResponseDTO adaugaEvolutie(EvolutieRequestDTO request) {
         Evolutie evolutie = evolutieMapper.toEntity(request);
@@ -26,7 +28,7 @@ public class EvolutieService {
         return evolutieMapper.toDto(salvata);
     }
 
-    // Obținere istoric pentru un pacient specific (doar notele acestui terapeut)
+    // istoric evolutii pentru un pacient specific (doar notele acestui terapeut)
     public List<EvolutieResponseDTO> getIstoricEvolutii(Long pacientId, Long terapeutId) {
         return evolutieRepository.findAllByPacientIdAndTerapeutIdOrderByCreatedAtDesc(pacientId, terapeutId)
                 .stream()

@@ -17,13 +17,17 @@ public class EvaluareController {
 
     private final EvaluareService evaluareService;
 
-    // Endpoint pentru dropdown pacienți
+    // pentru dropdown pacienti
+    // returneaza lista de pacienti cu care terapeutul a avut programari
+    // api-gateway -> getPacientiTerapeut (EvaluareController)
     @GetMapping("/pacienti-recenti")
     public ResponseEntity<List<UserNumeDTO>> getPacientiTerapeut(@RequestParam Long terapeutId) {
         return ResponseEntity.ok(evaluareService.getPacientiTerapeut(terapeutId));
     }
 
-    // Endpoint creare evaluare
+    // creare evaluare
+    // primeste diagnosticul, sedintele recomandate, serviciul recomandat si leaga programarea de ultima programare pentru a activa relatia pacient-terapeut
+    // api-gateway -> creeazaEvaluare (EvaluareController)
     @PostMapping
     public ResponseEntity<Evaluare> creeazaEvaluare(@RequestBody EvaluareRequestDTO request) {
         return ResponseEntity.ok(evaluareService.creeazaEvaluare(request));

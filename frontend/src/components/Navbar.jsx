@@ -49,7 +49,7 @@ export default function Navbar() {
           </>
         )}
 
-        <a href="#" onClick={handleLogout}>Deconectare</a>
+        <button className="nav-logout-btn" onClick={handleLogout}>Deconectare</button>
       </div>
     </nav>
   );

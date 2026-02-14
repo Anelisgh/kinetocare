@@ -60,3 +60,25 @@
     height: 40px;
     margin-left: 10px;
 }
+
+.nav-logout-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+    color: black;
+    padding: 0 15px;
+    height: 100%;
+    position: relative;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: inherit;
+    font-weight: inherit;
+}
+
+.nav-logout-btn:hover {
+    box-shadow: inset 0 -3px 0 #7EB5FF;
+    transform: translateY(-1px);
+}

@@ -96,7 +96,7 @@
 /* Form Section */
 .evolutii-form-section {
     display: grid;
-    grid-template-columns: 1fr 2fr;
+    grid-template-columns: 1fr;
     gap: var(--space-lg, 1.25rem);
     margin-bottom: var(--space-xl, 1.75rem);
 }

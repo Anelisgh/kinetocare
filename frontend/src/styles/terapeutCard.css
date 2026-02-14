@@ -198,6 +198,26 @@
     font-size: 0.9rem;
 }
 
+.schedule-header {
+    font-size: 0.9rem;
+    font-weight: 700;
+    margin: 0 0 var(--space-md, 1rem) 0;
+    color: var(--color-primary-dark, #075985);
+}
+
+.schedule-location {
+    font-size: 0.85rem;
+    color: var(--color-primary, #0369a1);
+}
+
+.schedule-times {
+    font-size: 0.85rem;
+    color: var(--color-text-secondary, #475569);
+    margin-left: var(--space-sm, 0.5rem);
+    list-style: none;
+    padding: 0;
+}
+
 .terapeut-selected-indicator,
 .terapeut-chosen-badge {
     position: static;

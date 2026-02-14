@@ -1,10 +1,4 @@
-import api from './api';
-
-const handleError = (error, defaultMessage) => {
-    console.error('API Error:', error);
-    const msg = error.response?.data?.message || defaultMessage;
-    throw new Error(msg);
-};
+import api, { handleApiError } from './api';
 
 export const evolutiiService = {
     // Adăugare notă
@@ -13,7 +7,7 @@ export const evolutiiService = {
             const response = await api.post('/api/evolutii', data);
             return response.data;
         } catch (error) {
-            handleError(error, 'Nu s-a putut salva evoluția.');
+            handleApiError(error, 'Nu s-a putut salva evoluția.');
         }
     },
 
@@ -23,7 +17,7 @@ export const evolutiiService = {
             const response = await api.get(`/api/evolutii?pacientId=${pacientId}&terapeutId=${terapeutId}`);
             return response.data;
         } catch (error) {
-            handleError(error, 'Nu s-a putut încărca istoricul.');
+            handleApiError(error, 'Nu s-a putut încărca istoricul.');
         }
     }
 };

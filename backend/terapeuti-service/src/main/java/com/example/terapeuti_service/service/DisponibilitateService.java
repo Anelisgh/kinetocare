@@ -28,6 +28,7 @@ public class DisponibilitateService {
     private final LocatieRepository locatieRepository;
     private final DisponibilitateMapper disponibilitateMapper;
 
+    // gaseste disponibilitatile active ale terapeutului si locatiile
     public List<DisponibilitateDTO> getDisponibilitatiByKeycloakId(String keycloakId) {
         Terapeut terapeut = terapeutRepository.findByKeycloakId(keycloakId)
                 .orElseThrow(() -> new RuntimeException("Terapeutul nu a fost găsit"));
@@ -35,16 +36,17 @@ public class DisponibilitateService {
         List<DisponibilitateTerapeut> disponibilitati =
                 disponibilitateRepository.findByTerapeutIdAndActiveTrue(terapeut.getId());
 
-        // Obține locațiile folosind metoda helper
-        return getDisponibilitateDTOS(disponibilitati, locatieRepository, disponibilitateMapper);
+        // obtine locatiile folosind metoda helper
+        return getDisponibilitateDTOS(disponibilitati);
     }
 
+    // adauga o disponibilitate
     @Transactional
     public DisponibilitateDTO addDisponibilitate(String keycloakId, CreateDisponibilitateDTO dto) {
         Terapeut terapeut = terapeutRepository.findByKeycloakId(keycloakId)
                 .orElseThrow(() -> new RuntimeException("Terapeutul nu a fost găsit"));
 
-        // Validări
+        // Validari
         if (dto.getZiSaptamana() < 1 || dto.getZiSaptamana() > 7) {
             throw new RuntimeException("Ziua săptămânii trebuie să fie între 1 (Luni) și 7 (Duminică)");
         }
@@ -54,7 +56,7 @@ public class DisponibilitateService {
             throw new RuntimeException("Ora de început trebuie să fie înainte de ora de sfârșit");
         }
 
-        // Verifică dacă locația există și este activă
+        // verifica daca locatia exista si e activa
         Locatie locatie = locatieRepository.findById(dto.getLocatieId())
                 .orElseThrow(() -> new RuntimeException("Locația nu a fost găsită"));
 
@@ -83,6 +85,7 @@ public class DisponibilitateService {
         return disponibilitateMapper.toDTO(saved, locatie);
     }
 
+    // sterge o disponibilitate (soft delete)
     @Transactional
     public void deleteDisponibilitate(String keycloakId, Long disponibilitateId) {
         Terapeut terapeut = terapeutRepository.findByKeycloakId(keycloakId)
@@ -91,23 +94,20 @@ public class DisponibilitateService {
         DisponibilitateTerapeut disponibilitate = disponibilitateRepository.findById(disponibilitateId)
                 .orElseThrow(() -> new RuntimeException("Disponibilitatea nu a fost găsită"));
 
-        // Verifică că disponibilitatea aparține terapeutului
+        // Verifica ca disponibilitatea apartine terapeutului
         if (!disponibilitate.getTerapeutId().equals(terapeut.getId())) {
             throw new RuntimeException("Nu aveți permisiunea să ștergeți această disponibilitate");
         }
 
-        // Soft delete
+        // soft delete
         disponibilitate.setActive(false);
         disponibilitateRepository.save(disponibilitate);
 
         log.info("Deleted disponibilitate {} for terapeut {}", disponibilitateId, keycloakId);
     }
 
-    public static List<DisponibilitateDTO> getDisponibilitateDTOS(
-            List<DisponibilitateTerapeut> disponibilitati,
-            LocatieRepository locatieRepository,
-            DisponibilitateMapper disponibilitateMapper) {
-
+    // metoda helper pentru a obtine disponibilitatile si locatiile
+    private List<DisponibilitateDTO> getDisponibilitateDTOS(List<DisponibilitateTerapeut> disponibilitati) {
         List<Long> locatieIds = disponibilitati.stream()
                 .map(DisponibilitateTerapeut::getLocatieId)
                 .distinct()

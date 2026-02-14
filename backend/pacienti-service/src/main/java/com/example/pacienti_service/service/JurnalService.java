@@ -22,12 +22,13 @@ public class JurnalService {
     private final ProgramariClient programariClient;
     private final JurnalMapper jurnalMapper;
 
+    // adaugarea jurnalului
     @Transactional
     public void adaugaJurnal(Long pacientId, JurnalRequestDTO request) {
-        // 1. Obținem data programării din programari-service
+        // obtinem data programarii din programari-service
         ProgramareJurnalDTO detaliiProgramare = programariClient.getDetaliiProgramare(request.getProgramareId());
 
-        // 2. Salvăm jurnalul cu data reală a ședinței
+        // salvam jurnalul cu data reala a sedintei
         JurnalPacient jurnal = JurnalPacient.builder()
                 .pacientId(pacientId)
                 .programareId(request.getProgramareId())
@@ -35,21 +36,22 @@ public class JurnalService {
                 .dificultateExercitii(request.getDificultateExercitii())
                 .nivelOboseala(request.getNivelOboseala())
                 .comentarii(request.getComentarii())
-                .data(detaliiProgramare.getData()) // Data reală a programării
+                .data(detaliiProgramare.getData()) // obtinem data reala, nu lasam pacientul sa o introduca
                 .build();
 
         jurnalRepository.save(jurnal);
         log.info("Jurnal adăugat pentru pacientul {} - programare {}", pacientId, request.getProgramareId());
 
-        // 3. Marcăm programarea că are jurnal completat
+        // marcam faptul ca programarea are jurnal completat
         programariClient.marcheazaJurnal(request.getProgramareId());
     }
 
+    // returneaza istoric jurnale
     public List<JurnalIstoricDTO> getIstoric(Long pacientId) {
-        // 1. Luăm jurnalele din DB
+        // luam jurnalele din db
         List<JurnalPacient> jurnale = jurnalRepository.findByPacientIdOrderByDataDesc(pacientId);
 
-        // 2. Pentru fiecare jurnal, îmbogățim cu detaliile programării
+        // pentru fiecare jurnal, imbogatim cu detaliile programarii
         return jurnale.stream().map(jurnal -> {
             ProgramareJurnalDTO detalii = null;
             try {

@@ -17,18 +17,29 @@ public class TerapeutController {
 
     private final TerapeutService terapeutService;
 
+    // in: keycloakId -> out: date terapeut
+    // api-gateway -> getProfile (ProfileController)
     @GetMapping("/by-keycloak/{keycloakId}")
     public ResponseEntity<TerapeutDTO> getTerapeutByKeycloakId(@PathVariable String keycloakId) {
         log.info("Getting terapeut by keycloakId: {}", keycloakId);
         return ResponseEntity.ok(terapeutService.getTerapeutByKeycloakId(keycloakId));
     }
 
+    // creaza un terapeut (pastrat ca backup, ca noi de fapt folosim initializeTerapeut)
     @PostMapping("/by-keycloak/{keycloakId}")
     public ResponseEntity<TerapeutDTO> createTerapeut(@PathVariable String keycloakId) {
         log.info("Creating terapeut profile for keycloakId: {}", keycloakId);
         return ResponseEntity.ok(terapeutService.createTerapeut(keycloakId));
     }
 
+    // folosit in user-service (initializeRoleSpecificProfile)
+    @PostMapping("/initialize/{keycloakId}")
+    public ResponseEntity<Void> initializeTerapeut(@PathVariable String keycloakId) {
+        terapeutService.initializeEmptyTerapeut(keycloakId);
+        return ResponseEntity.ok().build();
+    }
+
+    // api-gateway -> updateProfile (ProfileController)
     @PatchMapping("/{keycloakId}")
     public ResponseEntity<TerapeutDTO> updateTerapeut(
             @PathVariable String keycloakId,
@@ -37,8 +48,8 @@ public class TerapeutController {
         return ResponseEntity.ok(terapeutService.updateTerapeut(keycloakId, updateDTO));
     }
 
-    // Endpoint pentru a obține keycloakId după terapeut ID (folosit de
-    // programari-service)
+    // in: terapeutId -> out: keycloakId
+    // folosit de programari-service (TerapeutiClient)
     @GetMapping("/id/{terapeutId}/keycloak-id")
     public ResponseEntity<String> getKeycloakIdById(@PathVariable Long terapeutId) {
         String keycloakId = terapeutService.getKeycloakIdById(terapeutId);

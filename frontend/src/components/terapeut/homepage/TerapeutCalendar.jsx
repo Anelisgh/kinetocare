@@ -69,50 +69,31 @@ const TerapeutCalendar = ({ terapeutId, onEventClick, refreshTrigger, locatieId 
         }
     }, [refreshTrigger, locatieId]);
 
-    // 3. Logica Culorilor
-    const getBorderColor = (props) => {
-        if (props.status === 'ANULATA' && props.motivAnulare === 'NEPREZENTARE') {
-            return '#EF4444'; // Roșu aprins
-        }
-        if (props.status === 'FINALIZATA') return '#22C55E'; // Verde
-        if (props.status === 'PROGRAMATA' && props.primaIntalnire) return '#EAB308'; // Galben
-        return '#3B82F6'; // Albastru (Default)
+    // Helper: construiește clase CSS bazate pe status
+
+    const getStatusClass = (props) => {
+        if (props.status === 'ANULATA') return 'status-anulata';
+        if (props.status === 'FINALIZATA') return 'status-finalizata';
+        if (props.status === 'PROGRAMATA' && props.primaIntalnire) return 'status-programata prima-intalnire';
+        return 'status-programata';
     };
 
     // 4. Custom Rendering pentru "Căsuță"
     const renderEventContent = (eventInfo) => {
         const props = eventInfo.event.extendedProps;
-        const isCancelled = props.status === 'ANULATA';
-
-        let borderColor = '#3B82F6'; // Default Blue
-        if (props.status === 'FINALIZATA') borderColor = '#22C55E';
-        else if (props.status === 'PROGRAMATA' && props.primaIntalnire) borderColor = '#EAB308';
-        else if (isCancelled) borderColor = '#9CA3AF'; // Gri pt anulate
 
         return (
-            <div
-                className={`custom-event-card ${isCancelled ? 'status-anulata-visual' : ''}`}
-                style={{
-                    borderLeft: `5px solid ${borderColor}`,
-                    opacity: isCancelled ? 0.6 : 1,
-                    textDecoration: isCancelled ? 'line-through' : 'none',
-                    backgroundColor: isCancelled ? '#f3f4f6' : '#fafafa',
-                    height: '100%',
-                    padding: '2px 4px',
-                    borderRadius: '4px',
-                    overflow: 'hidden'
-                }}
-            >
-                <div className="event-time" style={{ fontWeight: 'bold', fontSize: '0.8em' }}>
+            <div className={`custom-event-card ${getStatusClass(props)}`}>
+                <div className="event-time">
                     {eventInfo.timeText}
                 </div>
-                <div className="event-title" style={{ fontWeight: '600', fontSize: '0.85em' }}>
+                <div className="event-title">
                     {eventInfo.event.title}
                 </div>
-                <div className="event-details" style={{ fontSize: '0.75em' }}>
+                <div className="event-details">
                     {props.tipServiciu}
                 </div>
-                <div className="event-details" style={{ fontSize: '0.75em', fontStyle: 'italic' }}>
+                <div className="event-details event-details-location">
                     📍 {props.numeLocatie}
                 </div>
             </div>

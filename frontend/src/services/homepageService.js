@@ -1,9 +1,4 @@
-import api from './api';
-
-const handleError = (error, defaultMessage) => {
-  console.error('API Error:', error);
-  throw new Error(error.response?.data?.error || defaultMessage);
-};
+import api, { handleApiError } from './api';
 
 export const homepageService = {
   getDashboardData: async () => {
@@ -11,7 +6,7 @@ export const homepageService = {
       const response = await api.get('/api/homepage');
       return response.data;
     } catch (error) {
-      handleError(error, 'Eroare la încărcarea dashboard-ului');
+      handleApiError(error, 'Eroare la încărcarea dashboard-ului');
     }
   }
 };

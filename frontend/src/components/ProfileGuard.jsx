@@ -38,7 +38,7 @@ export default function ProfileGuard() {
   }
 
   if (error) {
-    return <div className="error-message p-4 text-red-500 bg-red-50 border border-red-200 rounded">{error}</div>;
+    return <div className="error-message">{error}</div>;
   }
   // il redirectionam sa-si completeze profilul
   if (!profileComplete) {

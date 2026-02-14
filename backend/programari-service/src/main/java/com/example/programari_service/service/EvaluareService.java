@@ -30,18 +30,20 @@ public class EvaluareService {
     private final EvaluareMapper evaluareMapper;
     private final PacientMapper pacientMapper;
 
-    // 1. POPULARE DROPDOWN
+    // populeaza dropdown-ul din formularul de evaluare
     public List<UserNumeDTO> getPacientiTerapeut(Long terapeutId) {
-        // Luăm ID-urile unice (care sunt User IDs) din tabela Programare
+        // luam user IDs din tabela Programare
         List<Long> pacientIds = programareRepository.findPacientiIdByTerapeutId(terapeutId);
         List<UserNumeDTO> rezultat = new ArrayList<>();
 
+        // pentru fiecare user ID, cautam detalii user si il adaugam in lista
         for (Long userId : pacientIds) {
             try {
-                // APEL DIRECT CĂTRE USER SERVICE
-                // Folosim metoda getUserById pe care o ai deja in UserClient
+                // apelam user-service pentru a obtine detalii user
+                // folosim getUserById din UserClient
                 UserDisplayCalendarDTO userDetails = userClient.getUserById(userId);
 
+                // daca user-ul exista, il adaugam in lista
                 if (userDetails != null) {
                     UserNumeDTO pacientDTO = pacientMapper.toPacientNumeDTO(userDetails, userId);
                     if (pacientDTO != null) {
@@ -55,41 +57,40 @@ public class EvaluareService {
         return rezultat;
     }
 
-    // 2. MAGIC LINK (Găsește programarea de legat)
+    // gaseste ultima programare dintre un pacient si un terapeut
     public Programare getUltimaProgramare(Long pacientId, Long terapeutId) {
-        // Luăm prima programare din listă (cea mai recentă)
+        // luam prima programare din lista, adica cea mai recenta
         List<Programare> lista = programareRepository.findLatestAppointments(
                 pacientId,
                 terapeutId,
                 PageRequest.of(0, 1));
+        // daca lista e goala, returnam null
         return lista.isEmpty() ? null : lista.get(0);
     }
 
-    // 3. SALVARE
+    // fluxul complet de creare a unei evaluari
     @Transactional
     public Evaluare creeazaEvaluare(EvaluareRequestDTO request) {
-        // Folosim mapper-ul pentru conversia de bază
+        // folosim mapper pentru conversie
         Evaluare evaluare = evaluareMapper.toEntity(request);
 
-        // A. Determinăm Programarea și Data
+        // determinam programarea si data
         if (request.getProgramareId() == null) {
-            // Dacă frontend-ul nu a trimis ID, îl căutăm noi
+            // daca frontend-ul nu a trimis ID, il cautam noi
             Programare ultima = getUltimaProgramare(request.getPacientId(), request.getTerapeutId());
 
             if (ultima != null) {
                 evaluare.setProgramareId(ultima.getId());
                 evaluare.setData(ultima.getData());
-
-                // Marcăm programarea că are evaluare
+                // marcam programarea ca are evaluare
                 ultima.setAreEvaluare(true);
                 programareRepository.save(ultima);
             } else {
-                // Fallback: Dacă nu există nicio ședință (ciudat, dar posibil), punem data
-                // curentă
+                // fallback: daca nu exista nicio programare, punem data curenta
                 evaluare.setData(LocalDate.now());
             }
         } else {
-            // Dacă frontend-ul a trimis explicit un ID
+            // daca frontend-ul a trimis explicit un ID
             Programare p = programareRepository.findById(request.getProgramareId())
                     .orElseThrow(() -> new RuntimeException("Programarea specificată nu există"));
 
@@ -101,7 +102,7 @@ public class EvaluareService {
 
         Evaluare evaluareSalvata = evaluareRepository.save(evaluare);
 
-        // dupa ce a fost salvata evaluarea, asiguram relatia activa
+        // dupa ce a fost salvata evaluarea, ne asiguram ca relatia e activa
         relatieService.asiguraRelatieActiva(request.getPacientId(), request.getTerapeutId(), evaluareSalvata.getData());
 
         return evaluareSalvata;

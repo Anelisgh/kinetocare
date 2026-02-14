@@ -1,4 +1,4 @@
-package com.example.terapeuti_service.config;
+package com.example.programari_service.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,13 +20,13 @@ import java.util.stream.Collectors;
 @EnableMethodSecurity
 public class SecurityConfig {
 
+    // protejeaza endpoint-urile
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/actuator/health").permitAll()
-                        .requestMatchers("/terapeut/by-keycloak/**", "/terapeut/initialize/**", "/concediu/check/**", "/disponibilitate/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .oauth2ResourceServer(oauth2 -> oauth2
@@ -38,6 +38,7 @@ public class SecurityConfig {
                 .build();
     }
 
+    // extrage rolurile din JWT si le transforma in ROLE_ + rol
     @Bean
     public JwtAuthenticationConverter jwtAuthenticationConverter() {
         JwtAuthenticationConverter converter = new JwtAuthenticationConverter();

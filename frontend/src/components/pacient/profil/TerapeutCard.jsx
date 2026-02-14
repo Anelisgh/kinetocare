@@ -22,12 +22,12 @@ export default function TerapeutCard({
         });
 
         return (
-            <div className="terapeut-schedule mt-3">
-                <h4 className="text-sm font-bold mb-2">📅 Program Disponibil:</h4>
+            <div className="terapeut-schedule">
+                <h4 className="schedule-header">📅 Program Disponibil:</h4>
                 {Object.entries(programPerLocatie).map(([locatie, orar]) => (
-                    <div key={locatie} className="schedule-item mb-2">
-                        <strong className="text-xs text-blue-600">{locatie}</strong>
-                        <ul className="text-xs text-gray-600 ml-2">
+                    <div key={locatie} className="schedule-item">
+                        <strong className="schedule-location">{locatie}</strong>
+                        <ul className="schedule-times">
                             {orar.sort((a,b) => a.ziSaptamana - b.ziSaptamana).map(slot => (
                                 <li key={slot.id}>
                                     {slot.ziSaptamanaNume}: {slot.oraInceput.substring(0,5)} - {slot.oraSfarsit.substring(0,5)}

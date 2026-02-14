@@ -3,13 +3,14 @@ package com.example.programari_service.mapper;
 import com.example.programari_service.dto.CalendarProgramareDTO;
 import com.example.programari_service.dto.CreeazaProgramareRequest;
 import com.example.programari_service.dto.DetaliiServiciuDTO;
+import com.example.programari_service.dto.ProgramareJurnalDTO;
+import com.example.programari_service.dto.ProgramareResponseDTO;
 import com.example.programari_service.dto.UrmatoareaProgramareDTO;
 import com.example.programari_service.entity.Programare;
 import com.example.programari_service.entity.StatusProgramare;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalTime;
-import java.time.OffsetDateTime;
 
 @Component
 public class ProgramareMapper {
@@ -55,8 +56,6 @@ public class ProgramareMapper {
         programare.setStatus(StatusProgramare.PROGRAMATA);
         programare.setAreEvaluare(false);
         programare.setAreJurnal(false);
-        programare.setCreatedAt(OffsetDateTime.now());
-        programare.setUpdatedAt(OffsetDateTime.now());
 
         return programare;
     }
@@ -78,6 +77,42 @@ public class ProgramareMapper {
                 .motivAnulare(programare.getMotivAnulare())
                 .primaIntalnire(Boolean.TRUE.equals(programare.getPrimaIntalnire()))
                 .telefonPacient(telefonPacient)
+                .build();
+    }
+
+    // conversie Programare + date externe -> ProgramareJurnalDTO (pentru jurnal pacient si detalii programare)
+    public ProgramareJurnalDTO toProgramareJurnalDTO(Programare programare,
+                                                      String numeTerapeut,
+                                                      String numeLocatie) {
+        if (programare == null) return null;
+
+        return ProgramareJurnalDTO.builder()
+                .id(programare.getId())
+                .tipServiciu(programare.getTipServiciu())
+                .data(programare.getData())
+                .ora(programare.getOraInceput())
+                .numeTerapeut(numeTerapeut)
+                .numeLocatie(numeLocatie)
+                .build();
+    }
+
+    public ProgramareResponseDTO toResponseDTO(Programare programare) {
+        if (programare == null) return null;
+
+        return ProgramareResponseDTO.builder()
+                .id(programare.getId())
+                .pacientId(programare.getPacientId())
+                .terapeutId(programare.getTerapeutId())
+                .locatieId(programare.getLocatieId())
+                .serviciuId(programare.getServiciuId())
+                .tipServiciu(programare.getTipServiciu())
+                .pret(programare.getPret())
+                .durataMinute(programare.getDurataMinute())
+                .primaIntalnire(programare.getPrimaIntalnire())
+                .data(programare.getData())
+                .oraInceput(programare.getOraInceput())
+                .oraSfarsit(programare.getOraSfarsit())
+                .status(programare.getStatus())
                 .build();
     }
 }
