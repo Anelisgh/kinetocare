@@ -113,7 +113,7 @@ const EvolutiiTerapeut = () => {
                             onChange={(e) => setSelectedPacientId(e.target.value)}
                             className="evolutii-select"
                         >
-                            <option value="">-- Alege Pacient --</option>
+                            <option value="">Alege Pacient</option>
                             {pacienti.map(p => (
                                 <option key={p.id} value={p.id}>{p.nume} {p.prenume}</option>
                             ))}

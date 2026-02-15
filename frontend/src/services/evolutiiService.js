@@ -1,7 +1,7 @@
 import api, { handleApiError } from './api';
 
 export const evolutiiService = {
-    // Adăugare notă
+    // Adaugare evolutie
     addEvolutie: async (data) => {
         try {
             const response = await api.post('/api/evolutii', data);
@@ -11,7 +11,7 @@ export const evolutiiService = {
         }
     },
 
-    // Încărcare istoric pentru un pacient
+    // Incarcare istoric pentru un pacient
     getIstoric: async (pacientId, terapeutId) => {
         try {
             const response = await api.get(`/api/evolutii?pacientId=${pacientId}&terapeutId=${terapeutId}`);

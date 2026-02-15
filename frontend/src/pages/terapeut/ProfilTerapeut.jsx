@@ -7,6 +7,7 @@ import ManagementDisponibilitate from '../../components/terapeut/profil/Manageme
 import ManagementConcedii from '../../components/terapeut/profil/ManagementConcedii';
 import '../../styles/profil.css';
 
+// Pagina profilului terapeutului -> afiseaza profilul terapeutului cu date personale, disponibilitatea si concediile
 export default function ProfilTerapeut() {
   const { userInfo } = useAuth();
   const [profile, setProfile] = useState(null);
@@ -41,8 +42,8 @@ export default function ProfilTerapeut() {
         prenume: data.prenume || '',
         email: data.email || '',
         telefon: data.telefon || '',
-        gen: data.gen || 'MASCULIN',
-        specializare: data.specializare || 'ADULTI',
+        gen: data.gen || '',
+        specializare: data.specializare || '',
         pozaProfil: data.pozaProfil || '',
       });
     } catch (error) {
@@ -86,8 +87,8 @@ export default function ProfilTerapeut() {
       prenume: profile.prenume || '',
       email: profile.email || '',
       telefon: profile.telefon || '',
-      gen: profile.gen || 'MASCULIN',
-      specializare: profile.specializare || 'ADULTI',
+      gen: profile.gen || '',
+      specializare: profile.specializare || '',
       pozaProfil: profile.pozaProfil || '',
     });
     setIsEditing(false);
@@ -124,6 +125,7 @@ export default function ProfilTerapeut() {
       {successMessage && <div className="success-message">{successMessage}</div>}
       {error && <div className="error-message">{error}</div>}
 
+      {/* --- ZONA DE DATE PERSONALE --- */}
       <div className="profil-layout">
         <PozaProfil
           pozaProfil={formData.pozaProfil}
@@ -131,6 +133,7 @@ export default function ProfilTerapeut() {
           onChange={handleChange}
         />
 
+        {/* --- EDITARE DATE PERSONALE --- */}
         {isEditing ? (
           <form onSubmit={handleSubmit} className="profil-form-principal">
             <div className="form-group">
@@ -170,6 +173,7 @@ export default function ProfilTerapeut() {
             </div>
           </form>
         ) : (
+          // --- VIEW DATE PERSONALE ---
           <div className="profil-info">
             <div className="info-item"><span className="info-label">Nume:</span><span className="info-value">{profile.nume}</span></div>
             <div className="info-item"><span className="info-label">Prenume:</span><span className="info-value">{profile.prenume}</span></div>
@@ -197,10 +201,12 @@ export default function ProfilTerapeut() {
 
       <hr className="section-divider" />
 
+      {/* --- ZONA DE DISPONIBILITATE --- */}
       <ManagementDisponibilitate />
 
       <hr className="section-divider" />
 
+      {/* --- ZONA DE CONCEDII --- */}
       <ManagementConcedii />
     </div>
   );

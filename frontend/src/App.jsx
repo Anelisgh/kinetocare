@@ -22,6 +22,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 
 import AdminLayout from './layouts/AdminLayout';
 import AdminLocatii from './pages/admin/AdminLocatii';
+import AdminServicii from './pages/admin/AdminServicii';
 
 import './styles/navbar.css';
 
@@ -58,6 +59,7 @@ function App() {
           <Route element={<AdminLayout />}>
             <Route path="/admin/homepage" element={<Navigate to="/admin/locatii" replace />} />
             <Route path="/admin/locatii" element={<AdminLocatii />} />
+            <Route path="/admin/servicii" element={<AdminServicii />} />
           </Route>
         </Route>
 

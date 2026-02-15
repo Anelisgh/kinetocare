@@ -90,7 +90,7 @@ const HomepagePacient = () => {
       {/* 2. ACTION AREA (Logica starilor) */}
       <div className="homepage-action-area">
 
-        {/* STAREA 1: Fara Terapeut */}
+        {/* STAREA 1: Fara Terapeut -> Afiseaza un card care il trimite la Profil sa-si caute unul */}
         {!terapeutDetalii && (
           <div className="homepage-no-therapist-card">
             <h3>Începe Recuperarea</h3>
@@ -107,7 +107,7 @@ const HomepagePacient = () => {
         )}
 
 
-        {/* STAREA 2: Are Programare Viitoare */}
+        {/* STAREA 2: Are Programare Viitoare -> Afiseaza card cu detalii si buton de Anulare */}
         {terapeutDetalii && urmatoareaProgramare && (
           <div className="homepage-appointment-card">
             <h3>Următoarea Ședință</h3>
@@ -136,7 +136,7 @@ const HomepagePacient = () => {
           </div>
         )}
 
-        {/* STAREA 3: Booking Mode (Are terapeut, dar nu are programare viitoare) */}
+        {/* STAREA 3: Booking Mode (Are terapeut, dar nu are programare viitoare) -> Afiseaza widget-ul de programare */}
         {terapeutDetalii && !urmatoareaProgramare && (
           <BookingWidget
             pacientId={data.id}

@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { profileService } from '../../../services/profileService';
 import '../../../styles/terapeutSearch.css';
 
+// Formular de cautare terapeut
 export default function TerapeutSearchForm({ specializare, onSearch, loading }) {
     const [selections, setSelections] = useState({
         judet: '',
@@ -103,7 +104,7 @@ export default function TerapeutSearchForm({ specializare, onSearch, loading }) 
                         value={selections.judet} 
                         onChange={handleChange}
                     >
-                        <option value="">-- Selectează Județul --</option>
+                        <option value="">Selectează Județul</option>
                         {judeteOptions.map(j => <option key={j} value={j}>{j}</option>)}
                     </select>
                 </div>
@@ -117,7 +118,7 @@ export default function TerapeutSearchForm({ specializare, onSearch, loading }) 
                         onChange={handleChange}
                         disabled={!selections.judet}
                     >
-                        <option value="">-- Selectează Orașul --</option>
+                        <option value="">Selectează Orașul</option>
                         {orasOptions.map(o => <option key={o} value={o}>{o}</option>)}
                     </select>
                 </div>
@@ -131,7 +132,7 @@ export default function TerapeutSearchForm({ specializare, onSearch, loading }) 
                         onChange={handleChange}
                         disabled={!selections.oras}
                     >
-                        <option value="">-- Selectează Locația --</option>
+                        <option value="">Selectează Locația</option>
                         {locatiiOptions.map(loc => (
                             <option key={loc.id} value={loc.id}>{loc.nume}</option>
                         ))}

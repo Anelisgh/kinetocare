@@ -6,6 +6,7 @@ import interactionPlugin from '@fullcalendar/interaction';
 import roLocale from '@fullcalendar/core/locales/ro';
 import { programariService } from '../../../services/programariService';
 
+// Calendarul terapeutului folosind FullCalendar
 const TerapeutCalendar = ({ terapeutId, onEventClick, refreshTrigger, locatieId }) => {
     const calendarRef = useRef(null);
 
@@ -14,8 +15,8 @@ const TerapeutCalendar = ({ terapeutId, onEventClick, refreshTrigger, locatieId 
             const startStr = info.start.toISOString().split('T')[0];
             const endStr = info.end.toISOString().split('T')[0];
 
-            // Pasăm locatieId către backend (dacă e selectat un ID, altfel e string gol/null)
-            // Backend-ul filtrează locația.
+            // Pasam locatieId catre backend (daca e selectat un ID, altfel e string gol/null)
+            // Backend-ul filtreaza locatia.
             let data = await programariService.getCalendarAppointments(
                 terapeutId,
                 startStr,
@@ -23,12 +24,12 @@ const TerapeutCalendar = ({ terapeutId, onEventClick, refreshTrigger, locatieId 
                 locatieId || null
             );
 
-            // 2. FILTRAREA INTELIGENTĂ
+            // 2. FILTRAREA INTELIGENTA
             const filteredData = data.filter(appt => {
-                // Păstrăm tot ce e PROGRAMATA sau FINALIZATA
+                // Pstram tot ce e PROGRAMATA sau FINALIZATA
                 if (appt.status !== 'ANULATA') return true;
 
-                // Dacă e ANULATA, o păstrăm DOAR dacă motivul e NEPREZENTARE
+                // Dacă e ANULATA, o pstrăm DOAR daca motivul e NEPREZENTARE
                 if (appt.status === 'ANULATA' && appt.motivAnulare === 'NEPREZENTARE') {
                     return true;
                 }
@@ -42,7 +43,7 @@ const TerapeutCalendar = ({ terapeutId, onEventClick, refreshTrigger, locatieId 
                 title: appt.title,
                 start: appt.start,
                 end: appt.end,
-                // O facem vizual distinctă (mai ștearsă) dacă e neprezentare
+                // O facem vizual distincta (mai stearsa) daca e neprezentare
                 display: 'auto',
                 extendedProps: {
                     numeLocatie: appt.numeLocatie,
@@ -62,23 +63,22 @@ const TerapeutCalendar = ({ terapeutId, onEventClick, refreshTrigger, locatieId 
         }
     };
 
-    // Trigger refresh când se schimbă filtrele
+    // Trigger refresh cand se schimba filtrele
     useEffect(() => {
         if (calendarRef.current) {
             calendarRef.current.getApi().refetchEvents();
         }
     }, [refreshTrigger, locatieId]);
 
-    // Helper: construiește clase CSS bazate pe status
-
+    // Helper: le coloram inteligent
     const getStatusClass = (props) => {
-        if (props.status === 'ANULATA') return 'status-anulata';
-        if (props.status === 'FINALIZATA') return 'status-finalizata';
-        if (props.status === 'PROGRAMATA' && props.primaIntalnire) return 'status-programata prima-intalnire';
-        return 'status-programata';
+        if (props.status === 'ANULATA') return 'status-anulata'; // rosu
+        if (props.status === 'FINALIZATA') return 'status-finalizata'; // verde
+        if (props.status === 'PROGRAMATA' && props.primaIntalnire) return 'status-programata prima-intalnire'; // galben
+        return 'status-programata'; // albastru
     };
 
-    // 4. Custom Rendering pentru "Căsuță"
+    // 4. Custom Rendering pentru "Casuta"
     const renderEventContent = (eventInfo) => {
         const props = eventInfo.event.extendedProps;
 
@@ -99,7 +99,7 @@ const TerapeutCalendar = ({ terapeutId, onEventClick, refreshTrigger, locatieId 
             </div>
         );
     };
-
+// 5. Returnam calendarul
     return (
         <FullCalendar
             ref={calendarRef}

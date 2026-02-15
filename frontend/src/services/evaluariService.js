@@ -2,7 +2,7 @@ import api, { handleApiError } from './api';
 
 export const evaluariService = {
 
-    // 1. Obține lista de pacienți
+    // Obtine lista de pacienti
     getPacientiRecenti: async (terapeutId) => {
         try {
             const response = await api.get(`/api/evaluari/pacienti-recenti?terapeutId=${terapeutId}`);
@@ -12,7 +12,7 @@ export const evaluariService = {
         }
     },
 
-    // 2. Salvează evaluarea
+    // Salveaza evaluarea
     creeazaEvaluare: async (evaluareData) => {
         try {
             const response = await api.post('/api/evaluari', evaluareData);
@@ -22,15 +22,12 @@ export const evaluariService = {
         }
     },
 
-    // 3. Obține lista de servicii (MODIFICAT: Fără hardcodare)
+    // Obtine lista de servicii
     getAllServicii: async () => {
         try {
-            // Frontend-ul cere asta prin Gateway
             const response = await api.get('/api/servicii');
             return response.data;
         } catch (error) {
-            // Aici e modificarea: Nu mai returnăm lista falsă.
-            // Aruncăm o eroare specifică pe care o prinde pagina EvaluariTerapeut.jsx
             console.error("Eroare la preluarea serviciilor:", error);
             throw new Error("Serviciul de Nomenclatoare este momentan indisponibil. Nu se pot încărca tipurile de servicii.");
         }

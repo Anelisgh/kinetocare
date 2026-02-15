@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../../services/api';
 
+// pagina de Onboarding (prima intrare) a unui pacient pentru completarea datelor personale
+// nu-l va lasa sa iasa din pagina pana nu completeaza toate campurile obligatorii
 export default function CompleteProfile() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
@@ -67,7 +69,7 @@ export default function CompleteProfile() {
         
         <p className="welcome-text">
           Pentru a putea continua, te rugăm să completezi câteva informații esențiale despre tine. 
-          Aceste date ne ajută să îți oferim cele mai bune servicii de kinetoterapie.
+          Aceste date ne ajută să îți oferim cele mai bune servicii de kinetoterapie. ☺️
         </p>
 
         {error && (

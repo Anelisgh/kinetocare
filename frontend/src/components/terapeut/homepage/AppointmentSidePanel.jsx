@@ -1,5 +1,6 @@
 import React from 'react';
 
+// fereastra laterala care apare peste calendar la click-ul unei programari ce contine detaliile programarii
 const AppointmentSidePanel = ({ appointment, onClose, onCancel, onMarkNeprezentare }) => {
     if (!appointment) return null;
 
@@ -7,9 +8,9 @@ const AppointmentSidePanel = ({ appointment, onClose, onCancel, onMarkNeprezenta
     const { title, start, end, extendedProps } = appointment;
     const { numeLocatie, tipServiciu, status, telefonPacient } = extendedProps;
 
-    // Verificăm timpul curent
+    // Verificam timpul curent
     const now = new Date();
-    // Considerăm că a trecut dacă ora de sfârșit este mai mică decât ora curentă
+    // Consideram ca a trecut dacă ora de sfarsit este mai mica decat ora curenta
     const isPast = end < now;
 
     // Formatare data/ora

@@ -1,7 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { adminService } from '../../services/adminService';
-import '../../styles/profil.css';
+import '../../styles/adminLocatii.css';
 
+// Pagina de administrare a locatiilor (doar adminul are acces)
 export default function AdminLocatii() {
   const [locatii, setLocatii] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -32,6 +33,53 @@ export default function AdminLocatii() {
     } finally {
       setLoading(false);
     }
+  };
+
+  // Sorting & Filtering Logic
+  const [sortConfig, setSortConfig] = useState({ key: 'id', direction: 'ascending' });
+  const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState('all'); // 'all', 'active', 'inactive'
+
+  const sortedLocatii = useMemo(() => {
+    let sortableItems = [...locatii];
+
+    // 1. Filtrare
+    if (searchTerm) {
+      const lowerTerm = searchTerm.toLowerCase();
+      sortableItems = sortableItems.filter(loc => 
+        loc.nume.toLowerCase().includes(lowerTerm) ||
+        loc.oras.toLowerCase().includes(lowerTerm) ||
+        loc.judet.toLowerCase().includes(lowerTerm) ||
+        loc.adresa.toLowerCase().includes(lowerTerm)
+      );
+    }
+
+    if (statusFilter !== 'all') {
+      const isActive = statusFilter === 'active';
+      sortableItems = sortableItems.filter(loc => loc.active === isActive);
+    }
+
+    // 2. Sortare
+    if (sortConfig.key !== null) {
+      sortableItems.sort((a, b) => {
+        if (a[sortConfig.key] < b[sortConfig.key]) {
+          return sortConfig.direction === 'ascending' ? -1 : 1;
+        }
+        if (a[sortConfig.key] > b[sortConfig.key]) {
+          return sortConfig.direction === 'ascending' ? 1 : -1;
+        }
+        return 0;
+      });
+    }
+    return sortableItems;
+  }, [locatii, sortConfig, searchTerm, statusFilter]);
+
+  const requestSort = (key) => {
+    let direction = 'ascending';
+    if (sortConfig.key === key && sortConfig.direction === 'ascending') {
+      direction = 'descending';
+    }
+    setSortConfig({ key, direction });
   };
 
   // handle form input changes
@@ -88,10 +136,30 @@ export default function AdminLocatii() {
   if (loading) return <div className="loading-spinner">Se încarcă locațiile...</div>;
 
   return (
-    <div className="profil-container">
-      <div className="profil-header">
+    <div className="admin-container">
+      <div className="admin-header">
         <h1>Administrare Locații</h1>
-        <button className="btn-save" onClick={openAddModal}>+ Adaugă Locație</button>
+        <button className="btn-save-header" onClick={openAddModal}>+ Adaugă Locație</button>
+      </div>
+
+      {/* FILTER BAR */}
+      <div className="filter-bar">
+        <input 
+          type="text" 
+          placeholder="Caută după nume, oraș, județ..." 
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="search-input"
+        />
+        <select 
+          value={statusFilter} 
+          onChange={(e) => setStatusFilter(e.target.value)}
+          className="filter-select"
+        >
+          <option value="all">Toate Statusurile</option>
+          <option value="active">Doar Active</option>
+          <option value="inactive">Doar Inactive</option>
+        </select>
       </div>
 
       {error && <div className="error-message">{error}</div>}
@@ -100,23 +168,37 @@ export default function AdminLocatii() {
         <table>
           <thead>
             <tr>
-            <th>ID</th>
-            <th>Nume</th>
-            <th>Oraș/Județ</th>
-            <th>Adresă</th>
-            <th>Status</th>
-            <th>Acțiuni</th>
-          </tr>
+              <th onClick={() => requestSort('id')} style={{ cursor: 'pointer' }}>
+                ID {sortConfig.key === 'id' ? (sortConfig.direction === 'ascending' ? '▲' : '▼') : ''}
+              </th>
+              <th onClick={() => requestSort('nume')} style={{ cursor: 'pointer' }}>
+                Nume {sortConfig.key === 'nume' ? (sortConfig.direction === 'ascending' ? '▲' : '▼') : ''}
+              </th>
+              <th onClick={() => requestSort('oras')} style={{ cursor: 'pointer' }}>
+                Oraș {sortConfig.key === 'oras' ? (sortConfig.direction === 'ascending' ? '▲' : '▼') : ''}
+              </th>
+              <th onClick={() => requestSort('judet')} style={{ cursor: 'pointer' }}>
+                Județ {sortConfig.key === 'judet' ? (sortConfig.direction === 'ascending' ? '▲' : '▼') : ''}
+              </th>
+              <th onClick={() => requestSort('adresa')} style={{ cursor: 'pointer' }}>
+                Adresă {sortConfig.key === 'adresa' ? (sortConfig.direction === 'ascending' ? '▲' : '▼') : ''}
+              </th>
+              <th onClick={() => requestSort('active')} style={{ cursor: 'pointer' }}>
+                Status {sortConfig.key === 'active' ? (sortConfig.direction === 'ascending' ? '▲' : '▼') : ''}
+              </th>
+              <th>Acțiuni</th>
+            </tr>
           </thead>
           <tbody>
-            {locatii.map(loc => (
+            {sortedLocatii.map(loc => (
               <tr key={loc.id}>
-                <td>{loc.id}</td>
-                <td>{loc.nume}</td>
-                <td>{loc.oras}, {loc.judet}</td>
+                <td>#{loc.id}</td>
+                <td><strong>{loc.nume}</strong></td>
+                <td>{loc.oras}</td>
+                <td>{loc.judet}</td>
                 <td>{loc.adresa}</td>
                 <td>
-                  <span>
+                  <span className={loc.active ? 'status-active' : 'status-inactive'}>
                     {loc.active ? 'Activ' : 'Inactiv'}
                   </span>
                 </td>
@@ -128,7 +210,7 @@ export default function AdminLocatii() {
                     Edit
                   </button>
                   <button 
-                    className="btn-cancel"
+                    className="btn-toggle"
                     onClick={() => handleToggleStatus(loc.id)}
                   >
                     {loc.active ? 'Dezactivează' : 'Activează'}
@@ -145,14 +227,14 @@ export default function AdminLocatii() {
         <div className="modal-overlay">
           <div className="modal-content">
             <h2>{editingLocatie ? 'Editează Locația' : 'Adaugă Locație Nouă'}</h2>
-            <form onSubmit={handleSubmit} className="profil-form">
+            <form onSubmit={handleSubmit} className="admin-form">
               <div className="form-group">
                 <label>Nume Locație *</label>
-                <input type="text" name="nume" value={formData.nume} onChange={handleInputChange} required />
+                <input type="text" name="nume" value={formData.nume} onChange={handleInputChange} required placeholder="Ex: Clinica Centru" />
               </div>
               <div className="form-group">
                 <label>Adresă *</label>
-                <input type="text" name="adresa" value={formData.adresa} onChange={handleInputChange} required />
+                <input type="text" name="adresa" value={formData.adresa} onChange={handleInputChange} required placeholder="Strada, Număr, Bloc..." />
               </div>
               <div className="form-row">
                 <div className="form-group">
@@ -171,13 +253,13 @@ export default function AdminLocatii() {
                 </div>
                 <div className="form-group">
                   <label>Telefon</label>
-                  <input type="text" name="telefon" value={formData.telefon} onChange={handleInputChange} />
+                  <input type="text" name="telefon" value={formData.telefon} onChange={handleInputChange} placeholder="07xx xxx xxx" />
                 </div>
               </div>
               
-              <div className="form-actions">
-                <button type="submit" className="btn-save">Salvează</button>
-                <button type="button" className="btn-cancel" onClick={() => setIsModalOpen(false)}>Anulează</button>
+              <div className="modal-actions">
+                <button type="button" className="btn-modal-cancel" onClick={() => setIsModalOpen(false)}>Anulează</button>
+                <button type="submit" className="btn-modal-save">Salvează</button>
               </div>
             </form>
           </div>

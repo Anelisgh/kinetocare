@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { programariService } from '../../../services/programariService';
 import '../../../styles/HomepagePacient.css';
 
+// widget pentru calendarul de programare
 const BookingWidget = ({ pacientId, terapeutId, locatieId, onSuccess }) => {
   const [selectedDate, setSelectedDate] = useState(null);
   const [slots, setSlots] = useState([]);

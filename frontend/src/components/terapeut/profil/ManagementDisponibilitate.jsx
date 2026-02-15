@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { profileService } from '../../../services/profileService';
 
+// Componenta care gestioneaza disponibilitatea terapeutului (backend-ul va genera sloturile libere pentru apcienti)
 const ManagementDisponibilitate = () => {
   const [disponibilitati, setDisponibilitati] = useState([]);
   const [locatii, setLocatii] = useState([]);

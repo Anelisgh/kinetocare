@@ -11,14 +11,7 @@ import java.time.OffsetDateTime;
 @Entity
 @Table(name = "servicii",
         indexes = {
-                // Actualizat: Indexul este acum pe coloana de foreign key
                 @Index(name = "idx_servicii_tip", columnList = "tip_serviciu_id")
-        },
-        uniqueConstraints = {
-                // Am presupus că doriți ca o combinație de tip + durată să fie unică
-                // Dacă doriți ca doar tipul să fie unic, lăsați doar "tip_serviciu_id"
-                @UniqueConstraint(name = "uk_servicii_tip_durata",
-                        columnNames = {"tip_serviciu_id", "durata_minute"})
         })
 @Getter
 @Setter
@@ -34,6 +27,8 @@ public class Serviciu {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "tip_serviciu_id", nullable = false)
     private TipServiciu tipServiciu;
+
+    private String nume;
 
     @Column(precision = 10, scale = 2, nullable = false)
     private BigDecimal pret;

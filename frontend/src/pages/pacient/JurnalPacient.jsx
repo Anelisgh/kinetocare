@@ -22,7 +22,7 @@ const JurnalPacient = () => {
 
     const [message, setMessage] = useState({ type: '', text: '' });
 
-    // 1. Inițializare - Luăm ID-ul pacientului din profil
+    // Initializare - Luam ID-ul pacientului din profil
     useEffect(() => {
         const initData = async () => {
             try {
@@ -38,7 +38,7 @@ const JurnalPacient = () => {
         initData();
     }, []);
 
-    // 2. Încărcare date jurnal când avem pacientId
+    // Incarcare date jurnal cand avem pacientId -> lista de programari care au trecut, dar nu au feedback
     const fetchData = async (id) => {
         try {
             setLoading(true);
@@ -50,7 +50,7 @@ const JurnalPacient = () => {
             setNecompletate(listNecompletate || []);
             setIstoric(listIstoric || []);
 
-            // Selectăm automat prima ședință dacă există
+            // Selectam automat prima sedinta daca exista
             if (listNecompletate && listNecompletate.length > 0 && !selectedProgramareId) {
                 setSelectedProgramareId(listNecompletate[0].id);
             }
@@ -88,7 +88,7 @@ const JurnalPacient = () => {
             // Refresh date
             fetchData(pacientId);
 
-            // Ascunde mesajul după 3 sec
+            // Ascunde mesajul dupa 3 sec
             setTimeout(() => setMessage({ type: '', text: '' }), 3000);
 
         } catch (err) {
@@ -96,7 +96,7 @@ const JurnalPacient = () => {
         }
     };
 
-    // Programarea curentă selectată (pentru afișare detalii read-only)
+    // Programarea curenta selectata (pentru afisare detalii read-only)
     const activeProgramare = necompletate.find(p => p.id === Number(selectedProgramareId));
 
     if (loading && necompletate.length === 0 && istoric.length === 0) {
@@ -113,15 +113,15 @@ const JurnalPacient = () => {
                 </div>
             )}
 
-            {/* --- ZONA 1: ADĂUGARE (Doar dacă există ședințe necompletate) --- */}
+            {/* --- ZONA 1: ADUGARE (Doar daca exista sedinte necompletate) --- */}
             {necompletate.length > 0 ? (
                 <div className="jurnal-card form-card">
                     <h2 className="card-title">Jurnal Programare</h2>
 
-                    {/* Dropdown selecție ședință (dacă sunt mai multe) */}
+                    {/* Dropdown selectie sedinta (daca sunt mai multe) */}
                     {necompletate.length > 1 && (
                         <div className="form-group">
-                            <label>Alege ședința pentru care completezi:</label>
+                            <label>Alege sedinta pentru care completezi:</label>
                             <select
                                 value={selectedProgramareId}
                                 onChange={(e) => setSelectedProgramareId(e.target.value)}
@@ -269,7 +269,7 @@ const JurnalPacient = () => {
 
                                 {item.comentarii && (
                                     <div className="history-comment">
-                                        "{item.comentarii}"
+                                        {item.comentarii}
                                     </div>
                                 )}
                             </div>

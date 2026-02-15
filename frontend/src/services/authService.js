@@ -3,7 +3,7 @@ const CLIENT_ID = 'react-client';
 const USER_API_URL = '/api/users'; // Folosim prefixul de proxy al Vite
 
 export const authService = {
-  // Register -> creează cont in keycloak + DB
+  // Register -> creeaza cont in keycloak + DB
   register: async (userData) => {
     const response = await fetch(`${USER_API_URL}/auth/register`, {
       method: 'POST',

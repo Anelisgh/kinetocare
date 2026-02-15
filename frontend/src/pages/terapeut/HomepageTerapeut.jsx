@@ -6,6 +6,7 @@ import TerapeutCalendar from '../../components/terapeut/homepage/TerapeutCalenda
 import AppointmentSidePanel from '../../components/terapeut/homepage/AppointmentSidePanel';
 import '../../styles/HomepageTerapeut.css';
 
+// Pagina principală a terapeutului -> afiseaza calendarul si panelul de programare
 const HomepageTerapeut = () => {
   const { userInfo } = useAuth();
 
@@ -20,6 +21,7 @@ const HomepageTerapeut = () => {
   const [refreshKey, setRefreshKey] = useState(0);
 
   useEffect(() => {
+    // Functie care incarca profilul terapeutului si locatiile
     const fetchProfileAndLocations = async () => {
       try {
         // 1. Profil Terapeut
@@ -39,11 +41,13 @@ const HomepageTerapeut = () => {
     fetchProfileAndLocations();
   }, []);
 
+  // Functie care selecteaza programarea
   const handleEventClick = (info) => {
     info.jsEvent.preventDefault();
     setSelectedAppointment(info.event);
   };
 
+  // Functie care anuleaza programarea
   const handleCancelAppointment = async (programareId) => {
     if (!window.confirm("Sigur dorești să anulezi această programare?")) return;
     try {
@@ -56,6 +60,7 @@ const HomepageTerapeut = () => {
     }
   };
 
+  // Functie care marcaza programarea ca neprezentare
   const handleMarkNeprezentare = async (programareId) => {
     if (!window.confirm("Confirmi că pacientul NU s-a prezentat?")) return;
     try {
@@ -79,7 +84,7 @@ const HomepageTerapeut = () => {
 
         {/* Selector Locație */}
         <select
-          className="filter-select" // Poți stiliza clasa asta în CSS
+          className="filter-select"
           value={selectedLocatieId}
           onChange={(e) => setSelectedLocatieId(e.target.value)}
           style={{ padding: '8px', borderRadius: '4px', border: '1px solid #ccc' }}
@@ -91,6 +96,7 @@ const HomepageTerapeut = () => {
         </select>
       </div>
 
+      {/* --- ZONA DE CALENDAR --- */}
       <div className="calendar-wrapper">
         <TerapeutCalendar
           terapeutId={terapeutId}
@@ -100,6 +106,7 @@ const HomepageTerapeut = () => {
         />
       </div>
 
+      {/* --- ZONA DE PANEL DE PROGRAMARE --- */}
       <AppointmentSidePanel
         appointment={selectedAppointment}
         onClose={() => setSelectedAppointment(null)}

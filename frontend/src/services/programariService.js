@@ -4,7 +4,6 @@ import api, { handleApiError } from './api';
 export const programariService = {
   createProgramare: async (data) => {
     try {
-      //{ pacientId, terapeutId, locatieId, serviciuId, data, oraInceput }
       const response = await api.post('/api/programari', data);
       return response.data;
     } catch (error) {
@@ -18,7 +17,7 @@ export const programariService = {
       const response = await api.get('/api/programari/serviciu-recomandat', {
         params: { pacientId }
       });
-      return response.data; // { id, nume, durataMinute, pret }
+      return response.data;
     } catch (error) {
       handleApiError(error, 'Nu s-a putut determina serviciul necesar');
     }
@@ -83,7 +82,6 @@ export const programariService = {
     try {
       const params = new URLSearchParams();
       params.append('terapeutId', terapeutId);
-      // Apelăm endpoint-ul de Neprezentare
       await api.patch(`/api/programari/${programareId}/neprezentare?${params.toString()}`);
     } catch (error) {
       handleApiError(error, 'Eroare la marcarea neprezentării');

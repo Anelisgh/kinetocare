@@ -13,13 +13,11 @@ import com.example.programari_service.mapper.ProgramareMapper;
 import com.example.programari_service.repository.EvaluareRepository;
 import com.example.programari_service.repository.ProgramareRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import com.example.programari_service.dto.CalendarProgramareDTO;
-import com.example.programari_service.dto.LocatieDisponibilaDTO;
-import com.example.programari_service.dto.UserDisplayCalendarDTO;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
@@ -40,6 +38,12 @@ public class ProgramareService {
     private final EvaluareRepository evaluareRepository;
     private final PacientiClient pacientiClient;
     private final UserClient userClient;
+
+    @Value("${app.service-names.initial}")
+    private String numeEvaluareInitiala;
+
+    @Value("${app.service-names.recurring}")
+    private String numeReevaluare;
 
     // ia prima programare viitoare a pacientului
     public Optional<UrmatoareaProgramareDTO> getUrmatoareaProgramare(Long pacientId) {
@@ -141,9 +145,9 @@ public class ProgramareService {
         // cautam ultima evaluare a pacientului
         Optional<Evaluare> evaluareOpt = evaluareRepository.findFirstByPacientIdOrderByDataDesc(pacientId);
 
-        // daca nu exista nici o evaluare -> EVALUARE
+        // daca nu exista nici o evaluare -> EVALUARE INITIALA (Specific Name)
         if (evaluareOpt.isEmpty()) {
-            return serviciiClient.gasesteServiciuDupaNume("Evaluare");
+            return serviciiClient.gasesteServiciuDupaNume(numeEvaluareInitiala);
         }
 
         Evaluare evaluare = evaluareOpt.get();
@@ -153,10 +157,10 @@ public class ProgramareService {
                 pacientId,
                 evaluare.getData());
 
-        // daca a efectuat toate sedintele recomandate in evaluare -> EVALUARE
-        // daca nu -> SERVICIUL RECOMANDAT IN EVALUARE
+        // daca a efectuat toate sedintele recomandate in evaluare -> S-a terminat pachetul -> REEVALUARE
+        // daca nu -> Continuam cu SERVICIUL RECOMANDAT IN EVALUARE
         if (sedinteEfectuateTotal >= evaluare.getSedinteRecomandate()) {
-            return serviciiClient.gasesteServiciuDupaNume("Evaluare");
+            return serviciiClient.gasesteServiciuDupaNume(numeReevaluare);
         } else {
             return serviciiClient.getServiciuById(evaluare.getServiciuRecomandatId());
         }

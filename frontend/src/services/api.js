@@ -18,7 +18,6 @@ api.interceptors.request.use(
     (error) => Promise.reject(error)
 );
 
-// 
 api.interceptors.response.use(
     (response) => response, // doar returneaza raspunsul
     async (error) => {
@@ -44,7 +43,7 @@ api.interceptors.response.use(
 
 export default api;
 
-// Funcție centralizată de tratare a erorilor API — folosită de toate service-urile
+// Functie centralizata de tratare a erorilor API
 export const handleApiError = (error, defaultMessage) => {
   console.error('API Error:', error);
   const msg =

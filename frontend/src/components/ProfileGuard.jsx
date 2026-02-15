@@ -10,7 +10,7 @@ export default function ProfileGuard() {
   useEffect(() => {
     checkProfile();
   }, []);
-
+// verificam daca profilul e incomplet
   const checkProfile = async () => {
     try {
       const profile = await profileService.getProfile();

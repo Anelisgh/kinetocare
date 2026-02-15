@@ -4,6 +4,7 @@ import TerapeutSearchForm from './TerapeutSearchForm';
 import TerapeutCard from './TerapeutCard';
 import '../../../styles/terapeutSection.css';
 
+// arata cine e terapeutul curent si il lasa sa-l schimbe
 export default function TerapeutSection({ dataNasterii, onProfileUpdate }) {
     const [myTerapeut, setMyTerapeut] = useState(null);
     const [hasTerapeut, setHasTerapeut] = useState(false);
@@ -162,15 +163,16 @@ export default function TerapeutSection({ dataNasterii, onProfileUpdate }) {
     return (
         <div className="info-section terapeut-section">
             <h2>Terapeutul Meu</h2>
-
+            {/* mesaj de succes */}
             {successMessage && (
                 <div className="success-message">{successMessage}</div>
             )}
-
+            {/* mesaj de eroare */}
             {error && (
                 <div className="error-message">{error}</div>
             )}
 
+            {/* Daca are terapeut */}
             {!showSearch && hasTerapeut && myTerapeut && (
                 <div className="my-terapeut">
                     <TerapeutCard 
@@ -195,6 +197,7 @@ export default function TerapeutSection({ dataNasterii, onProfileUpdate }) {
                 </div>
             )}
 
+            {/* Daca nu are terapeut */}
             {!showSearch && !hasTerapeut && (
                 <div className="no-terapeut">
                     <p className="info-message">
@@ -209,6 +212,7 @@ export default function TerapeutSection({ dataNasterii, onProfileUpdate }) {
                 </div>
             )}
 
+            {/* Cautare terapeut -> afiseaza TerapeutSearchForm */}
             {showSearch && (
                 <div className="terapeut-search">
                     <TerapeutSearchForm 

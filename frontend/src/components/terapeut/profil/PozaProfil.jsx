@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import '../../../styles/pozaProfil.css';
 
+// incarcarea pozei de profil
 const PozaProfil = ({ pozaProfil, isEditing, onChange }) => {
   const [preview, setPreview] = useState(pozaProfil);
 
@@ -9,7 +10,7 @@ const PozaProfil = ({ pozaProfil, isEditing, onChange }) => {
       setPreview(pozaProfil);
     }
   }, [pozaProfil]);
-  // Handle image file selection and convert to base64
+  // Handle image file selection and convert to base64 (text, pt salvarea in db, fara a avea un sever special de fisiere)
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {

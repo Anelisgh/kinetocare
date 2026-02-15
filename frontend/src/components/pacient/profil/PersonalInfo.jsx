@@ -1,5 +1,6 @@
 import React, { useMemo, useEffect } from 'react';
 
+// componenta pentru vizualizarea si editarea datelor personale si preferintelor din profil
 export default function PersonalInfo({ profile, formData, isEditing, onChange, locatii = [], assignedTerapeut }) {
     
     // lista de locatii disponibile 

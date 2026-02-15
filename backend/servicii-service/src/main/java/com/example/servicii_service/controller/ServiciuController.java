@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import com.example.servicii_service.dto.ServiciuAdminDTO;
+
 @RestController
 @RequestMapping("/servicii")
 @RequiredArgsConstructor
@@ -15,11 +17,34 @@ public class ServiciuController {
 
     private final ServiciuService serviciuService;
 
-    // returneaza toate serviciile
-    // TODO: UTILIZAT DE ADMIN
+    // CLIENT: returneaza toate serviciile active
     @GetMapping
     public ResponseEntity<List<ServiciuDTO>> getAllServicii() {
         return ResponseEntity.ok(serviciuService.getAllServicii());
+    }
+
+    // ADMIN: returneaza toate (inclusiv inactive, cu detalii complete)
+    @GetMapping("/admin")
+    public ResponseEntity<List<ServiciuAdminDTO>> getAllServiciiAdmin() {
+        return ResponseEntity.ok(serviciuService.getAllServiciiAdmin());
+    }
+
+    // ADMIN: Create
+    @PostMapping
+    public ResponseEntity<ServiciuAdminDTO> createServiciu(@RequestBody ServiciuAdminDTO dto) {
+        return ResponseEntity.ok(serviciuService.createServiciu(dto));
+    }
+
+    // ADMIN: Update
+    @PutMapping("/{id}")
+    public ResponseEntity<ServiciuAdminDTO> updateServiciu(@PathVariable Long id, @RequestBody ServiciuAdminDTO dto) {
+        return ResponseEntity.ok(serviciuService.updateServiciu(id, dto));
+    }
+
+    // ADMIN: Toggle Active
+    @PatchMapping("/{id}/active")
+    public ResponseEntity<ServiciuAdminDTO> toggleActive(@PathVariable Long id) {
+        return ResponseEntity.ok(serviciuService.toggleActive(id));
     }
 
     // returneaza un serviciu dupa id

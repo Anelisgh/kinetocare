@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { profileService } from '../../../services/profileService';
 
+// Componenta care gestioneaza concediile terapeutului (blocheaza zilele)
 const ManagementConcedii = () => {
   const [concedii, setConcedii] = useState([]);
   const [error, setError] = useState(null);

@@ -1,5 +1,6 @@
 import "../../../styles/terapeutCard.css";
 
+// Cardul terapeutului -> afiseaza detalii despre terapeut
 export default function TerapeutCard({ 
     terapeut, 
     isSelected, 

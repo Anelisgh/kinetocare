@@ -25,7 +25,7 @@
 }
 
 .page-title::before {
-    content: '📔';
+    content: '📓';
     font-size: 2rem;
 }
 
@@ -396,8 +396,8 @@
 }
 
 .history-details {
-    color: var(--color-text-muted, #94a3b8);
-    font-size: 0.9rem;
+    color: var(--color-text-secondary, #94a3b8);
+    font-size: 1rem;
 }
 
 .history-comment {
@@ -407,15 +407,6 @@
     padding-top: var(--space-md, 1rem);
     border-top: 1px dashed var(--color-border, #e2e8f0);
 }
-
-.history-comment::before {
-    content: '"';
-}
-
-.history-comment::after {
-    content: '"';
-}
-
 /* Animations */
 @keyframes jurnalFadeIn {
     from {
@@ -460,11 +451,7 @@
         align-items: flex-start;
         gap: var(--space-sm, 0.5rem);
     }
-
-    .history-metrics {
-        flex-direction: column;
-    }
-
+    
     .metric-badge {
         text-align: center;
     }

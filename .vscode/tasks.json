@@ -1,0 +1,10 @@
+{
+  "tasks": [
+    {
+      "label": "wait-10s",
+      "type": "shell",
+      "command": "timeout /T 10",
+      "problemMatcher": []
+    }
+  ]
+}

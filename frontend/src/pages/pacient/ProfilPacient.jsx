@@ -82,17 +82,19 @@ export default function ProfilPacient() {
             }));
         }
     };
-
+    // Handle form submission
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError(null);
         setSuccessMessage('');
 
+        // Validate CNP
         if (formData.cnp && !/^\d{13}$/.test(formData.cnp)) {
             setError('CNP-ul trebuie să conțină exact 13 cifre.');
             return;
         }
 
+        // Prepare data to send
         const dataToSend = {};
         const profileData = {
             ...profile,
@@ -103,6 +105,7 @@ export default function ProfilPacient() {
             locatiePreferataId: profile.locatiePreferataId ? String(profile.locatiePreferataId) : '',
         };
 
+        // Check if there are any changes
         let hasChanges = false;
         Object.keys(formData).forEach(key => {
             if (formData[key] !== profileData[key]) {
@@ -115,11 +118,13 @@ export default function ProfilPacient() {
             }
         });
 
+        // If faceSport is NU, set detaliiSport to null
         if (dataToSend.faceSport === 'NU') {
             dataToSend.detaliiSport = null;
             hasChanges = true;
         }
 
+        // If no changes, exit
         if (!hasChanges) {
             setIsEditing(false);
             setSuccessMessage('Nu a fost detectată nicio modificare.');
@@ -127,6 +132,7 @@ export default function ProfilPacient() {
             return;
         }
 
+        // Update profile
         try {
             const updatedProfile = await profileService.updateProfile(dataToSend);
             setProfile(updatedProfile);
@@ -149,6 +155,7 @@ export default function ProfilPacient() {
         }
     };
 
+    // Handle cancel
     const handleCancel = () => {
         const formattedDate = profile.dataNasterii
             ? new Date(profile.dataNasterii).toISOString().split('T')[0]
@@ -201,14 +208,17 @@ export default function ProfilPacient() {
                 )}
             </div>
 
+            {/* Success message */}
             {successMessage && (
                 <div className="success-message">{successMessage}</div>
             )}
 
+            {/* Error message */}
             {error && (
                 <div className="error-message">{error}</div>
             )}
 
+            {/* Edit mode */}
             {isEditing ? (
                 <form onSubmit={handleSubmit} className="profil-form">
                     <PersonalInfo
@@ -230,6 +240,7 @@ export default function ProfilPacient() {
                     </div>
                 </form>
             ) : (
+                // View mode
                 <div className="profil-info">
                     <PersonalInfo
                         profile={profile}

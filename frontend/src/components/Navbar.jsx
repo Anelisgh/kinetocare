@@ -29,7 +29,10 @@ export default function Navbar() {
       <div className="menu">
         {/* ADMIN */}
         {roles.includes('ADMIN') && (
-          <Link to="/admin/locatii">Administrare Locații</Link>
+          <>
+            <Link to="/admin/locatii">Administrare Locații</Link>
+            <Link to="/admin/servicii">Administrare Servicii</Link>
+          </>
         )}
 
         {/* PACIENT */}

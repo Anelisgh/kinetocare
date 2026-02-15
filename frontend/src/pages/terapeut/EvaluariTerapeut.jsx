@@ -21,19 +21,19 @@ const EvaluariTerapeut = () => {
     const [submitting, setSubmitting] = useState(false);
     const [message, setMessage] = useState({ type: '', text: '' }); // type: 'success' | 'error'
 
-    // 1. Încărcare Inițială (Profil -> TerapeutID -> Pacienți & Servicii)
+    // 1. Încarcare Initiala (Profil -> TerapeutID -> Pacienti & Servicii)
     useEffect(() => {
         const initData = async () => {
             try {
                 setLoading(true);
-                // A. Aflăm cine e terapeutul logat
+                // A. Aflam cine e terapeutul logat
                 const profile = await profileService.getProfile();
                 const tId = profile.terapeutId || profile.id;
                 setTerapeutId(tId);
 
                 if (!tId) throw new Error("Nu s-a găsit ID-ul terapeutului.");
 
-                // B. Încărcăm listele necesare în paralel
+                // B. Incarcam listele necesare în paralel
                 const [pacientiList, serviciiList] = await Promise.all([
                     evaluariService.getPacientiRecenti(tId),
                     evaluariService.getAllServicii()
@@ -44,7 +44,7 @@ const EvaluariTerapeut = () => {
                 const serviciiTratament = serviciiList.filter(s => !s.nume.toLowerCase().includes('evaluare'));
                 setServicii(serviciiTratament);
 
-                // Preselectăm primul serviciu dacă există
+                // Preselectam primul serviciu daca exista
                 if (serviciiList.length > 0) {
                     setFormData(prev => ({ ...prev, serviciuRecomandatId: serviciiList[0].id }));
                 }
@@ -73,7 +73,7 @@ const EvaluariTerapeut = () => {
         e.preventDefault();
         setMessage({ type: '', text: '' });
 
-        // Validare simplă
+        // Validare simpla
         if (!formData.pacientId) {
             setMessage({ type: 'error', text: 'Te rog selectează un pacient.' });
             return;
@@ -93,14 +93,14 @@ const EvaluariTerapeut = () => {
                 pacientId: Number(formData.pacientId),
                 sedinteRecomandate: Number(formData.sedinteRecomandate),
                 serviciuRecomandatId: Number(formData.serviciuRecomandatId),
-                // programareId îl lăsăm null, se ocupă backend-ul (Magic Link)
+                // programareId il lasam null, se ocupa backend-ul
             };
 
             await evaluariService.creeazaEvaluare(payload);
 
             setMessage({ type: 'success', text: 'Evaluarea a fost salvată cu succes!' });
 
-            // Resetăm parțial formularul (păstrăm serviciul și tipul poate)
+            // Resetam partial formularul
             setFormData(prev => ({
                 ...prev,
                 pacientId: '',
@@ -145,7 +145,7 @@ const EvaluariTerapeut = () => {
                                 onChange={handleChange}
                                 className="evaluari-select"
                             >
-                                <option value="">-- Selectează Pacient --</option>
+                                <option value="">Selectează Pacient</option>
                                 {pacienti.map(p => (
                                     <option key={p.id} value={p.id}>
                                         {p.nume} {p.prenume}
@@ -206,14 +206,14 @@ const EvaluariTerapeut = () => {
 
                             {/* Serviciu Recomandat */}
                             <div className="evaluari-form-group">
-                                <label className="evaluari-label">Tip Serviciu Recomandat</label>
+                                <label className="evaluari-label">Serviciu Recomandat</label>
                                 <select
                                     name="serviciuRecomandatId"
                                     value={formData.serviciuRecomandatId}
                                     onChange={handleChange}
                                     className="evaluari-select"
                                 >
-                                    <option value="">-- Alege Serviciul --</option>
+                                    <option value="">Selectează Serviciul</option>
                                     {servicii.map(s => (
                                         <option key={s.id} value={s.id}>
                                             {s.nume} {s.durataMinute ? `(${s.durataMinute} min)` : ''}
