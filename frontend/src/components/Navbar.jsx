@@ -1,5 +1,6 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import NotificationBell from './NotificationBell';
 import '../styles/navbar.css';
 
 export default function Navbar() {
@@ -38,18 +39,25 @@ export default function Navbar() {
         {/* PACIENT */}
         {roles.includes('PACIENT') && (
           <>
-            <Link to="/pacient/profil">Profil</Link>
+            <Link to="/pacient/programari">Programări</Link>
             <Link to="/pacient/jurnal">Jurnal</Link>
+            <Link to="/pacient/profil">Profil</Link>
           </>
         )}
 
         {/* TERAPEUT */}
         {roles.includes('TERAPEUT') && (
           <>
-            <Link to="/terapeut/profil">Profil</Link>
+            <Link to="/terapeut/pacienti">Pacienți</Link>
             <Link to="/terapeut/evaluari">Evaluari</Link>
             <Link to="/terapeut/evolutii">Evolutii</Link>
+            <Link to="/terapeut/profil">Profil</Link>
           </>
+        )}
+
+        {/* NOTIFICARI - vizibile pentru PACIENT si TERAPEUT */}
+        {(roles.includes('PACIENT') || roles.includes('TERAPEUT')) && (
+          <NotificationBell />
         )}
 
         <button className="nav-logout-btn" onClick={handleLogout}>Deconectare</button>

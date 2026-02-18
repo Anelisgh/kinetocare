@@ -42,27 +42,42 @@ public class HomepageService {
                         log.warn("Nu s-a găsit ID-ul numeric de pacient pentru keycloakId: {}", keycloakId);
                         return Mono.just(profileData);
                     }
-                    // apelam serviciul de programari pentru a lua "Următoarea Programare" a
-                    // pacientului
+                    // apelam serviciul de programari pentru a lua:
+                    // 1. "Următoarea Programare"
+                    // 2. "Situația Pacientului" (Diagnostic + Progres)
                     Long finalPacientId = pacientId;
-                    return securityUtils.getJwtToken().flatMap(token -> webClientBuilder.build()
+
+                    Mono<Map<String, Object>> nextApptMono = securityUtils.getJwtToken().flatMap(token -> webClientBuilder.build()
                             .get()
                             .uri(PROGRAMARI_SERVICE_URL + "/programari/pacient/" + finalPacientId + "/next")
                             .header("Authorization", "Bearer " + token)
                             .retrieve()
                             .bodyToMono(new ParameterizedTypeReference<Map<String, Object>>() {
                             })
-                            .map(nextAppt -> {
-                                profileData.put("urmatoareaProgramare", nextAppt);
-                                return profileData;
+                            .onErrorResume(e -> Mono.empty())); // Daca nu are programare, returnam empty
+
+                    Mono<Map<String, Object>> situatieMono = securityUtils.getJwtToken().flatMap(token -> webClientBuilder.build()
+                            .get()
+                            .uri(PROGRAMARI_SERVICE_URL + "/programari/pacient/" + finalPacientId + "/situatie")
+                            .header("Authorization", "Bearer " + token)
+                            .retrieve()
+                            .bodyToMono(new ParameterizedTypeReference<Map<String, Object>>() {
                             })
-                            // daca nu are programare continuam doar cu profilul
-                            .switchIfEmpty(Mono.just(profileData))
-                            .onErrorResume(e -> {
-                                log.error("Eroare la preluarea următoarei programări: ", e);
-                                // nu blocam fluxul daca pica serviciul de programari
-                                return Mono.just(profileData);
-                            }));
+                            .onErrorResume(e -> Mono.empty())); // Daca earaore, returnam empty
+
+                    return Mono.zip(nextApptMono.defaultIfEmpty(Map.of()), situatieMono.defaultIfEmpty(Map.of()))
+                            .map(tuple -> {
+                                Map<String, Object> nextAppt = tuple.getT1();
+                                Map<String, Object> situatie = tuple.getT2();
+
+                                if (!nextAppt.isEmpty()) {
+                                    profileData.put("urmatoareaProgramare", nextAppt);
+                                }
+                                if (!situatie.isEmpty()) {
+                                    profileData.put("situatie", situatie);
+                                }
+                                return profileData;
+                            });
                 });
     }
 }

@@ -1,0 +1,793 @@
+/* ============================================ */
+/* FISA PACIENT - DETALII PACIENT               */
+/* ============================================ */
+
+.fisa-container {
+    padding: var(--space-xl, 1.75rem);
+    background-color: var(--color-background, #F3F8FF);
+    min-height: calc(100vh - 8vh);
+    animation: fadeInFisa 0.6s ease-out;
+}
+
+@keyframes fadeInFisa {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Loading & Error */
+.fisa-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 60vh;
+    text-align: center;
+    color: var(--color-text-secondary, #475569);
+    font-size: 1.125rem;
+    gap: var(--space-md, 1rem);
+}
+
+.fisa-loading .loading-icon {
+    font-size: 3rem;
+    animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.1); opacity: 0.8; }
+}
+
+.fisa-error {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 60vh;
+    color: var(--color-error, #ef4444);
+    background: var(--color-error-bg, #fee2e2);
+    border-radius: var(--radius-xl, 20px);
+    border-left: 4px solid var(--color-error, #ef4444);
+    max-width: 500px;
+    margin: 0 auto;
+    padding: var(--space-xl, 1.75rem);
+}
+
+/* Back Button */
+.fisa-back-btn {
+    background: none;
+    border: none;
+    color: var(--color-primary, #0369a1);
+    font-weight: 700;
+    font-size: 0.95rem;
+    cursor: pointer;
+    padding: var(--space-sm, 0.5rem) 0;
+    margin-bottom: var(--space-md, 1rem);
+    transition: all var(--transition-base, 200ms ease-in-out);
+    font-family: 'Nunito', sans-serif;
+}
+
+.fisa-back-btn:hover {
+    color: var(--color-primary-dark, #075985);
+    transform: translateX(-4px);
+}
+
+/* Header Card */
+.fisa-header-card {
+    background: var(--color-surface, white);
+    border-radius: var(--radius-xl, 20px);
+    padding: var(--space-xl, 1.75rem);
+    border: 1px solid var(--color-border, #e2e8f0);
+    box-shadow: var(--shadow-md, 0 4px 6px -1px rgb(0 0 0 / 0.1));
+    margin-bottom: var(--space-xl, 1.75rem);
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: var(--space-xl, 1.75rem);
+    flex-wrap: wrap;
+}
+
+.fisa-header-left {
+    display: flex;
+    align-items: center;
+    gap: var(--space-lg, 1.25rem);
+}
+
+.fisa-avatar {
+    width: 64px;
+    height: 64px;
+    border-radius: var(--radius-full, 9999px);
+    background: linear-gradient(135deg, var(--color-primary, #0369a1) 0%, var(--color-primary-light, #0ea5e9) 100%);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 1.25rem;
+    flex-shrink: 0;
+    text-transform: uppercase;
+}
+
+.fisa-header-info h1 {
+    margin: 0 0 var(--space-sm, 0.5rem) 0;
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--color-text-primary, #0f172a);
+}
+
+.fisa-header-details {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-sm, 0.5rem);
+}
+
+.fisa-detail-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 0.2rem 0.65rem;
+    background: var(--color-surface-hover, #f8fafc);
+    border: 1px solid var(--color-border, #e2e8f0);
+    border-radius: var(--radius-full, 9999px);
+    font-size: 0.8rem;
+    color: var(--color-text-secondary, #475569);
+    font-weight: 600;
+}
+
+/* Situatie Curenta */
+.fisa-situatie {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md, 1rem);
+    min-width: 280px;
+}
+
+.situatie-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.situatie-label {
+    font-size: 0.7rem;
+    color: var(--color-text-muted, #94a3b8);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 700;
+}
+
+.situatie-value.diagnostic-badge {
+    display: inline-block;
+    padding: 0.3rem 0.75rem;
+    background: linear-gradient(135deg, #e0f2fe 0%, #f0f9ff 100%);
+    border: 1px solid rgba(3, 105, 161, 0.15);
+    border-radius: var(--radius-full, 9999px);
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: var(--color-primary-dark, #075985);
+}
+
+/* Progress Bar (matches patient homepage) */
+.fisa-progress-section {
+    width: 100%;
+}
+
+.fisa-progress-header {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #64748b;
+    margin-bottom: 0.5rem;
+}
+
+.fisa-progress-header strong {
+    color: #0f172a;
+}
+
+.fisa-progress-bar-container {
+    width: 100%;
+    height: 10px;
+    background-color: #f1f5f9;
+    border-radius: 999px;
+    overflow: hidden;
+    position: relative;
+    box-shadow: inset 0 1px 2px rgba(0,0,0,0.05);
+}
+
+.fisa-progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #0ea5e9, #0284c7);
+    border-radius: 999px;
+    transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+}
+
+/* ============================================ */
+/* TABS                                         */
+/* ============================================ */
+
+.fisa-tabs {
+    display: flex;
+    gap: var(--space-sm, 0.5rem);
+    margin-bottom: var(--space-xl, 1.75rem);
+    background: var(--color-surface, white);
+    padding: 0.35rem;
+    border-radius: var(--radius-lg, 16px);
+    border: 1px solid var(--color-border, #e2e8f0);
+    overflow-x: auto;
+}
+
+.fisa-tab {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs, 0.25rem);
+    padding: 0.6rem 1.2rem;
+    border: none;
+    border-radius: var(--radius-md, 10px);
+    background: transparent;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--color-text-secondary, #475569);
+    cursor: pointer;
+    transition: all var(--transition-base, 200ms ease-in-out);
+    white-space: nowrap;
+    font-family: 'Nunito', sans-serif;
+}
+
+.fisa-tab:hover {
+    background: var(--color-surface-hover, #f8fafc);
+    color: var(--color-text-primary, #0f172a);
+}
+
+.fisa-tab.active {
+    background: linear-gradient(135deg, var(--color-primary, #0369a1) 0%, var(--color-primary-light, #0ea5e9) 100%);
+    color: white;
+    box-shadow: 0 2px 8px rgba(3, 105, 161, 0.25);
+}
+
+.tab-icon {
+    font-size: 1rem;
+}
+
+.tab-count {
+    background: rgba(255, 255, 255, 0.25);
+    padding: 0.1rem 0.45rem;
+    border-radius: var(--radius-full, 9999px);
+    font-size: 0.7rem;
+    font-weight: 800;
+}
+
+.fisa-tab.active .tab-count {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.fisa-tab:not(.active) .tab-count {
+    background: var(--color-primary-subtle, #e0f2fe);
+    color: var(--color-primary-dark, #075985);
+}
+
+/* Tab Content */
+.fisa-tab-content {
+    animation: fadeInTab 0.3s ease-out;
+}
+
+@keyframes fadeInTab {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.tab-empty {
+    text-align: center;
+    padding: var(--space-xl, 1.75rem) * 2;
+    color: var(--color-text-secondary, #475569);
+    background: var(--color-surface, white);
+    border-radius: var(--radius-xl, 20px);
+    border: 2px dashed var(--color-border, #e2e8f0);
+    font-size: 1rem;
+    padding: 3rem;
+}
+
+/* ============================================ */
+/* EVALUARI TAB                                 */
+/* ============================================ */
+
+.evaluari-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-lg, 1.25rem);
+}
+
+.evaluare-card {
+    background: var(--color-surface, white);
+    border-radius: var(--radius-xl, 20px);
+    padding: var(--space-lg, 1.25rem);
+    border: 1px solid var(--color-border, #e2e8f0);
+    transition: all var(--transition-base, 200ms ease-in-out);
+}
+
+.evaluare-card:hover {
+    box-shadow: var(--shadow-md, 0 4px 6px -1px rgb(0 0 0 / 0.1));
+}
+
+.evaluare-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-md, 1rem);
+}
+
+.evaluare-header-left {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm, 0.5rem);
+}
+
+.evaluare-alt-terapeut {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--color-text-secondary, #475569);
+    background: var(--color-surface-hover, #f8fafc);
+    border: 1px solid var(--color-border, #e2e8f0);
+    padding: 0.15rem 0.5rem;
+    border-radius: var(--radius-full, 9999px);
+}
+
+.evaluare-tip {
+    padding: 0.25rem 0.75rem;
+    border-radius: var(--radius-full, 9999px);
+    font-size: 0.8rem;
+    font-weight: 700;
+}
+
+.evaluare-tip.initiala {
+    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+    color: #92400e;
+}
+
+.evaluare-tip.reevaluare {
+    background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%);
+    color: #075985;
+}
+
+.evaluare-data {
+    font-size: 0.85rem;
+    color: var(--color-text-secondary, #475569);
+    font-weight: 600;
+}
+
+.evaluare-body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm, 0.5rem);
+}
+
+.evaluare-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--space-xs, 0.25rem) 0;
+}
+
+.ev-label {
+    font-size: 0.75rem;
+    color: var(--color-text-muted, #94a3b8);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 700;
+}
+
+.ev-value {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--color-text-primary, #0f172a);
+}
+
+.evaluare-observatii {
+    margin-top: var(--space-sm, 0.5rem);
+    padding: var(--space-md, 1rem);
+    background: var(--color-surface-hover, #f8fafc);
+    border-radius: var(--radius-md, 10px);
+    border-left: 3px solid var(--color-secondary, #0d9488);
+}
+
+.evaluare-observatii p {
+    margin: var(--space-xs, 0.25rem) 0 0 0;
+    font-size: 0.9rem;
+    color: var(--color-text-primary, #0f172a);
+    line-height: 1.6;
+}
+
+.evaluare-footer {
+    margin-top: var(--space-md, 1rem);
+    padding-top: var(--space-sm, 0.5rem);
+    border-top: 1px solid var(--color-border, #e2e8f0);
+}
+
+.evaluare-terapeut {
+    font-size: 0.85rem;
+    color: var(--color-text-secondary, #475569);
+    font-weight: 600;
+}
+
+/* ============================================ */
+/* EVOLUTII TAB                                 */
+/* ============================================ */
+
+.evolutii-timeline {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md, 1rem);
+    position: relative;
+    padding-left: var(--space-xl, 1.75rem);
+}
+
+.evolutii-timeline::before {
+    content: '';
+    position: absolute;
+    left: 8px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: linear-gradient(to bottom, var(--color-primary, #0369a1), var(--color-primary-light, #0ea5e9));
+    border-radius: 1px;
+}
+
+.evolutie-item {
+    position: relative;
+    background: var(--color-surface, white);
+    border-radius: var(--radius-lg, 16px);
+    padding: var(--space-md, 1rem) var(--space-lg, 1.25rem);
+    border: 1px solid var(--color-border, #e2e8f0);
+    transition: all var(--transition-base, 200ms ease-in-out);
+}
+
+.evolutie-item::before {
+    content: '';
+    position: absolute;
+    left: calc(-1 * var(--space-xl, 1.75rem) + 4px);
+    top: 50%;
+    transform: translateY(-50%);
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--color-primary, #0369a1);
+    border: 2px solid white;
+    box-shadow: 0 0 0 2px var(--color-primary-light, #0ea5e9);
+}
+
+.evolutie-item:hover {
+    box-shadow: var(--shadow-md, 0 4px 6px -1px rgb(0 0 0 / 0.1));
+}
+
+.evolutie-date {
+    font-size: 0.8rem;
+    color: var(--color-primary, #0369a1);
+    font-weight: 700;
+    margin-bottom: var(--space-xs, 0.25rem);
+}
+
+.evolutie-content p {
+    margin: 0;
+    font-size: 0.9rem;
+    color: var(--color-text-primary, #0f172a);
+    line-height: 1.6;
+}
+
+/* ============================================ */
+/* PROGRAMARI TAB                               */
+/* ============================================ */
+
+/* Programari filter toggle */
+.programari-tab-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md, 1rem);
+}
+
+.programari-filter-toggle {
+    align-self: flex-end;
+    background: var(--color-surface, white);
+    border: 1px solid var(--color-border, #e2e8f0);
+    border-radius: var(--radius-full, 9999px);
+    padding: 0.35rem 0.85rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--color-text-secondary, #475569);
+    cursor: pointer;
+    transition: all var(--transition-base, 200ms ease-in-out);
+    font-family: 'Nunito', sans-serif;
+}
+
+.programari-filter-toggle:hover {
+    background: var(--color-surface-hover, #f8fafc);
+    border-color: var(--color-primary-light, #0ea5e9);
+    color: var(--color-primary, #0369a1);
+}
+
+.programari-filter-toggle.active {
+    background: var(--color-error-bg, #fee2e2);
+    border-color: var(--color-error, #ef4444);
+    color: #991b1b;
+}
+
+.programari-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md, 1rem);
+}
+
+.programare-card {
+    background: var(--color-surface, white);
+    border-radius: var(--radius-lg, 16px);
+    padding: var(--space-md, 1rem) var(--space-lg, 1.25rem);
+    border: 1px solid var(--color-border, #e2e8f0);
+    border-left: 4px solid var(--color-text-muted, #94a3b8);
+    transition: all var(--transition-base, 200ms ease-in-out);
+}
+
+.programare-card:hover {
+    box-shadow: var(--shadow-md, 0 4px 6px -1px rgb(0 0 0 / 0.1));
+}
+
+.programare-card.status-programata { border-left-color: #3b82f6; }
+.programare-card.status-finalizata { border-left-color: #10b981; }
+.programare-card.status-anulata { border-left-color: #ef4444; opacity: 0.8; }
+
+.programare-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-sm, 0.5rem);
+}
+
+.programare-date {
+    display: flex;
+    flex-direction: column;
+}
+
+.prog-day {
+    font-weight: 700;
+    font-size: 1rem;
+    color: var(--color-text-primary, #0f172a);
+}
+
+.prog-time {
+    font-size: 0.8rem;
+    color: var(--color-text-secondary, #475569);
+    font-weight: 600;
+}
+
+.programare-status {
+    padding: 0.2rem 0.6rem;
+    border-radius: var(--radius-full, 9999px);
+    font-size: 0.75rem;
+    font-weight: 700;
+    background: var(--color-surface-hover, #f8fafc);
+    color: var(--color-text-secondary, #475569);
+}
+
+.programare-status.status-programata {
+    background: var(--color-primary-subtle, #e0f2fe);
+    color: var(--color-primary-dark, #075985);
+}
+
+.programare-status.status-finalizata {
+    background: var(--color-success-bg, #d1fae5);
+    color: #065f46;
+}
+
+.programare-status.status-anulata {
+    background: var(--color-error-bg, #fee2e2);
+    color: #991b1b;
+}
+
+.programare-body {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-sm, 0.5rem);
+    font-size: 0.85rem;
+    color: var(--color-text-secondary, #475569);
+}
+
+.prog-service {
+    font-weight: 600;
+    color: var(--color-text-primary, #0f172a);
+}
+
+.prog-alt-terapeut {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--color-text-secondary, #475569);
+    background: var(--color-surface-hover, #f8fafc);
+    border: 1px solid var(--color-border, #e2e8f0);
+    padding: 0.15rem 0.5rem;
+    border-radius: var(--radius-full, 9999px);
+}
+
+/* Motiv anulare */
+.programare-motiv-anulare {
+    margin-top: var(--space-sm, 0.5rem);
+    padding: var(--space-sm, 0.5rem) var(--space-md, 1rem);
+    background: var(--color-error-bg, #fee2e2);
+    border-radius: var(--radius-md, 10px);
+    font-size: 0.85rem;
+    color: #991b1b;
+    border-left: 3px solid var(--color-error, #ef4444);
+}
+
+.motiv-label {
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 0.7rem;
+    letter-spacing: 0.3px;
+}
+
+.programare-eval-info {
+    margin-top: var(--space-sm, 0.5rem);
+    padding-top: var(--space-sm, 0.5rem);
+    border-top: 1px solid var(--color-border, #e2e8f0);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* ============================================ */
+/* JURNALE TAB                                  */
+/* ============================================ */
+
+.jurnale-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md, 1rem);
+}
+
+.jurnal-card {
+    background: var(--color-surface, white);
+    border-radius: var(--radius-xl, 20px);
+    padding: var(--space-lg, 1.25rem);
+    border: 1px solid var(--color-border, #e2e8f0);
+    transition: all var(--transition-base, 200ms ease-in-out);
+}
+
+.jurnal-card:hover {
+    box-shadow: var(--shadow-md, 0 4px 6px -1px rgb(0 0 0 / 0.1));
+}
+
+.jurnal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-md, 1rem);
+}
+
+.jurnal-date {
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: var(--color-text-primary, #0f172a);
+}
+
+.jurnal-ora {
+    font-size: 0.8rem;
+    color: var(--color-text-secondary, #475569);
+    font-weight: 600;
+}
+
+/* Metric Bars */
+.jurnal-metrics {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm, 0.5rem);
+}
+
+.metric {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm, 0.5rem);
+}
+
+.metric-label {
+    font-size: 0.75rem;
+    color: var(--color-text-muted, #94a3b8);
+    font-weight: 700;
+    text-transform: uppercase;
+    min-width: 80px;
+    letter-spacing: 0.3px;
+}
+
+.metric-bar-container {
+    flex: 1;
+    height: 8px;
+    background: var(--color-surface-hover, #f1f5f9);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.metric-bar {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.6s ease-out;
+}
+
+.metric-bar.durere {
+    background: linear-gradient(90deg, #fbbf24, #ef4444);
+}
+
+.metric-bar.dificultate {
+    background: linear-gradient(90deg, #34d399, #f59e0b);
+}
+
+.metric-bar.oboseala {
+    background: linear-gradient(90deg, #60a5fa, #8b5cf6);
+}
+
+.metric-value {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--color-text-secondary, #475569);
+    min-width: 35px;
+    text-align: right;
+}
+
+.jurnal-comentarii {
+    margin-top: var(--space-md, 1rem);
+    padding: var(--space-md, 1rem);
+    background: var(--color-surface-hover, #f8fafc);
+    border-radius: var(--radius-md, 10px);
+    border-left: 3px solid var(--color-secondary, #0d9488);
+}
+
+.jurnal-comentarii p {
+    margin: var(--space-xs, 0.25rem) 0 0 0;
+    font-size: 0.9rem;
+    color: var(--color-text-primary, #0f172a);
+    line-height: 1.6;
+}
+
+/* ============================================ */
+/* RESPONSIVE                                   */
+/* ============================================ */
+
+@media (max-width: 768px) {
+    .fisa-container {
+        padding: var(--space-md, 1rem);
+    }
+
+    .fisa-header-card {
+        flex-direction: column;
+    }
+
+    .fisa-situatie {
+        min-width: unset;
+        width: 100%;
+    }
+
+    .situatie-stats {
+        justify-content: center;
+    }
+
+    .fisa-tabs {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .fisa-tab {
+        padding: 0.5rem 0.9rem;
+        font-size: 0.8rem;
+    }
+
+    .evaluare-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 2px;
+    }
+
+    .programare-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--space-sm, 0.5rem);
+    }
+
+    .metric-label {
+        min-width: 65px;
+        font-size: 0.65rem;
+    }
+}

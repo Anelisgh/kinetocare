@@ -9,6 +9,8 @@ import com.example.programari_service.entity.Evaluare;
 import com.example.programari_service.entity.MotivAnulare;
 import com.example.programari_service.entity.Programare;
 import com.example.programari_service.entity.StatusProgramare;
+import com.example.programari_service.mapper.EvaluareMapper;
+import com.example.programari_service.mapper.IstoricProgramareMapper;
 import com.example.programari_service.mapper.ProgramareMapper;
 import com.example.programari_service.repository.EvaluareRepository;
 import com.example.programari_service.repository.ProgramareRepository;
@@ -25,6 +27,9 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -33,11 +38,14 @@ public class ProgramareService {
 
     private final ProgramareRepository programareRepository;
     private final ProgramareMapper programareMapper;
+    private final IstoricProgramareMapper istoricProgramareMapper;
     private final ServiciiClient serviciiClient;
     private final TerapeutiClient terapeutiClient;
     private final EvaluareRepository evaluareRepository;
+    private final EvaluareMapper evaluareMapper;
     private final PacientiClient pacientiClient;
     private final UserClient userClient;
+    private final NotificarePublisher notificarePublisher;
 
     @Value("${app.service-names.initial}")
     private String numeEvaluareInitiala;
@@ -90,7 +98,19 @@ public class ProgramareService {
                 oraSfarsit,
                 isPrimaIntalnire);
 
-        return programareRepository.save(programareNoua);
+        Programare salvata = programareRepository.save(programareNoua);
+
+        // notificari catre terapeut
+        notificarePublisher.programareNoua(salvata);
+        if (isPrimaIntalnire) {
+            notificarePublisher.evaluareInitialaNoua(salvata);
+        }
+        // daca serviciul ales automat e "Reevaluare", notificam terapeutul
+        if (numeReevaluare.equalsIgnoreCase(serviciuDeAplicat.getNume())) {
+            notificarePublisher.reevaluareNecesara(salvata);
+        }
+
+        return salvata;
     }
 
     // anuleaza o programare de catre pacient
@@ -111,6 +131,9 @@ public class ProgramareService {
         programare.setMotivAnulare(MotivAnulare.ANULAT_DE_PACIENT);
 
         programareRepository.save(programare);
+
+        // notificare catre terapeut
+        notificarePublisher.programareAnulataDePacient(programare);
     }
 
     // marcheaza neprezentarea de catre terapeut
@@ -297,9 +320,10 @@ public class ProgramareService {
         programare.setStatus(StatusProgramare.ANULATA);
         programare.setMotivAnulare(MotivAnulare.ANULAT_DE_TERAPEUT);
 
-        // TODO: notificare catre pacient
-
         programareRepository.save(programare);
+
+        // notificare catre pacient
+        notificarePublisher.programareAnulataDeTerapeut(programare);
     }
 
     // Cron Job pentru finalizarea automata a sedintelor
@@ -317,7 +341,29 @@ public class ProgramareService {
             expirate.forEach(p -> p.setStatus(StatusProgramare.FINALIZATA));
             programareRepository.saveAll(expirate);
             log.info("Cron Job: S-au finalizat automat {} programări.", expirate.size());
+
+            // pentru fiecare programare finalizata, trimitem notificari
+            expirate.forEach(this::trimiteNotificariDupaFinalizare);
         }
+    }
+
+    // trimite REMINDER_JURNAL si verifica daca pacientul a terminat pachetul (REEVALUARE_RECOMANDATA)
+    private void trimiteNotificariDupaFinalizare(Programare p) {
+        // reminder jurnal - pacientul trebuie sa completeze jurnalul
+        notificarePublisher.reminderJurnal(p);
+
+        // verificam daca pacientul a terminat toate sedintele din pachet
+        // refolosim aceeasi logica din determinaServiciulCorect
+        evaluareRepository.findFirstByPacientIdOrderByDataDesc(p.getPacientId())
+                .ifPresent(evaluare -> {
+                    if (evaluare.getSedinteRecomandate() != null) {
+                        long sedinteEfectuate = programareRepository.countSedintePacientDupaData(
+                                p.getPacientId(), evaluare.getData());
+                        if (sedinteEfectuate == evaluare.getSedinteRecomandate()) {
+                            notificarePublisher.reevaluareRecomandata(p);
+                        }
+                    }
+                });
     }
 
     // sedinte finalizate fara jurnal
@@ -350,6 +396,61 @@ public class ProgramareService {
         return programareMapper.toProgramareJurnalDTO(p, numeTerapeut, numeLocatie);
     }
 
+    // returneaza istoricul complet al programarilor unui pacient
+    public List<IstoricProgramareDTO> getIstoricPacient(Long pacientId) {
+        List<Programare> programari = programareRepository.findAllByPacientIdOrderByDataDescOraInceputDesc(pacientId);
+
+        // Fetch journal history
+        List<JurnalIstoricDTO> jurnale = new ArrayList<>();
+        try {
+            jurnale = pacientiClient.getIstoricJurnal(pacientId);
+        } catch (Exception e) {
+            log.warn("Nu s-a putut prelua istoricul jurnalului pentru pacientul {}: {}", pacientId, e.getMessage());
+        }
+
+        // Map journals by programareId
+        Map<Long, JurnalIstoricDTO> jurnalMap = jurnale.stream()
+                .filter(j -> j.getProgramareId() != null)
+                .collect(Collectors.toMap(JurnalIstoricDTO::getProgramareId, Function.identity(), (existing, replacement) -> existing));
+
+        return programari.stream().map(p -> {
+            String numeTerapeut = getNumeTerapeut(p.getTerapeutId());
+            String numeLocatie = getNumeLocatie(p.getLocatieId());
+
+            String serviciuRecomandat = null;
+            Evaluare evaluare = null;
+            if (Boolean.TRUE.equals(p.getAreEvaluare())) {
+                evaluare = evaluareRepository.findByProgramareId(p.getId()).orElse(null);
+                
+                if (evaluare != null && evaluare.getServiciuRecomandatId() != null) {
+                    try {
+                        DetaliiServiciuDTO serviciuDTO = serviciiClient.getServiciuById(evaluare.getServiciuRecomandatId());
+                        if (serviciuDTO != null) {
+                            serviciuRecomandat = serviciuDTO.getNume();
+                        }
+                    } catch (Exception e) {
+                        log.warn("Nu s-a putut prelua numele serviciului recomandat pentru evaluarea {}: {}", evaluare.getId(), e.getMessage());
+                        serviciuRecomandat = "Indisponibil";
+                    }
+                }
+            }
+
+            // Map Journal Details if exists
+            DetaliiJurnalDTO detaliiJurnal = null;
+            if (jurnalMap.containsKey(p.getId())) {
+                JurnalIstoricDTO j = jurnalMap.get(p.getId());
+                detaliiJurnal = DetaliiJurnalDTO.builder()
+                        .nivelDurere(j.getNivelDurere())
+                        .dificultateExercitii(j.getDificultateExercitii())
+                        .nivelOboseala(j.getNivelOboseala())
+                        .comentarii(j.getComentarii())
+                        .build();
+            }
+
+            return istoricProgramareMapper.toDTO(p, numeTerapeut, numeLocatie, evaluare, serviciuRecomandat, detaliiJurnal);
+        }).toList();
+    }
+
     // HELPER: obtine numele complet al terapeutului dupa terapeutId
     private String getNumeTerapeut(Long terapeutId) {
         try {
@@ -377,5 +478,23 @@ public class ProgramareService {
             log.error("Nu s-a putut prelua numele locatiei {}: {}", locatieId, e.getMessage());
         }
         return "Locație Necunoscută";
+    }
+    // Calculeaza situatia curenta a pacientului (Diagnostic + Progres Sedinte)
+    public SituatiePacientDTO getSituatiePacient(Long pacientId) {
+        // 1. Cautam ultima evaluare
+        Optional<Evaluare> evaluareOpt = evaluareRepository.findFirstByPacientIdOrderByDataDesc(pacientId);
+
+        if (evaluareOpt.isEmpty()) {
+            return evaluareMapper.toEmptySituatiePacientDTO();
+        }
+
+        Evaluare evaluare = evaluareOpt.get();
+
+        // 2. Numaram sedintele efectuate de la data evaluarii
+        long sedinteEfectuate = programareRepository.countSedintePacientDupaData(
+                pacientId,
+                evaluare.getData());
+
+        return evaluareMapper.toSituatiePacientDTO(evaluare, sedinteEfectuate);
     }
 }

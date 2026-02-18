@@ -92,6 +92,7 @@ public class ProgramareMapper {
                 .data(programare.getData())
                 .ora(programare.getOraInceput())
                 .numeTerapeut(numeTerapeut)
+                .terapeutId(programare.getTerapeutId())
                 .numeLocatie(numeLocatie)
                 .build();
     }

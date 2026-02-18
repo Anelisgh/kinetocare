@@ -11,6 +11,7 @@ public class JurnalMapper {
     public JurnalIstoricDTO toIstoricDTO(JurnalPacient jurnal, ProgramareJurnalDTO detalii) {
         return JurnalIstoricDTO.builder()
                 .id(jurnal.getId())
+                .programareId(jurnal.getProgramareId())
                 .dataJurnal(jurnal.getData())
                 .oraSedinta(detalii != null ? detalii.getOra() : null)
                 .nivelDurere(jurnal.getNivelDurere())

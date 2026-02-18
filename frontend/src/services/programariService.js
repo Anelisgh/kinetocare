@@ -11,6 +11,15 @@ export const programariService = {
     }
   },
 
+  getIstoricPacient: async (pacientId) => {
+    try {
+      const response = await api.get(`/api/programari/pacient/${pacientId}/istoric`);
+      return response.data;
+    } catch (error) {
+      handleApiError(error, 'Eroare la preluarea istoricului pacientului');
+    }
+  },
+
   // extrage serviciul recomandat de terapeut pentru pacient
   getServiciuRecomandat: async (pacientId) => {
     try {
@@ -85,6 +94,30 @@ export const programariService = {
       await api.patch(`/api/programari/${programareId}/neprezentare?${params.toString()}`);
     } catch (error) {
       handleApiError(error, 'Eroare la marcarea neprezentării');
+    }
+  },
+
+  // FISA PACIENT - lista pacienti terapeut
+  getListaPacienti: async (terapeutId) => {
+    try {
+      const response = await api.get('/api/fisa-pacient/lista', {
+        params: { terapeutId }
+      });
+      return response.data;
+    } catch (error) {
+      handleApiError(error, 'Eroare la preluarea listei de pacienți');
+    }
+  },
+
+  // FISA PACIENT - detalii pacient
+  getFisaPacient: async (pacientId, terapeutId) => {
+    try {
+      const response = await api.get(`/api/fisa-pacient/${pacientId}`, {
+        params: { terapeutId }
+      });
+      return response.data;
+    } catch (error) {
+      handleApiError(error, 'Eroare la preluarea fișei pacientului');
     }
   }
 

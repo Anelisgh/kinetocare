@@ -3,8 +3,6 @@ package com.example.programari_service.dto;
 import com.example.programari_service.entity.TipEvaluare;
 import lombok.Data;
 
-import java.time.LocalDate;
-
 @Data
 public class EvaluareRequestDTO {
     private Long pacientId;

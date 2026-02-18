@@ -13,11 +13,14 @@ import HomepageTerapeut from './pages/terapeut/HomepageTerapeut';
 import ProfilTerapeut from './pages/terapeut/ProfilTerapeut';
 import EvaluariTerapeut from './pages/terapeut/EvaluariTerapeut';
 import EvolutiiTerapeut from './pages/terapeut/EvolutiiTerapeut';
+import PacientiTerapeut from './pages/terapeut/PacientiTerapeut';
+import FisaPacient from './pages/terapeut/FisaPacient';
 
 import HomepagePacient from './pages/pacient/HomepagePacient';
 import ProfilPacient from './pages/pacient/ProfilPacient';
 import CompleteProfile from './pages/pacient/CompleteProfile';
 import JurnalPacient from './pages/pacient/JurnalPacient';
+import ProgramariPacient from './pages/pacient/ProgramariPacient';
 import ProtectedRoute from './components/ProtectedRoute';
 
 import AdminLayout from './layouts/AdminLayout';
@@ -40,6 +43,8 @@ function App() {
             <Route path="/terapeut/profil" element={<ProfilTerapeut />} />
             <Route path="/terapeut/evaluari" element={<EvaluariTerapeut />} />
             <Route path="/terapeut/evolutii" element={<EvolutiiTerapeut />} />
+            <Route path="/terapeut/pacienti" element={<PacientiTerapeut />} />
+            <Route path="/terapeut/pacienti/:pacientId" element={<FisaPacient />} />
           </Route>
         </Route>
 
@@ -51,6 +56,7 @@ function App() {
               <Route path="/pacient/homepage" element={<HomepagePacient />} />
               <Route path="/pacient/profil" element={<ProfilPacient />} />
               <Route path="/pacient/jurnal" element={<JurnalPacient />} />
+              <Route path="/pacient/programari" element={<ProgramariPacient />} />
             </Route>
           </Route>
         </Route>

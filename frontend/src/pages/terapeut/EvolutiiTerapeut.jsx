@@ -122,7 +122,7 @@ const EvolutiiTerapeut = () => {
 
                     <div className="evolutii-form-group">
                         <form onSubmit={handleSubmit}>
-                            <label className="evolutii-label">Adaugă Notă / Evoluție</label>
+                            <label className="evolutii-label">Adaugă Notă</label>
                             <textarea
                                 value={observatii}
                                 onChange={(e) => setObservatii(e.target.value)}
@@ -145,7 +145,7 @@ const EvolutiiTerapeut = () => {
                 {/* ISTORIC */}
                 <div className="evolutii-istoric-section">
                     <h3 className="evolutii-istoric-header">
-                        Istoric Notițe {getSelectedPatientName()}
+                        Istoric {getSelectedPatientName()}
                     </h3>
 
                     {!selectedPacientId ? (

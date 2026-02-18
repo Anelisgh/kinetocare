@@ -21,6 +21,7 @@ public class JurnalService {
     private final JurnalRepository jurnalRepository;
     private final ProgramariClient programariClient;
     private final JurnalMapper jurnalMapper;
+    private final NotificarePublisher notificarePublisher;
 
     // adaugarea jurnalului
     @Transactional
@@ -44,6 +45,11 @@ public class JurnalService {
 
         // marcam faptul ca programarea are jurnal completat
         programariClient.marcheazaJurnal(request.getProgramareId());
+
+        // notificam terapeutul ca jurnalul a fost completat
+        if (detaliiProgramare.getTerapeutId() != null) {
+            notificarePublisher.jurnalCompletat(detaliiProgramare.getTerapeutId(), pacientId, request.getProgramareId());
+        }
     }
 
     // returneaza istoric jurnale

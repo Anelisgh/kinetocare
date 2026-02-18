@@ -1,0 +1,350 @@
+/* ============================================ */
+/* PACIENTI TERAPEUT - LISTA PACIENTI           */
+/* ============================================ */
+
+.pacienti-container {
+    padding: var(--space-xl, 1.75rem);
+    background-color: var(--color-background, #F3F8FF);
+    min-height: calc(100vh - 8vh);
+    animation: fadeInPage 0.6s ease-out;
+}
+
+@keyframes fadeInPage {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Loading & Error */
+.pacienti-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 60vh;
+    text-align: center;
+    color: var(--color-text-secondary, #475569);
+    font-size: 1.125rem;
+    gap: var(--space-md, 1rem);
+}
+
+.loading-icon {
+    font-size: 3rem;
+    animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.1); opacity: 0.8; }
+}
+
+.pacienti-error {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 60vh;
+    color: var(--color-error, #ef4444);
+    background: var(--color-error-bg, #fee2e2);
+    border-radius: var(--radius-xl, 20px);
+    border-left: 4px solid var(--color-error, #ef4444);
+    max-width: 500px;
+    margin: 0 auto;
+    padding: var(--space-xl, 1.75rem);
+}
+
+/* Header */
+.pacienti-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-xl, 1.75rem);
+    flex-wrap: wrap;
+    gap: var(--space-md, 1rem);
+}
+
+.pacienti-title-section {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md, 1rem);
+}
+
+.pacienti-title-section h1 {
+    font-size: 1.75rem;
+    font-weight: 800;
+    color: var(--color-text-primary, #0f172a);
+    margin: 0;
+}
+
+.pacienti-count {
+    background: linear-gradient(135deg, var(--color-primary, #0369a1) 0%, var(--color-primary-light, #0ea5e9) 100%);
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: var(--radius-full, 9999px);
+    font-size: 0.8rem;
+    font-weight: 700;
+}
+
+/* Search */
+
+.pacienti-search {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm, 0.5rem);
+}
+
+.pacienti-search input {
+    display: flex;
+    align-items: center;
+    background: var(--color-surface, white);
+    transition: all var(--transition-base, 200ms ease-in-out);
+    min-width: 250px;
+}
+
+.pacienti-search:focus-within {
+    border-color: var(--color-primary, #0369a1);
+}
+
+.search-icon {
+    font-size: 1rem;
+    opacity: 0.6;
+}
+
+.search-input {
+    border: none;
+    outline: none;
+    background: transparent;
+    font-size: 0.95rem;
+    font-family: 'Nunito', sans-serif;
+    color: var(--color-text-primary, #0f172a);
+    width: 100%;
+}
+
+.search-input::placeholder {
+    color: var(--color-text-muted, #94a3b8);
+}
+
+/* Section Title */
+.section-title {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--color-text-primary, #0f172a);
+    margin: 0 0 var(--space-lg, 1.25rem) 0;
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm, 0.5rem);
+}
+
+.section-icon.active {
+    color: #10b981;
+    font-size: 0.75rem;
+}
+
+.section-icon.archived {
+    color: var(--color-text-muted, #94a3b8);
+    font-size: 0.75rem;
+}
+
+/* Grid */
+.pacienti-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: var(--space-lg, 1.25rem);
+}
+
+/* Patient Card */
+.pacient-card {
+    background: var(--color-surface, white);
+    border-radius: var(--radius-xl, 20px);
+    padding: var(--space-lg, 1.25rem);
+    border: 1px solid var(--color-border, #e2e8f0);
+    cursor: pointer;
+    transition: all var(--transition-base, 200ms ease-in-out);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md, 1rem);
+}
+
+.pacient-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px rgba(3, 105, 161, 0.12);
+    border-color: var(--color-primary-light, #0ea5e9);
+}
+
+.pacient-card.archived {
+    opacity: 0.75;
+    border-left: 4px solid var(--color-text-muted, #94a3b8);
+}
+
+.pacient-card.archived:hover {
+    opacity: 1;
+    border-color: var(--color-text-muted, #94a3b8);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
+}
+
+/* Card Header */
+.pacient-card-header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md, 1rem);
+}
+
+.pacient-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius-full, 9999px);
+    background: linear-gradient(135deg, var(--color-primary, #0369a1) 0%, var(--color-primary-light, #0ea5e9) 100%);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 0.95rem;
+    flex-shrink: 0;
+    text-transform: uppercase;
+}
+
+.pacient-avatar.archived {
+    background: linear-gradient(135deg, #94a3b8 0%, #cbd5e1 100%);
+}
+
+.pacient-name-section h3 {
+    margin: 0;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--color-text-primary, #0f172a);
+}
+
+.pacient-age {
+    font-size: 0.8rem;
+    color: var(--color-text-secondary, #475569);
+    font-weight: 500;
+}
+
+/* Card Body */
+.pacient-card-body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm, 0.5rem);
+}
+
+.pacient-info-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.info-label {
+    font-size: 0.75rem;
+    color: var(--color-text-muted, #94a3b8);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 700;
+}
+
+.info-value {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--color-text-primary, #0f172a);
+}
+
+.info-value.diagnostic {
+    max-width: 180px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    text-align: right;
+}
+
+.info-value.sessions.has-sessions {
+    color: var(--color-primary, #0369a1);
+}
+
+.info-value.sessions.no-sessions {
+    color: #10b981;
+}
+
+/* Card Footer */
+.pacient-card-footer {
+    border-top: 1px solid var(--color-border, #e2e8f0);
+    padding-top: var(--space-sm, 0.5rem);
+    text-align: right;
+}
+
+.view-details {
+    font-size: 0.85rem;
+    color: var(--color-primary, #0369a1);
+    font-weight: 700;
+    transition: all var(--transition-base, 200ms ease-in-out);
+}
+
+.pacient-card:hover .view-details {
+    color: var(--color-primary-dark, #075985);
+    letter-spacing: 1px;
+}
+
+/* Empty State */
+.pacienti-empty {
+    text-align: center;
+    padding: var(--space-xl, 1.75rem);
+    color: var(--color-text-secondary, #475569);
+    background: var(--color-surface, white);
+    border-radius: var(--radius-xl, 20px);
+    border: 2px dashed var(--color-border, #e2e8f0);
+}
+
+/* Arhiva Toggle */
+.arhiva-section {
+    margin-top: var(--space-xl, 1.75rem);
+}
+
+.arhiva-toggle {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm, 0.5rem);
+    padding: var(--space-md, 1rem) var(--space-lg, 1.25rem);
+    background: var(--color-surface, white);
+    border: 1px solid var(--color-border, #e2e8f0);
+    border-radius: var(--radius-lg, 16px);
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--color-text-secondary, #475569);
+    cursor: pointer;
+    transition: all var(--transition-base, 200ms ease-in-out);
+    font-family: 'Nunito', sans-serif;
+    margin-bottom: var(--space-md, 1rem);
+}
+
+.arhiva-toggle:hover {
+    background: var(--color-surface-hover, #f8fafc);
+    border-color: var(--color-text-muted, #94a3b8);
+}
+
+.toggle-arrow {
+    margin-left: auto;
+    transition: transform var(--transition-base, 200ms ease-in-out);
+    font-size: 0.75rem;
+}
+
+.toggle-arrow.open {
+    transform: rotate(180deg);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .pacienti-container {
+        padding: var(--space-md, 1rem);
+    }
+
+    .pacienti-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .pacienti-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .pacienti-title-section h1 {
+        font-size: 1.4rem;
+    }
+}

@@ -3,6 +3,8 @@ import { HashLink } from 'react-router-hash-link';
 import { homepageService } from '../../services/homepageService';
 import { programariService } from '../../services/programariService';
 import BookingWidget from '../../components/pacient/homepage/BookingWidget';
+import ActiveAppointmentCard from '../../components/pacient/homepage/ActiveAppointmentCard';
+import TerapeutSection from '../../components/pacient/profil/TerapeutSection';
 import '../../styles/HomepagePacient.css';
 
 const HomepagePacient = () => {
@@ -56,13 +58,30 @@ const HomepagePacient = () => {
           <div className="homepage-patient-details">
             <p className="homepage-patient-name">{nume} {prenume} ({varsta} ani)</p>
           </div>
-          {/* Daca avem info despre diagnostic din Evaluare, le afisam */}
-          {data.diagnostic && (
-            <div className="homepage-diagnostic-section">
-              <p className="homepage-diagnostic-label">Diagnostic</p>
-              <span className="homepage-diagnostic-badge">
-                {data.diagnostic}
-              </span>
+          
+          {/* Diagnostic & Progres */}
+          {/* Diagnostic & Progres */}
+          {data.situatie && (
+            <div className="homepage-situatie-container">
+               <div className="homepage-diagnostic-section">
+                  <p className="homepage-diagnostic-label">Diagnostic</p>
+                  <span className="homepage-diagnostic-badge">
+                    {data.situatie.diagnostic}
+                  </span>
+               </div>
+
+               <div className="homepage-progress-section">
+                  <div className="homepage-progress-header">
+                      <span>Progres Tratament</span>
+                      <strong>{data.situatie.sedinteEfectuate} / {data.situatie.sedinteRecomandate} ședințe</strong>
+                  </div>
+                  <div className="homepage-progress-bar-container">
+                      <div 
+                        className="homepage-progress-bar-fill" 
+                        style={{ width: `${Math.min((data.situatie.sedinteEfectuate / (data.situatie.sedinteRecomandate || 1)) * 100, 100)}%` }}
+                      ></div>
+                  </div>
+               </div>
             </div>
           )}
         </div>
@@ -90,50 +109,20 @@ const HomepagePacient = () => {
       {/* 2. ACTION AREA (Logica starilor) */}
       <div className="homepage-action-area">
 
-        {/* STAREA 1: Fara Terapeut -> Afiseaza un card care il trimite la Profil sa-si caute unul */}
+        {/* STAREA 1: Fara Terapeut -> Afiseaza un card pentru selectarea terapeutului */}
         {!terapeutDetalii && (
-          <div className="homepage-no-therapist-card">
-            <h3>Începe Recuperarea</h3>
-            <p>Selectează un terapeut pentru a putea face programări.</p>
-            {/* HashLink in loc de Link -> Pentru că are un mecanism intern care așteaptă ca elementul să apară în DOM înainte să încerce scroll-ul */}
-            <HashLink
-              to="/pacient/profil#choose-terapeut"
-              className="homepage-find-therapist-btn"
-              scroll={(el) => el.scrollIntoView({ behavior: 'smooth', block: 'start' })}
-            >
-              Găsește Terapeut
-            </HashLink>
-          </div>
+          <TerapeutSection 
+            dataNasterii={dataNasterii}
+            onProfileUpdate={refreshDashboard}
+          />
         )}
-
 
         {/* STAREA 2: Are Programare Viitoare -> Afiseaza card cu detalii si buton de Anulare */}
         {terapeutDetalii && urmatoareaProgramare && (
-          <div className="homepage-appointment-card">
-            <h3>Următoarea Ședință</h3>
-
-            <div className="homepage-appointment-time-section">
-              <div className="homepage-appointment-time">
-                {urmatoareaProgramare.oraInceput.substring(0, 5)}
-              </div>
-              <div className="homepage-appointment-date-section">
-                <p className="homepage-appointment-date">
-                  {new Date(urmatoareaProgramare.data).toLocaleDateString('ro-RO', { weekday: 'long', day: 'numeric', month: 'long' })}
-                </p>
-                <p className="homepage-appointment-service">{urmatoareaProgramare.tipServiciu}</p>
-              </div>
-            </div>
-
-            <div className="homepage-appointment-footer">
-              <span className="homepage-appointment-price">{urmatoareaProgramare.pret} RON</span>
-              <button
-                onClick={() => handleCancel(urmatoareaProgramare.id)}
-                className="homepage-cancel-btn"
-              >
-                Anulează
-              </button>
-            </div>
-          </div>
+          <ActiveAppointmentCard 
+            programare={urmatoareaProgramare}
+            onCancel={handleCancel}
+          />
         )}
 
         {/* STAREA 3: Booking Mode (Are terapeut, dar nu are programare viitoare) -> Afiseaza widget-ul de programare */}

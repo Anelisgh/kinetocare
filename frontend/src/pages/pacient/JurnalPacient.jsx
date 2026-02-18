@@ -241,42 +241,7 @@ const JurnalPacient = () => {
                 </div>
             )}
 
-            {/* --- ZONA 2: ISTORIC --- */}
-            <div className="history-section">
-                <h2 className="section-title">Istoric Jurnale</h2>
-                {istoric.length === 0 ? (
-                    <p className="text-gray-500">Nu ai completat niciun jurnal încă.</p>
-                ) : (
-                    <div className="history-list">
-                        {istoric.map(item => (
-                            <div key={item.id} className="history-card">
-                                <div className="history-header">
-                                    <span className="history-date">
-                                        {item.dataJurnal ? new Date(item.dataJurnal).toLocaleDateString('ro-RO') : 'Dată necunoscută'}
-                                    </span>
-                                    <span className="history-service">{item.tipServiciu || 'Serviciu'}</span>
-                                </div>
 
-                                <div className="history-metrics">
-                                    <div className="metric-badge metric-red">Durere: {item.nivelDurere}</div>
-                                    <div className="metric-badge metric-yellow">Efort: {item.dificultateExercitii}</div>
-                                    <div className="metric-badge metric-blue">Oboseală: {item.nivelOboseala}</div>
-                                </div>
-
-                                <div className="history-details">
-                                    <small>Terapeut: {item.numeTerapeut}</small>
-                                </div>
-
-                                {item.comentarii && (
-                                    <div className="history-comment">
-                                        {item.comentarii}
-                                    </div>
-                                )}
-                            </div>
-                        ))}
-                    </div>
-                )}
-            </div>
         </div>
     );
 };

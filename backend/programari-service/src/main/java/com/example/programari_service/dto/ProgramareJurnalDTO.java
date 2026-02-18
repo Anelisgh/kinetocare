@@ -14,5 +14,6 @@ public class ProgramareJurnalDTO {
     private LocalDate data;
     private LocalTime ora;
     private String numeTerapeut;
+    private Long terapeutId;
     private String numeLocatie;
 }

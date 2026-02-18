@@ -131,4 +131,16 @@ public class ProgramareController {
     public ResponseEntity<ProgramareJurnalDTO> getDetaliiProgramare(@PathVariable Long id) {
         return ResponseEntity.ok(programareService.getDetaliiProgramare(id));
     }
+
+    // returneaza istoricul complet al programarilor unui pacient
+    @GetMapping("/pacient/{id}/istoric")
+    public ResponseEntity<List<IstoricProgramareDTO>> getIstoricPacient(@PathVariable Long id) {
+        return ResponseEntity.ok(programareService.getIstoricPacient(id));
+    }
+    // returneaza situatia pacientului (diagnostic + progres sedinte)
+    // api-gateway -> getHomepage (HomepageController)
+    @GetMapping("/pacient/{id}/situatie")
+    public ResponseEntity<SituatiePacientDTO> getSituatiePacient(@PathVariable Long id) {
+        return ResponseEntity.ok(programareService.getSituatiePacient(id));
+    }
 }

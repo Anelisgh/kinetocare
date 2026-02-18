@@ -134,109 +134,114 @@ const EvaluariTerapeut = () => {
 
                 <form onSubmit={handleSubmit} className="evaluari-form">
 
-                    {/* GRID: Pacient & Tip */}
-                    <div className="evaluari-form-grid">
-                        {/* Select Pacient */}
-                        <div className="evaluari-form-group">
-                            <label className="evaluari-label">Pacient</label>
-                            <select
-                                name="pacientId"
-                                value={formData.pacientId}
-                                onChange={handleChange}
-                                className="evaluari-select"
-                            >
-                                <option value="">Selectează Pacient</option>
-                                {pacienti.map(p => (
-                                    <option key={p.id} value={p.id}>
-                                        {p.nume} {p.prenume}
-                                    </option>
-                                ))}
-                            </select>
-                            <p className="evaluari-hint">
-                                Sunt afișați doar pacienții cu programări recente.
-                            </p>
-                        </div>
+    {/* GRID: Pacient & Tip */}
+    <div className="evaluari-form-grid">
+        {/* Select Pacient */}
+        <div className="evaluari-form-group">
+            <label className="evaluari-label">Pacient</label>
+            <select
+                name="pacientId"
+                value={formData.pacientId}
+                onChange={handleChange}
+                className="evaluari-select"
+            >
+                <option value="">Selectează Pacient</option>
+                {pacienti.map(p => (
+                    <option key={p.id} value={p.id}>
+                        {p.nume} {p.prenume}
+                    </option>
+                ))}
+            </select>
+        </div>
 
-                        {/* Select Tip Evaluare */}
-                        <div className="evaluari-form-group">
-                            <label className="evaluari-label">Tip Evaluare</label>
-                            <select
-                                name="tip"
-                                value={formData.tip}
-                                onChange={handleChange}
-                                className="evaluari-select"
-                            >
-                                <option value="INITIALA">Evaluare Inițială</option>
-                                <option value="REEVALUARE">Reevaluare (Periodic)</option>
-                            </select>
-                        </div>
-                    </div>
+        {/* Select Tip Evaluare */}
+        <div className="evaluari-form-group">
+            <label className="evaluari-label">Tip Evaluare</label>
+            <select
+                name="tip"
+                value={formData.tip}
+                onChange={handleChange}
+                className="evaluari-select"
+            >
+                <option value="INITIALA">Evaluare Inițială</option>
+                <option value="REEVALUARE">Reevaluare (Periodic)</option>
+            </select>
+        </div>
+    </div>
 
-                    {/* Textarea Diagnostic */}
-                    <div className="evaluari-form-group">
-                        <label className="evaluari-label">Diagnostic & Concluzii</label>
-                        <textarea
-                            name="diagnostic"
-                            value={formData.diagnostic}
-                            onChange={handleChange}
-                            rows="4"
-                            placeholder="Descrie diagnosticul, simptomele și concluziile clinice..."
-                            className="evaluari-textarea"
-                        ></textarea>
-                    </div>
+    {/* Textarea Diagnostic */}
+    <div className="evaluari-form-group">
+        <label className="evaluari-label" style={{ display: 'flex', justifyContent: 'space-between' }}>
+            Diagnostic
+            <span style={{ fontSize: '0.8rem', color: '#2ecc71', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                👁️ Vizibil Pacient
+            </span>
+        </label>
+        <textarea
+            name="diagnostic"
+            value={formData.diagnostic}
+            onChange={handleChange}
+            rows="4"
+            placeholder="Descrie diagnosticul clinic..."
+            className="evaluari-textarea"
+        ></textarea>
+    </div>
 
-                    {/* GRID: Plan Tratament */}
-                    <div className="evaluari-tratament-section">
-                        <h3 className="evaluari-tratament-title">Recomandări Tratament</h3>
-                        <div className="evaluari-form-grid">
+    {/* GRID: Plan Tratament */}
+    <div className="evaluari-tratament-section">
+        <h3 className="evaluari-tratament-title">Recomandări Tratament</h3>
+        <div className="evaluari-form-grid">
+            {/* Nr Sedinte */}
+            <div className="evaluari-form-group">
+                <label className="evaluari-label">Ședințe Recomandate</label>
+                <input
+                    type="number"
+                    name="sedinteRecomandate"
+                    value={formData.sedinteRecomandate}
+                    onChange={handleChange}
+                    min="1"
+                    max="50"
+                    className="evaluari-input"
+                />
+            </div>
 
-                            {/* Nr Sedinte */}
-                            <div className="evaluari-form-group">
-                                <label className="evaluari-label">Ședințe Recomandate</label>
-                                <input
-                                    type="number"
-                                    name="sedinteRecomandate"
-                                    value={formData.sedinteRecomandate}
-                                    onChange={handleChange}
-                                    min="1"
-                                    max="50"
-                                    className="evaluari-input"
-                                />
-                            </div>
+            {/* Serviciu Recomandat */}
+            <div className="evaluari-form-group">
+                <label className="evaluari-label">Serviciu Recomandat</label>
+                <select
+                    name="serviciuRecomandatId"
+                    value={formData.serviciuRecomandatId}
+                    onChange={handleChange}
+                    className="evaluari-select"
+                >
+                    <option value="">Selectează Serviciul</option>
+                    {servicii.map(s => (
+                        <option key={s.id} value={s.id}>
+                            {s.nume} {s.durataMinute ? `(${s.durataMinute} min)` : ''}
+                        </option>
+                    ))}
+                </select>
+            </div>
+        </div>
+    </div>
 
-                            {/* Serviciu Recomandat */}
-                            <div className="evaluari-form-group">
-                                <label className="evaluari-label">Serviciu Recomandat</label>
-                                <select
-                                    name="serviciuRecomandatId"
-                                    value={formData.serviciuRecomandatId}
-                                    onChange={handleChange}
-                                    className="evaluari-select"
-                                >
-                                    <option value="">Selectează Serviciul</option>
-                                    {servicii.map(s => (
-                                        <option key={s.id} value={s.id}>
-                                            {s.nume} {s.durataMinute ? `(${s.durataMinute} min)` : ''}
-                                        </option>
-                                    ))}
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Textarea Observatii */}
-                    <div className="evaluari-form-group">
-                        <label className="evaluari-label">Alte Observații (Opțional)</label>
-                        <textarea
-                            name="observatii"
-                            value={formData.observatii}
-                            onChange={handleChange}
-                            rows="2"
-                            placeholder="Ex: Pacientul acuză dureri la efort, se recomandă pauză..."
-                            className="evaluari-textarea"
-                        ></textarea>
-                    </div>
-
+    {/* Textarea Observatii / Note Interne */}
+    <div className="evaluari-form-group">
+        <label className="evaluari-label" style={{ display: 'flex', justifyContent: 'space-between' }}>
+            Observații Private
+            <span style={{ fontSize: '0.8rem', color: '#e74c3c', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                🔒 Invizibil pt. Pacient
+            </span>
+        </label>
+        <textarea
+            name="observatii"
+            value={formData.observatii}
+            onChange={handleChange}
+            rows="2"
+            placeholder="Notițe pentru tine și alți colegi terapeuți (ex: pacient dificil, reacție emoțională etc.)"
+            className="evaluari-textarea"
+        ></textarea>
+    </div>
                     {/* Buton Submit */}
                     <div className="evaluari-submit-wrapper">
                         <button

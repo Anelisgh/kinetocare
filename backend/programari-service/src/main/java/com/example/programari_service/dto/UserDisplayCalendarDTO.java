@@ -14,4 +14,6 @@ public class UserDisplayCalendarDTO {
     private String nume;
     private String prenume;
     private String telefon;
+    private String email;
+    private String gen;
 }

@@ -10,6 +10,7 @@ import java.time.LocalTime;
 @Builder
 public class JurnalIstoricDTO {
     private Long id;
+    private Long programareId;
     private LocalDate dataJurnal; // Data ședinței
     private LocalTime oraSedinta; // Ora ședinței
     private Integer nivelDurere;

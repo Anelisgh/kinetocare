@@ -85,4 +85,14 @@ public interface ProgramareRepository extends JpaRepository<Programare, Long> {
         @Query("SELECT p FROM Programare p WHERE p.pacientId = :pacientId AND p.status = :status AND p.areJurnal = false ORDER BY p.data DESC")
         List<Programare> findByPacientIdAndStatusAndAreJurnalFalseOrderByDataDesc(@Param("pacientId") Long pacientId,
                         @Param("status") StatusProgramare status);
+
+        // gaseste toate programarile unui pacient, ordonate descrescator dupa data si ora
+        List<Programare> findAllByPacientIdOrderByDataDescOraInceputDesc(Long pacientId);
+
+        // pentru REMINDERE - gaseste programarile programate intr-o fereastra de timp
+        @Query("SELECT p FROM Programare p WHERE p.status = 'PROGRAMATA' " +
+                        "AND p.data = :data AND p.oraInceput BETWEEN :oraStart AND :oraEnd")
+        List<Programare> findProgramariInFereastra(@Param("data") LocalDate data,
+                        @Param("oraStart") LocalTime oraStart,
+                        @Param("oraEnd") LocalTime oraEnd);
 }
