@@ -12,6 +12,8 @@ import java.util.List;
 import com.example.servicii_service.dto.ServiciuAdminDTO;
 import com.example.servicii_service.entity.TipServiciu;
 import com.example.servicii_service.repository.TipServiciuRepository;
+import com.example.servicii_service.exception.ResourceNotFoundException;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -22,6 +24,7 @@ public class ServiciuService {
     private final ServiciuMapper serviciuMapper;
 
     // Metoda pentru a returna toate serviciile
+    @Transactional(readOnly = true)
     public List<ServiciuDTO> getAllServicii() {
         return serviciuRepository.findAll()
                 .stream()
@@ -31,6 +34,7 @@ public class ServiciuService {
     }
 
     // ADMIN: Returneaza toate serviciile cu detalii complete (inclusiv inactive)
+    @Transactional(readOnly = true)
     public List<ServiciuAdminDTO> getAllServiciiAdmin() {
         return serviciuRepository.findAll()
                 .stream()
@@ -39,16 +43,18 @@ public class ServiciuService {
     }
 
     // returneaza un serviciu dupa id
+    @Transactional(readOnly = true)
     public ServiciuDTO getDetaliiServiciu(Long id) {
         Serviciu serviciu = serviciuRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Serviciul nu există"));
+                .orElseThrow(() -> new ResourceNotFoundException("Serviciul nu există"));
         return serviciuMapper.toDto(serviciu);
     }
 
     // ADMIN: Create Service
+    @Transactional
     public ServiciuAdminDTO createServiciu(ServiciuAdminDTO dto) {
-        TipServiciu tip = tipServiciuRepository.findById(dto.getTipServiciuId())
-                .orElseThrow(() -> new RuntimeException("Tipul de serviciu nu există"));
+        TipServiciu tip = tipServiciuRepository.findById(dto.tipServiciuId())
+                .orElseThrow(() -> new ResourceNotFoundException("Tipul de serviciu nu există"));
 
         Serviciu entity = serviciuMapper.toEntity(dto, tip);
         Serviciu saved = serviciuRepository.save(entity);
@@ -56,14 +62,15 @@ public class ServiciuService {
     }
 
     // ADMIN: Update Service
+    @Transactional
     public ServiciuAdminDTO updateServiciu(Long id, ServiciuAdminDTO dto) {
         Serviciu entity = serviciuRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Serviciul nu există"));
+                .orElseThrow(() -> new ResourceNotFoundException("Serviciul nu există"));
 
         TipServiciu tip = null;
-        if (dto.getTipServiciuId() != null) {
-            tip = tipServiciuRepository.findById(dto.getTipServiciuId())
-                    .orElseThrow(() -> new RuntimeException("Tipul de serviciu nu există"));
+        if (dto.tipServiciuId() != null) {
+            tip = tipServiciuRepository.findById(dto.tipServiciuId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Tipul de serviciu nu există"));
         }
 
         serviciuMapper.updateEntityFromDto(dto, entity, tip);
@@ -72,9 +79,10 @@ public class ServiciuService {
     }
 
     // ADMIN: Toggle Active
+    @Transactional
     public ServiciuAdminDTO toggleActive(Long id) {
         Serviciu entity = serviciuRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Serviciul nu există"));
+                .orElseThrow(() -> new ResourceNotFoundException("Serviciul nu există"));
         
         entity.setActive(!entity.getActive());
         Serviciu updated = serviciuRepository.save(entity);
@@ -82,6 +90,7 @@ public class ServiciuService {
     }
 
     // in principiu pentru returnarea Evalurii initiale dupa prima programare (determinaServiciulCorect in programari-service)
+    @Transactional(readOnly = true)
     public ServiciuDTO cautaDupaNume(String nume) {
         // 1. Cautam intai dupa nume specific
         List<Serviciu> rezultateNume = serviciuRepository.findByNumeContainingIgnoreCase(nume);
@@ -94,7 +103,7 @@ public class ServiciuService {
                 .findByTipServiciu_NumeContainingIgnoreCase(nume);
 
         if (rezultateTip.isEmpty()) {
-            throw new RuntimeException("Nu s-au găsit servicii pentru numele dat: " + nume);
+            throw new ResourceNotFoundException("Nu s-au găsit servicii pentru numele dat: " + nume);
         }
 
         return serviciuMapper.toDto(rezultateTip.getFirst());

@@ -21,20 +21,10 @@ public class AuthController {
     // !nu avem login pentru ca se ocupa keycloak
     // folosit in authService.js
     @PostMapping("/register")
-    public ResponseEntity<?> register(@Valid @RequestBody RegisterRequestDTO request) {
-        try {
-            log.info("Registration attempt for email: {}", request.getEmail());
-            RegisterResponseDTO response = keycloakService.registerUser(request);
-            return ResponseEntity.status(HttpStatus.CREATED).body(response);
-        } catch (RuntimeException e) {
-            log.error("Registration failed: {}", e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(new ErrorResponse(e.getMessage()));
-        }
+    public ResponseEntity<RegisterResponseDTO> register(@Valid @RequestBody RegisterRequestDTO request) {
+        log.info("Registration attempt for email: {}", request.email());
+        RegisterResponseDTO response = keycloakService.registerUser(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     } // nu mai verificam daca email-ul deja exista, pentru ca keycloak nu accepta 2
       // users cu acelasi username (in cazul nostru mail-ul)
-      // Helper class pentru răspunsuri
-
-    record ErrorResponse(String message) {
-    }
 }

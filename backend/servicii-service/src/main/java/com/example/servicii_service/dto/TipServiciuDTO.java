@@ -1,17 +1,12 @@
 package com.example.servicii_service.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import jakarta.validation.constraints.NotBlank;
 
-@Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
-public class TipServiciuDTO {
-    private Long id;
-    private String nume;
-    private String descriere;
-    private Boolean active;
+public record TipServiciuDTO(
+        Long id,
+        @NotBlank(message = "Numele este obligatoriu")
+        String nume,
+        String descriere,
+        Boolean active
+) {
 }

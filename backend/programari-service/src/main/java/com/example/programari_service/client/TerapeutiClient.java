@@ -6,7 +6,9 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
-@FeignClient(name = "terapeuti-service", url = "http://localhost:8084")
+import java.util.Map;
+
+@FeignClient(name = "terapeuti-service", url = "http://localhost:8084", configuration = CustomErrorDecoder.class)
 public interface TerapeutiClient {
 
     // ia orarul specific al terapeutului. folosit la calculul sloturilor disponibile
@@ -24,7 +26,15 @@ public interface TerapeutiClient {
     @GetMapping("/locatii/{id}")
     LocatieDisponibilaDTO getLocatieById(@PathVariable("id") Long id);
 
+    // [STATISTICI] ia toate locatiile pentru a mapa id -> nume eficient
+    @GetMapping("/locatii")
+    java.util.List<LocatieDisponibilaDTO> getLocatii();
+
     // converteste terapeutId in keycloakId. folosit ca bridge: programarea stocheaza terapeutId, dar user-service are nevoie de keycloakId pentru a obtine numele
     @GetMapping("/terapeut/id/{terapeutId}/keycloak-id")
     String getKeycloakIdByTerapeutId(@PathVariable("terapeutId") Long terapeutId);
+
+    // keycloakId -> TerapeutDTO (contine id-ul intern). folosit la admin cancel
+    @GetMapping("/terapeut/by-keycloak/{keycloakId}")
+    Map<String, Object> getTerapeutByKeycloakId(@PathVariable("keycloakId") String keycloakId);
 }

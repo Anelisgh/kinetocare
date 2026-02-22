@@ -32,4 +32,11 @@ public class EvaluareController {
     public ResponseEntity<Evaluare> creeazaEvaluare(@RequestBody EvaluareRequestDTO request) {
         return ResponseEntity.ok(evaluareService.creeazaEvaluare(request));
     }
+
+    // editeaza evaluare
+    // api-gateway -> updateEvaluare (EvaluareController)
+    @PutMapping("/{id}")
+    public ResponseEntity<Evaluare> updateEvaluare(@PathVariable Long id, @RequestBody EvaluareRequestDTO request) {
+        return ResponseEntity.ok(evaluareService.actualizeazaEvaluare(id, request));
+    }
 }

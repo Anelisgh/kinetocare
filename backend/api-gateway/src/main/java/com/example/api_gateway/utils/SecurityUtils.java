@@ -17,11 +17,12 @@ public class SecurityUtils {
     // Metodă helper pentru a obține token-ul JWT din contextul de securitate
     public Mono<String> getJwtToken() {
         return ReactiveSecurityContextHolder.getContext()
-                .map(securityContext -> {
+                .<String>handle((securityContext, sink) -> {
                     if (securityContext.getAuthentication() instanceof JwtAuthenticationToken jwtAuth) {
-                        return jwtAuth.getToken().getTokenValue();
+                        sink.next(jwtAuth.getToken().getTokenValue());
+                        return;
                     }
-                    throw new RuntimeException("No JWT token found in security context");
+                    sink.error(new RuntimeException("No JWT token found in security context"));
                 })
                 .switchIfEmpty(Mono.error(new RuntimeException("Security context is empty")));
     }

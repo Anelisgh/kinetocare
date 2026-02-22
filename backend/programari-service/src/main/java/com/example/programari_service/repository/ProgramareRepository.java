@@ -14,11 +14,12 @@ import java.util.Optional;
 
 public interface ProgramareRepository extends JpaRepository<Programare, Long> {
         // prima programare viitoare activa
+        // prima programare viitoare activa
         @Query("SELECT p FROM Programare p WHERE p.pacientId = :pacientId " +
                         "AND p.status = 'PROGRAMATA' " +
-                        "AND (p.data > CURRENT_DATE OR (p.data = CURRENT_DATE AND p.oraInceput > CURRENT_TIME)) " +
+                        "AND (p.data > :dataAzi OR (p.data = :dataAzi AND p.oraInceput > :oraCurenta)) " +
                         "ORDER BY p.data ASC, p.oraInceput ASC")
-        List<Programare> gasesteUrmatoareaProgramare(@Param("pacientId") Long pacientId, PageRequest pageRequest);
+        List<Programare> gasesteUrmatoareaProgramare(@Param("pacientId") Long pacientId, @Param("dataAzi") LocalDate dataAzi, @Param("oraCurenta") LocalTime oraCurenta, PageRequest pageRequest);
 
         // numara programarile active pentru un pacient si terapeut
         // pentru primaIntalnire
@@ -95,4 +96,86 @@ public interface ProgramareRepository extends JpaRepository<Programare, Long> {
         List<Programare> findProgramariInFereastra(@Param("data") LocalDate data,
                         @Param("oraStart") LocalTime oraStart,
                         @Param("oraEnd") LocalTime oraEnd);
+
+        // admin cancel - gaseste programarile viitoare programate ale unui terapeut
+        @Query("SELECT p FROM Programare p WHERE p.terapeutId = :terapeutId " +
+                        "AND p.status = :status " +
+                        "AND (p.data > :data OR (p.data = :data AND p.oraInceput > :ora))")
+        List<Programare> findByTerapeutIdAndStatusAndDataGreaterThanEqual(
+                        @Param("terapeutId") Long terapeutId, @Param("status") StatusProgramare status, @Param("data") LocalDate data, @Param("ora") LocalTime ora);
+
+        // admin cancel - gaseste programarile viitoare programate ale unui pacient
+        @Query("SELECT p FROM Programare p WHERE p.pacientId = :pacientId " +
+                        "AND p.status = :status " +
+                        "AND (p.data > :data OR (p.data = :data AND p.oraInceput > :ora))")
+        List<Programare> findByPacientIdAndStatusAndDataGreaterThanEqual(
+                        @Param("pacientId") Long pacientId, @Param("status") StatusProgramare status, @Param("data") LocalDate data, @Param("ora") LocalTime ora);
+
+        // schimbare terapeut - gaseste programarile viitoare dintre un pacient si un terapeut 
+        @Query("SELECT p FROM Programare p WHERE p.pacientId = :pacientId " +
+                        "AND p.terapeutId = :terapeutId " +
+                        "AND p.status = :status " +
+                        "AND (p.data > :data OR (p.data = :data AND p.oraInceput > :ora))")
+        List<Programare> findByPacientIdAndTerapeutIdAndStatusAndDataGreaterThanEqual(
+                        @Param("pacientId") Long pacientId, @Param("terapeutId") Long terapeutId, @Param("status") StatusProgramare status, @Param("data") LocalDate data, @Param("ora") LocalTime ora);
+
+        // ----------------- STATISTICI -----------------
+
+        // 1. Programari pe luna per locatie
+        @Query("SELECT new com.example.programari_service.dto.statistici.StatisticiProgramariLunareDTO(" +
+                "p.locatieId, '', YEAR(p.data), MONTH(p.data), COUNT(p)) " +
+                "FROM Programare p " +
+                "WHERE p.status <> :status " +
+                "AND p.data BETWEEN :startDate AND :endDate " +
+                "GROUP BY p.locatieId, YEAR(p.data), MONTH(p.data)")
+        List<com.example.programari_service.dto.statistici.StatisticiProgramariLunareDTO> countByLocatieIdAndMonth(
+                @Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate, @Param("status") StatusProgramare status);
+
+        // 2. Venituri totale per locatie
+        @Query("SELECT new com.example.programari_service.dto.statistici.StatisticiVenituriLocatieDTO(" +
+                "p.locatieId, '', SUM(p.pret)) " +
+                "FROM Programare p " +
+                "WHERE p.status = :status " +
+                "AND p.data BETWEEN :startDate AND :endDate " +
+                "GROUP BY p.locatieId")
+        List<com.example.programari_service.dto.statistici.StatisticiVenituriLocatieDTO> sumPretByLocatieIdAndStatus(
+                @Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate, @Param("status") StatusProgramare status);
+
+        // 4. Rata de anulari per locatie - Count All
+        @Query("SELECT p.locatieId as locatieId, COUNT(p) as count " +
+                "FROM Programare p " +
+                "WHERE p.data BETWEEN :startDate AND :endDate " +
+                "GROUP BY p.locatieId")
+        List<Object[]> countTotalByLocatieId(
+                @Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
+
+        // 4. Rata de anulari per locatie - Count Anulate
+        @Query("SELECT p.locatieId as locatieId, COUNT(p) as count " +
+                "FROM Programare p " +
+                "WHERE p.status = :status " +
+                "AND p.data BETWEEN :startDate AND :endDate " +
+                "GROUP BY p.locatieId")
+        List<Object[]> countAnulateByLocatieId(
+                @Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate, @Param("status") StatusProgramare status);
+
+
+        // 5. Pacienti noi pe luna per locatie
+        @Query("SELECT new com.example.programari_service.dto.statistici.StatisticiPacientiNoiDTO(" +
+                "p.locatieId, '', YEAR(p.data), MONTH(p.data), COUNT(DISTINCT p.pacientId)) " +
+                "FROM Programare p " +
+                "WHERE p.data = (SELECT MIN(p2.data) FROM Programare p2 WHERE p2.pacientId = p.pacientId) " +
+                "AND p.data BETWEEN :startDate AND :endDate " +
+                "GROUP BY p.locatieId, YEAR(p.data), MONTH(p.data)")
+        List<com.example.programari_service.dto.statistici.StatisticiPacientiNoiDTO> countNewPatientsByLocatieIdAndMonth(
+                @Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
+
+        // 6. Programari per terapeut
+        @Query("SELECT new com.example.programari_service.dto.statistici.StatisticiTerapeutDTO(" +
+                "p.terapeutId, '', COUNT(p)) " +
+                "FROM Programare p " +
+                "WHERE p.status <> :status " +
+                "AND p.data BETWEEN :startDate AND :endDate " +
+                "GROUP BY p.terapeutId")
+        List<com.example.programari_service.dto.statistici.StatisticiTerapeutDTO> countByTerapeutIdAndMonth(
+                @Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate, @Param("status") StatusProgramare status);
 }

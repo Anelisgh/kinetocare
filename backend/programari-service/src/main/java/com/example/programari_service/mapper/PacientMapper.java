@@ -2,19 +2,14 @@ package com.example.programari_service.mapper;
 
 import com.example.programari_service.dto.UserNumeDTO;
 import com.example.programari_service.dto.UserDisplayCalendarDTO;
-import org.springframework.stereotype.Component;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
-@Component
-public class PacientMapper {
-    public UserNumeDTO toPacientNumeDTO(UserDisplayCalendarDTO userDTO, Long userId) {
-        if (userDTO == null) {
-            return null;
-        }
+@Mapper(componentModel = "spring")
+public interface PacientMapper {
 
-        return UserNumeDTO.builder()
-                .id(userId)
-                .nume(userDTO.getNume())
-                .prenume(userDTO.getPrenume())
-                .build();
-    }
+    @Mapping(target = "id", source = "userId")
+    @Mapping(target = "nume", source = "userDTO.nume")
+    @Mapping(target = "prenume", source = "userDTO.prenume")
+    UserNumeDTO toPacientNumeDTO(UserDisplayCalendarDTO userDTO, Long userId);
 }

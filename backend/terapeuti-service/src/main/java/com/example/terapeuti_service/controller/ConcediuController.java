@@ -8,6 +8,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -24,28 +26,31 @@ public class ConcediuController {
 
     // returneaza concediile unui terapeut 
     // api-gateway -> getConcedii (ConcediuController)
-    @GetMapping("/terapeut/{keycloakId}")
-    public ResponseEntity<List<ConcediuDTO>> getConcedii(@PathVariable String keycloakId) {
+    @GetMapping
+    public ResponseEntity<List<ConcediuDTO>> getConcedii(@AuthenticationPrincipal Jwt jwt) {
+        String keycloakId = jwt.getSubject();
         log.info("Getting concedii for terapeut: {}", keycloakId);
         return ResponseEntity.ok(concediuService.getConcediiByKeycloakId(keycloakId));
     }
 
     // adauga un concediu pentru un terapeut 
     // api-gateway -> addConcediu (ConcediuController)
-    @PostMapping("/terapeut/{keycloakId}")
+    @PostMapping
     public ResponseEntity<ConcediuDTO> addConcediu(
-            @PathVariable String keycloakId,
+            @AuthenticationPrincipal Jwt jwt,
             @Valid @RequestBody CreateConcediuDTO dto) {
+        String keycloakId = jwt.getSubject();
         log.info("Adding concediu for terapeut: {}", keycloakId);
         return ResponseEntity.ok(concediuService.addConcediu(keycloakId, dto));
     }
 
     // sterge un concediu pentru un terapeut 
     // api-gateway -> deleteConcediu (ConcediuController)
-    @DeleteMapping("/{concediuId}/terapeut/{keycloakId}")
+    @DeleteMapping("/{concediuId}")
     public ResponseEntity<Void> deleteConcediu(
-            @PathVariable String keycloakId,
+            @AuthenticationPrincipal Jwt jwt,
             @PathVariable Long concediuId) {
+        String keycloakId = jwt.getSubject();
         log.info("Deleting concediu {} for terapeut: {}", concediuId, keycloakId);
         concediuService.deleteConcediu(keycloakId, concediuId);
         return ResponseEntity.noContent().build();

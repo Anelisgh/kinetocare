@@ -77,4 +77,14 @@ public class PacientController {
     public ResponseEntity<PacientResponse> removeTerapeut(@PathVariable String keycloakId) {
         return ResponseEntity.ok(pacientService.removeTerapeut(keycloakId));
     }
+
+    // seteaza starea activa a pacientului
+    // folosit in: user-service (toggleUserActive) — endpoint intern
+    @PatchMapping("/by-keycloak/{keycloakId}/toggle-active")
+    public ResponseEntity<Void> toggleActive(
+            @PathVariable String keycloakId,
+            @RequestParam boolean active) {
+        pacientService.setActive(keycloakId, active);
+        return ResponseEntity.ok().build();
+    }
 }

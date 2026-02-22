@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import { adminService } from '../../services/adminService';
-import '../../styles/adminLocatii.css';
+import '../../styles/adminShared.css';
 
 // Pagina de administrare a locatiilor (doar adminul are acces)
 export default function AdminLocatii() {
@@ -125,7 +125,7 @@ export default function AdminLocatii() {
   const handleToggleStatus = async (id) => {
     if (window.confirm('Sigur dorești să schimbi statusul acestei locații?')) {
       try {
-        await adminService.toggleStatus(id);
+        await adminService.toggleLocatieStatus(id);
         fetchLocatii();
       } catch (err) {
         alert(err.message);
@@ -198,19 +198,19 @@ export default function AdminLocatii() {
                 <td>{loc.judet}</td>
                 <td>{loc.adresa}</td>
                 <td>
-                  <span className={loc.active ? 'status-active' : 'status-inactive'}>
+                  <span className={`status-badge ${loc.active ? 'active' : 'inactive'}`}>
                     {loc.active ? 'Activ' : 'Inactiv'}
                   </span>
                 </td>
                 <td>
                   <button 
-                    className="btn-edit" 
+                    className="admin-btn-edit" 
                     onClick={() => openEditModal(loc)}
                   >
                     Edit
                   </button>
                   <button 
-                    className="btn-toggle"
+                    className={`action-btn ${loc.active ? 'deactivate-btn' : 'activate-btn'}`}
                     onClick={() => handleToggleStatus(loc.id)}
                   >
                     {loc.active ? 'Dezactivează' : 'Activează'}

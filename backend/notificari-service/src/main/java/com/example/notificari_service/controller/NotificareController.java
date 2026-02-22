@@ -1,6 +1,6 @@
 package com.example.notificari_service.controller;
 
-import com.example.notificari_service.entity.Notificare;
+import com.example.notificari_service.dto.NotificareDTO;
 import com.example.notificari_service.entity.TipUser;
 import com.example.notificari_service.service.NotificareService;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +19,7 @@ public class NotificareController {
 
     // lista notificarile unui user
     @GetMapping
-    public ResponseEntity<List<Notificare>> getNotificari(
+    public ResponseEntity<List<NotificareDTO>> getNotificari(
             @RequestParam Long userId,
             @RequestParam TipUser tipUser) {
         return ResponseEntity.ok(notificareService.getNotificari(userId, tipUser));

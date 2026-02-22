@@ -1,6 +1,10 @@
+import { AppError } from '../utils/AppError.js';
+
 const API_GATEWAY_URL = '/api/auth';
 const CLIENT_ID = 'react-client'; 
 const USER_API_URL = '/api/users'; // Folosim prefixul de proxy al Vite
+
+let inMemoryToken = null; // Stocarea in siguranță, exclusiv in memorie
 
 export const authService = {
   // Register -> creeaza cont in keycloak + DB
@@ -14,13 +18,29 @@ export const authService = {
     });
     
     if (!response.ok) {
-      const error = await response.json(); 
-      throw new Error(error.message || 'Eroare la înregistrare');
+      const errorData = await response.json(); 
+      // Parsare RFC 7807
+      const msg = errorData?.detail || errorData?.message || 'Eroare la înregistrare';
+      const eroriCampuri = errorData?.erori_campuri || null;
+      throw new AppError(msg, response.status, eroriCampuri, errorData?.detail);
     }
     
     return response.json();
   },
   
+  // Metode noi pentru managementul in-memory al token-ului
+  setToken: (token) => {
+    inMemoryToken = token;
+  },
+
+  getToken: () => {
+    return inMemoryToken;
+  },
+
+  clearToken: () => {
+    inMemoryToken = null;
+  },
+
   // Login -> prin Gateway, primeste refresh token in cookie
   login: async (email, password) => {
     const formData = new URLSearchParams();
@@ -41,11 +61,11 @@ export const authService = {
     }
     
     const tokenData = await response.json();
-    
+    authService.setToken(tokenData.access_token);
     return tokenData;
   },
 
-  // crearea unui refresh token, pentru ca access token are o viata scurta. refresh token -> va cere un nou access token atunci cand primul expira. 
+  // crearea unui refresh token
   refreshToken: async () => {
     const formData = new URLSearchParams();
     formData.append('grant_type', 'refresh_token');
@@ -53,7 +73,7 @@ export const authService = {
     const response = await fetch(`${API_GATEWAY_URL}/token`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      credentials: 'include', // -> browser-ul trimite automat cookie-ul cu refresh_token, iar backend-ul il trage din cookie
+      credentials: 'include',
       body: formData,
     });
     
@@ -63,9 +83,7 @@ export const authService = {
     }
     
     const tokenData = await response.json();
-    
-    localStorage.setItem('access_token', tokenData.access_token);
-    
+    authService.setToken(tokenData.access_token);
     return authService.getUserInfo();
   },
   
@@ -80,11 +98,11 @@ export const authService = {
       console.error('Eroare la logout:', error);
     }
     
-    localStorage.removeItem('access_token');
+    authService.clearToken();
   },
   
   isAuthenticated: () => {
-    const token = localStorage.getItem('access_token');
+    const token = authService.getToken();
     if (!token) return false;
     
     try {
@@ -97,14 +115,11 @@ export const authService = {
   
   // extrage info din JWT
   getUserInfo: () => {
-    const token = localStorage.getItem('access_token');
+    const token = authService.getToken();
     if (!token) return null;
     
     try {
-      // pentru a acces la email, roles, keycloakId din keycloak
       const payload = JSON.parse(atob(token.split('.')[1]));
-      
-      // extrage rolurile din realm_access
       const roles = payload.realm_access?.roles || [];
       
       return {

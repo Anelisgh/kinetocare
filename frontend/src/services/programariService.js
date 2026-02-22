@@ -100,9 +100,7 @@ export const programariService = {
   // FISA PACIENT - lista pacienti terapeut
   getListaPacienti: async (terapeutId) => {
     try {
-      const response = await api.get('/api/fisa-pacient/lista', {
-        params: { terapeutId }
-      });
+      const response = await api.get(`/api/fisa-pacient/terapeut/${terapeutId}/lista`);
       return response.data;
     } catch (error) {
       handleApiError(error, 'Eroare la preluarea listei de pacienți');
@@ -112,7 +110,7 @@ export const programariService = {
   // FISA PACIENT - detalii pacient
   getFisaPacient: async (pacientId, terapeutId) => {
     try {
-      const response = await api.get(`/api/fisa-pacient/${pacientId}`, {
+      const response = await api.get(`/api/fisa-pacient/pacient/${pacientId}`, {
         params: { terapeutId }
       });
       return response.data;

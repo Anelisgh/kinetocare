@@ -66,9 +66,9 @@ public class NotificarePublisher {
     private void trimite(String routingKey, NotificareEvent event) {
         try {
             rabbitTemplate.convertAndSend(RabbitMQConfig.EXCHANGE_NAME, routingKey, event);
-            log.info("Notificare trimisă: {} → userId={}", event.getTipNotificare(), event.getUserId());
+            log.info("Notificare trimisă: {} → userId={}", event.tipNotificare(), event.userId());
         } catch (Exception e) {
-            log.error("Eroare la trimiterea notificării {}: {}", event.getTipNotificare(), e.getMessage());
+            log.error("Eroare la trimiterea notificării {}: {}", event.tipNotificare(), e.getMessage());
         }
     }
 }

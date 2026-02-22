@@ -62,14 +62,38 @@ export default function NotificationBell() {
     }
   }, [userId, tipUser]);
 
-  // polling pentru count
+  // polling pentru count conditionat de vizibilitatea tab-ului
   useEffect(() => {
     if (!userId || !tipUser) return;
 
     fetchCount(); // fetch initial
-    intervalRef.current = setInterval(fetchCount, POLL_INTERVAL);
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        // Tab activ -> refacem fetch imediat si pornim intervalul
+        fetchCount();
+        if (!intervalRef.current) {
+          intervalRef.current = setInterval(fetchCount, POLL_INTERVAL);
+        }
+      } else {
+        // Tab inactiv -> oprim intervalul pt a cruța resursele
+        if (intervalRef.current) {
+          clearInterval(intervalRef.current);
+          intervalRef.current = null;
+        }
+      }
+    };
+
+    // pornim intervalul prima oara daca suntem in focus
+    if (document.visibilityState === 'visible') {
+      intervalRef.current = setInterval(fetchCount, POLL_INTERVAL);
+    }
+
+    // ascultam event-ul de vizibilitate a paginii
+    document.addEventListener('visibilitychange', handleVisibilityChange);
 
     return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
       if (intervalRef.current) clearInterval(intervalRef.current);
     };
   }, [userId, tipUser, fetchCount]);

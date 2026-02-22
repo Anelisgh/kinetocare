@@ -26,7 +26,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/actuator/health").permitAll()
-                        .requestMatchers("/terapeut/by-keycloak/**", "/terapeut/initialize/**", "/concediu/check/**", "/disponibilitate/**").permitAll()
+                        .requestMatchers("/terapeut/by-keycloak/**", "/terapeut/initialize/**", "/concediu/check/**", "/disponibilitate/**", "/terapeut/by-keycloak/*/toggle-active").permitAll()
                         .anyRequest().authenticated()
                 )
                 .oauth2ResourceServer(oauth2 -> oauth2

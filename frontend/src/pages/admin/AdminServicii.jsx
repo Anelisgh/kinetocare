@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { adminService } from '../../services/adminService';
-import '../../styles/adminServicii.css';
+import '../../styles/adminShared.css';
+
 
 const AdminServicii = () => {
     const [activeTab, setActiveTab] = useState('servicii'); // 'servicii' or 'tipuri'
@@ -275,13 +276,16 @@ const AdminServicii = () => {
                                     </>
                                 )}
                                 <td>
-                                    <span className={item.active ? 'status-active' : 'status-inactive'}>
+                                    <span className={`status-badge ${item.active ? 'active' : 'inactive'}`}>
                                         {item.active ? 'Activ' : 'Inactiv'}
                                     </span>
                                 </td>
                                 <td>
-                                    <button className="btn-edit" onClick={() => openEditModal(item)}>Edit</button>
-                                    <button className="btn-toggle" onClick={() => handleToggleStatus(item.id)}>
+                                    <button className="admin-btn-edit" onClick={() => openEditModal(item)}>Edit</button>
+                                    <button 
+                                        className={`action-btn ${item.active ? 'deactivate-btn' : 'activate-btn'}`}
+                                        onClick={() => handleToggleStatus(item.id)}
+                                    >
                                         {item.active ? 'Dezactivează' : 'Activează'}
                                     </button>
                                 </td>

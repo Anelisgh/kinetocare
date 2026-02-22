@@ -1,51 +1,42 @@
 package com.example.programari_service.mapper;
 
 import com.example.programari_service.dto.EvaluareRequestDTO;
-import com.example.programari_service.entity.Evaluare;
-import org.springframework.stereotype.Component;
 import com.example.programari_service.dto.SituatiePacientDTO;
+import com.example.programari_service.entity.Evaluare;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
-@Component
-public class EvaluareMapper {
-    public Evaluare toEntity(EvaluareRequestDTO request) {
-        if (request == null) {
-            return null;
-        }
+@Mapper(componentModel = "spring")
+public interface EvaluareMapper {
 
-        Evaluare evaluare = new Evaluare();
-        evaluare.setPacientId(request.getPacientId());
-        evaluare.setTerapeutId(request.getTerapeutId());
-        evaluare.setTip(request.getTip());
-        evaluare.setDiagnostic(request.getDiagnostic());
-        evaluare.setSedinteRecomandate(request.getSedinteRecomandate());
-        evaluare.setServiciuRecomandatId(request.getServiciuRecomandatId());
-        evaluare.setObservatii(request.getObservatii());
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "programareId", ignore = true)
+    @Mapping(target = "data", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
+    @Mapping(target = "updatedAt", ignore = true)
+    Evaluare toEntity(EvaluareRequestDTO request);
 
-        return evaluare;
-    }
-
-
-    public SituatiePacientDTO toSituatiePacientDTO(Evaluare evaluare, long sedinteEfectuate) {
+    default SituatiePacientDTO toSituatiePacientDTO(Evaluare evaluare, long sedinteEfectuate) {
         if (evaluare == null) {
             return null;
         }
 
         long sedinteRamase = Math.max(0, evaluare.getSedinteRecomandate() - sedinteEfectuate);
 
-        return SituatiePacientDTO.builder()
-                .diagnostic(evaluare.getDiagnostic())
-                .sedinteRecomandate(evaluare.getSedinteRecomandate())
-                .sedinteEfectuate(sedinteEfectuate)
-                .sedinteRamase(sedinteRamase)
-                .build();
+        return new SituatiePacientDTO(
+                evaluare.getDiagnostic(),
+                evaluare.getSedinteRecomandate(),
+                sedinteEfectuate,
+                sedinteRamase
+        );
     }
 
-    public SituatiePacientDTO toEmptySituatiePacientDTO() {
-        return SituatiePacientDTO.builder()
-                .diagnostic("Momentan indisponibil")
-                .sedinteRecomandate(0)
-                .sedinteEfectuate(0L)
-                .sedinteRamase(0L)
-                .build();
+    default SituatiePacientDTO toEmptySituatiePacientDTO() {
+        return new SituatiePacientDTO(
+                "Momentan indisponibil",
+                0,
+                0L,
+                0L
+        );
     }
 }

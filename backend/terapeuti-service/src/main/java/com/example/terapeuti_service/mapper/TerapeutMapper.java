@@ -1,70 +1,50 @@
 package com.example.terapeuti_service.mapper;
 
 import com.example.terapeuti_service.dto.*;
-import com.example.terapeuti_service.dto.UpdateTerapeutDTO;
 import com.example.terapeuti_service.entity.Terapeut;
-import org.springframework.stereotype.Component;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
+import org.mapstruct.BeanMapping;
+import org.mapstruct.NullValuePropertyMappingStrategy;
 
 import java.util.List;
 
-@Component
-public class TerapeutMapper {
+@Mapper(componentModel = "spring")
+public interface TerapeutMapper {
 
-    // keycloakId -> entity gol (pentru createTerapeut si initializeEmptyTerapeut)
-    public Terapeut toNewEntity(String keycloakId) {
-        return Terapeut.builder()
-                .keycloakId(keycloakId)
-                .active(true)
-                .build();
-    }
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "specializare", ignore = true)
+    @Mapping(target = "pozaProfil", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
+    @Mapping(target = "updatedAt", ignore = true)
+    @Mapping(target = "active", constant = "true")
+    Terapeut toNewEntity(String keycloakId);
 
-    // entity -> TerapeutDTO (campuri directe)
-    public TerapeutDTO toDTO(Terapeut terapeut) {
-        if (terapeut == null) {
-            return null;
-        }
+    @Mapping(target = "disponibilitati", ignore = true)
+    @Mapping(target = "concedii", ignore = true)
+    @Mapping(target = "locatiiDisponibile", ignore = true)
+    @Mapping(target = "profileIncomplete", ignore = true)
+    TerapeutDTO toDTO(Terapeut terapeut);
 
-        return TerapeutDTO.builder()
-                .id(terapeut.getId())
-                .keycloakId(terapeut.getKeycloakId())
-                .specializare(terapeut.getSpecializare())
-                .pozaProfil(terapeut.getPozaProfil())
-                .active(terapeut.getActive())
-                .createdAt(terapeut.getCreatedAt())
-                .updatedAt(terapeut.getUpdatedAt())
-                .build();
-    }
+    @Mapping(target = "keycloakId", source = "terapeut.keycloakId")
+    @Mapping(target = "pozaProfil", source = "terapeut.pozaProfil")
+    @Mapping(target = "specializare", source = "terapeut.specializare")
+    @Mapping(target = "disponibilitati", source = "disponibilitati")
+    @Mapping(target = "locatiiDisponibile", source = "locatiiUnice")
+    TerapeutDetaliDTO toDetaliDTO(Terapeut terapeut, List<DisponibilitateDTO> disponibilitati, List<LocatieDisponibilaDTO> locatiiUnice);
 
-    // entity + date suplimentare -> TerapeutDetaliDTO
-    public TerapeutDetaliDTO toDetaliDTO(Terapeut terapeut,
-                                          List<DisponibilitateDTO> disponibilitati,
-                                          List<LocatieDisponibilaDTO> locatiiUnice) {
-        return TerapeutDetaliDTO.builder()
-                .keycloakId(terapeut.getKeycloakId())
-                .pozaProfil(terapeut.getPozaProfil())
-                .specializare(terapeut.getSpecializare() != null ? terapeut.getSpecializare().name() : null)
-                .disponibilitati(disponibilitati)
-                .locatiiDisponibile(locatiiUnice)
-                .build();
-    }
+    @Mapping(target = "keycloakId", source = "terapeut.keycloakId")
+    @Mapping(target = "pozaProfil", source = "terapeut.pozaProfil")
+    @Mapping(target = "specializare", source = "terapeut.specializare")
+    @Mapping(target = "locatiiDisponibile", source = "locatiiDisp")
+    TerapeutSearchDTO toSearchDTO(Terapeut terapeut, List<LocatieDisponibilaDTO> locatiiDisp);
 
-    // entity + locatii -> TerapeutSearchDTO
-    public TerapeutSearchDTO toSearchDTO(Terapeut terapeut, List<LocatieDisponibilaDTO> locatiiDisp) {
-        return TerapeutSearchDTO.builder()
-                .keycloakId(terapeut.getKeycloakId())
-                .pozaProfil(terapeut.getPozaProfil())
-                .specializare(terapeut.getSpecializare().name())
-                .locatiiDisponibile(locatiiDisp)
-                .build();
-    }
-
-    // updateaza entity din UpdateTerapeutDTO
-    public void updateEntity(Terapeut terapeut, UpdateTerapeutDTO dto) {
-        if (dto.getSpecializare() != null) {
-            terapeut.setSpecializare(dto.getSpecializare());
-        }
-        if (dto.getPozaProfil() != null) {
-            terapeut.setPozaProfil(dto.getPozaProfil());
-        }
-    }
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "keycloakId", ignore = true)
+    @Mapping(target = "active", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
+    @Mapping(target = "updatedAt", ignore = true)
+    void updateEntity(@MappingTarget Terapeut terapeut, UpdateTerapeutDTO dto);
 }

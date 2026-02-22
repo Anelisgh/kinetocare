@@ -2,24 +2,18 @@ package com.example.pacienti_service.dto;
 
 import com.example.pacienti_service.entity.FaceSport;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-public class PacientRequest{
-    private LocalDate dataNasterii;
-    private String cnp;
-    private FaceSport faceSport;
+public record PacientRequest(
+        LocalDate dataNasterii,
+        String cnp,
+        FaceSport faceSport,
 
-    @Size(max = 500, message = "Detaliile despre sport trebuie să aibă maxim 500 de caractere")
-    private String detaliiSport;
+        @Size(max = 500, message = "Detaliile despre sport trebuie să aibă maxim 500 de caractere")
+        String detaliiSport,
 
-    private String orasPreferat;
-    private Long locatiePreferataId;
-    private String terapeutKeycloakId;
-}
+        String orasPreferat,
+        Long locatiePreferataId,
+        String terapeutKeycloakId
+) {}

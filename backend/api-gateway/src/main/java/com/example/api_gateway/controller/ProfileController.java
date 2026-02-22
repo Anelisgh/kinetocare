@@ -28,11 +28,7 @@ public class ProfileController {
         String role = securityUtils.extractRole(jwt);
 
         return profileService.getProfile(keycloakId, role)
-                .map(ResponseEntity::ok)
-                .onErrorResume(e -> {
-                    log.error("Error getting profile for user: {}", keycloakId, e);
-                    return Mono.just(ResponseEntity.internalServerError().build());
-                });
+                .map(ResponseEntity::ok);
     }
 
     // actualizeaza campurile din profil (user + pacient/terapeut) -> ProfileService
@@ -45,10 +41,6 @@ public class ProfileController {
         String role = securityUtils.extractRole(jwt);
 
         return profileService.updateProfile(keycloakId, role, updateData)
-                .map(ResponseEntity::ok)
-                .onErrorResume(e -> {
-                    log.error("Error updating profile for user: {}", keycloakId, e);
-                    return Mono.just(ResponseEntity.internalServerError().build());
-                });
+                .map(ResponseEntity::ok);
     }
 }

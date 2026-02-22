@@ -29,7 +29,7 @@ public class DisponibilitateTerapeut {
     private Long terapeutId;
 
     @Column(name = "zi_saptamana", nullable = false)
-    private Integer ziSaptamana; // 1=Luni ... 7=Duminica specific java.time.DayOfWeek
+    private Integer ziSaptamana; // 1=Luni ... 7=Duminica
 
     @Column(name = "locatie_id", nullable = false)
     private Long locatieId;

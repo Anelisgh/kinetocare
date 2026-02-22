@@ -2,15 +2,14 @@ package com.example.api_gateway.controller;
 
 import com.example.api_gateway.service.ProfileService;
 import com.example.api_gateway.utils.SecurityUtils;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.web.util.UriComponentsBuilder;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
@@ -18,14 +17,21 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/programari")
-@RequiredArgsConstructor
 @Slf4j
 public class ProgramariController {
 
-    private final WebClient.Builder webClientBuilder;
+    private final WebClient programariWebClient;
     private final ProfileService profileService;
     private final SecurityUtils securityUtils;
-    private static final String PROGRAMARI_SERVICE_URL = "http://localhost:8085";
+
+    public ProgramariController(
+            @Qualifier("programariWebClient") WebClient programariWebClient,
+            ProfileService profileService,
+            SecurityUtils securityUtils) {
+        this.programariWebClient = programariWebClient;
+        this.profileService = profileService;
+        this.securityUtils = securityUtils;
+    }
 
     // creeaza o programare noua (pacient) -> programari-service
     @PostMapping
@@ -38,22 +44,14 @@ public class ProgramariController {
 
         // luam JSON-ul din frontend si-l trimitem mai departe catre serviciul de
         // programari
-        return webClientBuilder.build()
-                .post()
-                .uri(PROGRAMARI_SERVICE_URL, uriBuilder ->
-                        uriBuilder.path("/programari").build()
-                )
+        return programariWebClient.post()
+                .uri("/programari")
                 .header("Authorization", "Bearer " + jwt.getTokenValue())
                 .bodyValue(programareRequest)
                 .retrieve()
                 .bodyToMono(new ParameterizedTypeReference<Map<String, Object>>() {
                 })
-                .map(ResponseEntity::ok)
-                .onErrorResume(e -> {
-                    log.error("Eroare la crearea programării: ", e);
-                    return Mono.just(ResponseEntity.badRequest()
-                            .body(Map.of("error", "Nu s-a putut crea programarea. Verifică disponibilitatea.")));
-                });
+                .map(ResponseEntity::ok);
     }
 
     // determina serviciul recomandat pentru un pacient -> programari-service
@@ -62,23 +60,17 @@ public class ProgramariController {
             @RequestParam Long pacientId,
             @AuthenticationPrincipal Jwt jwt) {
 
-        return webClientBuilder.build()
-                .get()
-                .uri(PROGRAMARI_SERVICE_URL, uriBuilder ->
-                        uriBuilder
-                                .path("/programari/serviciu-recomandat")
-                                .queryParam("pacientId", pacientId)
-                                .build()
+        return programariWebClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/programari/serviciu-recomandat")
+                        .queryParam("pacientId", pacientId)
+                        .build()
                 )
                 .header("Authorization", "Bearer " + jwt.getTokenValue())
                 .retrieve()
                 .bodyToMono(new ParameterizedTypeReference<Map<String, Object>>() {
                 })
-                .map(ResponseEntity::ok)
-                .onErrorResume(e -> {
-                    log.error("Eroare la determinarea serviciului recomandat", e);
-                    return Mono.just(ResponseEntity.internalServerError().build());
-                });
+                .map(ResponseEntity::ok);
     }
 
     // returneaza sloturile orare disponibile pentru o zi -> programari-service
@@ -89,16 +81,14 @@ public class ProgramariController {
                                                                  @RequestParam Long serviciuId,
                                                                  @AuthenticationPrincipal Jwt jwt) {
 
-        return webClientBuilder.build()
-                .get()
-                .uri(PROGRAMARI_SERVICE_URL, uriBuilder ->
-                        uriBuilder
-                                .path("/programari/disponibilitate")
-                                .queryParam("terapeutId", terapeutId)
-                                .queryParam("locatieId", locatieId)
-                                .queryParam("data", data)
-                                .queryParam("serviciuId", serviciuId)
-                                .build()
+        return programariWebClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/programari/disponibilitate")
+                        .queryParam("terapeutId", terapeutId)
+                        .queryParam("locatieId", locatieId)
+                        .queryParam("data", data)
+                        .queryParam("serviciuId", serviciuId)
+                        .build()
                 )
                 .header("Authorization", "Bearer " + jwt.getTokenValue())
                 .retrieve()
@@ -126,24 +116,17 @@ public class ProgramariController {
                     Long pacientId = ((Number) idObj).longValue();
 
                     // trimitem cererea de anulare catre serviciul de programari
-                    return webClientBuilder.build()
-                            .patch()
-                            .uri(PROGRAMARI_SERVICE_URL, uriBuilder ->
-                                    uriBuilder
-                                            .path("/programari/{programareId}/cancel")
-                                            .queryParam("pacientId", pacientId) // gateway pune id-ul real
-                                            .build(programareId)
+                    return programariWebClient.patch()
+                            .uri(uriBuilder -> uriBuilder
+                                    .path("/programari/{programareId}/cancel")
+                                    .queryParam("pacientId", pacientId) // gateway pune id-ul real
+                                    .build(programareId)
                             )
                             .header("Authorization", "Bearer " + jwt.getTokenValue())
                             .retrieve()
                             .toBodilessEntity();
                 })
-                .map(response -> ResponseEntity.ok().<Void>build())
-                .onErrorResume(e -> {
-                    log.error("Eroare la anularea programării {} pentru user {}: {}", programareId, keycloakId,
-                            e.getMessage());
-                    return Mono.just(ResponseEntity.internalServerError().build());
-                });
+                .map(response -> ResponseEntity.ok().<Void>build());
     }
 
     // returneaza programarile unui terapeut pentru calendar -> programari-service
@@ -155,9 +138,8 @@ public class ProgramariController {
             @RequestParam(required = false) Long locatieId,
             @AuthenticationPrincipal Jwt jwt) {
 
-        return webClientBuilder.build()
-                .get()
-                .uri(PROGRAMARI_SERVICE_URL, uriBuilder -> {
+        return programariWebClient.get()
+                .uri(uriBuilder -> {
                     var builder = uriBuilder
                             .path("/programari/calendar")
                             .queryParam("terapeutId", terapeutId)
@@ -174,11 +156,7 @@ public class ProgramariController {
                 .retrieve()
                 .bodyToMono(new ParameterizedTypeReference<List<Map<String, Object>>>() {
                 })
-                .map(ResponseEntity::ok)
-                .onErrorResume(e -> {
-                    log.error("Eroare la preluarea calendarului pentru terapeut {}: {}", terapeutId, e.getMessage());
-                    return Mono.just(ResponseEntity.internalServerError().build());
-                });
+                .map(ResponseEntity::ok);
     }
 
     // terapeutul anuleaza o programare -> programari-service
@@ -188,21 +166,15 @@ public class ProgramariController {
             @RequestParam Long terapeutId, // din frontend
             @AuthenticationPrincipal Jwt jwt) {
 
-        return webClientBuilder.build()
-                .patch()
-                .uri(uriBuilder -> UriComponentsBuilder.fromUriString(PROGRAMARI_SERVICE_URL)
-                        .path("/programari/" + programareId + "/cancel-terapeut")
+        return programariWebClient.patch()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/programari/{programareId}/cancel-terapeut")
                         .queryParam("terapeutId", terapeutId)
-                        .build(true)
-                        .toUri())
+                        .build(programareId))
                 .header("Authorization", "Bearer " + jwt.getTokenValue())
                 .retrieve()
                 .toBodilessEntity()
-                .map(response -> ResponseEntity.ok().<Void>build())
-                .onErrorResume(e -> {
-                    log.error("Eroare anulare terapeut pt programarea {}: {}", programareId, e.getMessage());
-                    return Mono.just(ResponseEntity.internalServerError().build());
-                });
+                .map(response -> ResponseEntity.ok().<Void>build());
     }
 
     // marcheaza neprezentarea unui pacient (terapeut sau admin) -> programari-service
@@ -222,9 +194,6 @@ public class ProgramariController {
             // Dacă e admin, nu ne pasă de ID-ul terapeutului (trimitem null sau 0)
             terapeutIdMono = Mono.just(0L);
         } else if ("TERAPEUT".equals(role)) {
-            // Dacă e terapeut, trebuie să validăm că trimite ID-ul lui (sau îl luăm din profil ca să fim siguri)
-            // Aici fie te bazezi pe ce trimite frontend-ul (dacă ai încredere), fie îl extragi iar din profil.
-            // Varianta simplă: luăm ce vine din frontend, backend-ul validează oricum ownership-ul.
             if (terapeutId == null) {
                 return Mono.error(new RuntimeException("ID-ul terapeutului este necesar."));
             }
@@ -234,22 +203,16 @@ public class ProgramariController {
         }
 
         return terapeutIdMono.flatMap(finalTId ->
-                webClientBuilder.build()
-                        .patch()
-                        .uri(uriBuilder -> UriComponentsBuilder.fromUriString(PROGRAMARI_SERVICE_URL)
-                                .path("/programari/" + programareId + "/neprezentare")
+                programariWebClient.patch()
+                        .uri(uriBuilder -> uriBuilder
+                                .path("/programari/{programareId}/neprezentare")
                                 .queryParam("terapeutId", finalTId)
                                 .queryParam("isAdmin", isAdmin)
-                                .build(true)
-                                .toUri())
+                                .build(programareId))
                         .header("Authorization", "Bearer " + jwt.getTokenValue())
                         .retrieve()
                         .toBodilessEntity()
                         .map(response -> ResponseEntity.ok().<Void>build())
-                        .onErrorResume(e -> {
-                            log.error("Eroare marcare neprezentare: {}", e.getMessage());
-                            return Mono.just(ResponseEntity.internalServerError().build());
-                        })
         );
     }
 
@@ -259,16 +222,11 @@ public class ProgramariController {
             @PathVariable Long id,
             @AuthenticationPrincipal Jwt jwt) {
 
-        return webClientBuilder.build()
-                .get()
-                .uri(PROGRAMARI_SERVICE_URL + "/programari/pacient/" + id + "/necompletate")
+        return programariWebClient.get()
+                .uri("/programari/pacient/{id}/necompletate", id)
                 .header("Authorization", "Bearer " + jwt.getTokenValue())
                 .retrieve()
                 .bodyToMono(new ParameterizedTypeReference<List<Map<String, Object>>>() {})
-                .map(ResponseEntity::ok)
-                .onErrorResume(e -> {
-                    log.error("Eroare la preluarea programărilor necompletate: {}", e.getMessage());
-                    return Mono.just(ResponseEntity.internalServerError().build());
-                });
+                .map(ResponseEntity::ok);
     }
 }

@@ -1,5 +1,6 @@
 package com.example.user_service.mapper;
 
+import com.example.user_service.dto.AdminUserDTO;
 import com.example.user_service.dto.UpdateUserDTO;
 import com.example.user_service.dto.UserDTO;
 import com.example.user_service.entity.User;
@@ -9,31 +10,46 @@ import org.springframework.stereotype.Component;
 public class UserMapper {
 
     public UserDTO toDTO(User user) {
-        UserDTO dto = new UserDTO();
-        dto.setId(user.getId());
-        dto.setNume(user.getNume());
-        dto.setPrenume(user.getPrenume());
-        dto.setEmail(user.getEmail());
-        dto.setTelefon(user.getTelefon());
-        dto.setGen(user.getGen());
-        return dto;
+        return new UserDTO(
+            user.getId(),
+            user.getKeycloakId(),
+            user.getNume(),
+            user.getPrenume(),
+            user.getEmail(),
+            user.getTelefon(),
+            user.getGen()
+        );
+    }
+
+    // pentru admin - listing useri
+    public AdminUserDTO toAdminDTO(User user) {
+        return new AdminUserDTO(
+            user.getId(),
+            user.getNume(),
+            user.getPrenume(),
+            user.getEmail(),
+            user.getTelefon(),
+            user.getRole().name(),
+            user.getActive(),
+            user.getCreatedAt()
+        );
     }
 
     public void updateEntity(User user, UpdateUserDTO updateDTO) {
-        if (updateDTO.getNume() != null && !updateDTO.getNume().isEmpty()) {
-            user.setNume(updateDTO.getNume());
+        if (updateDTO.nume() != null && !updateDTO.nume().isEmpty()) {
+            user.setNume(updateDTO.nume());
         }
-        if (updateDTO.getPrenume() != null && !updateDTO.getPrenume().isEmpty()) {
-            user.setPrenume(updateDTO.getPrenume());
+        if (updateDTO.prenume() != null && !updateDTO.prenume().isEmpty()) {
+            user.setPrenume(updateDTO.prenume());
         }
-        if (updateDTO.getEmail() != null && !updateDTO.getEmail().isEmpty()) {
-            user.setEmail(updateDTO.getEmail());
+        if (updateDTO.email() != null && !updateDTO.email().isEmpty()) {
+            user.setEmail(updateDTO.email());
         }
-        if (updateDTO.getTelefon() != null && !updateDTO.getTelefon().isEmpty()) {
-            user.setTelefon(updateDTO.getTelefon());
+        if (updateDTO.telefon() != null && !updateDTO.telefon().isEmpty()) {
+            user.setTelefon(updateDTO.telefon());
         }
-        if (updateDTO.getGen() != null){
-            user.setGen(updateDTO.getGen());
+        if (updateDTO.gen() != null){
+            user.setGen(updateDTO.gen());
         }
     }
 }

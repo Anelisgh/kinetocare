@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import com.example.terapeuti_service.dto.statistici.StatisticiTerapeutiActiviDTO;
 
 import java.time.LocalTime;
 import java.util.List;
@@ -38,4 +39,11 @@ public interface DisponibilitateRepository extends JpaRepository<Disponibilitate
             Long terapeutId, Long locatieId, Integer ziSaptamana);
 
 
+    // [STATISTICI] Numara terapeuti activi (care au disponibilitate setata) per locatie
+    @Query("SELECT new com.example.terapeuti_service.dto.statistici.StatisticiTerapeutiActiviDTO(" +
+            "d.locatieId, '', COUNT(DISTINCT d.terapeutId)) " +
+            "FROM DisponibilitateTerapeut d " +
+            "WHERE d.active = true " +
+            "GROUP BY d.locatieId")
+    List<StatisticiTerapeutiActiviDTO> countActiveTherapistsPerLocation();
 }

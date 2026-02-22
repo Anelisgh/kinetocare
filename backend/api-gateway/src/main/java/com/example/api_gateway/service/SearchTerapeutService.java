@@ -1,11 +1,10 @@
 package com.example.api_gateway.service;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.HashMap;
@@ -14,32 +13,41 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
 @Slf4j
 public class SearchTerapeutService {
 
-    private final WebClient.Builder webClientBuilder;
+    private final WebClient terapeutiWebClient;
+    private final WebClient pacientiWebClient;
+    private final WebClient userWebClient;
 
-    private static final String TERAPEUT_SERVICE_URL = "http://localhost:8084";
-    private static final String PACIENT_SERVICE_URL = "http://localhost:8083";
-    private static final String USER_SERVICE_URL = "http://localhost:8082";
+    public SearchTerapeutService(
+            @Qualifier("terapeutiWebClient") WebClient terapeutiWebClient,
+            @Qualifier("pacientiWebClient") WebClient pacientiWebClient,
+            @Qualifier("userWebClient") WebClient userWebClient) {
+        this.terapeutiWebClient = terapeutiWebClient;
+        this.pacientiWebClient = pacientiWebClient;
+        this.userWebClient = userWebClient;
+    }
 
     // cauta terapeuti dupa criterii si imbogateste rezultatele cu date din user-service
     public Mono<List<Map<String, Object>>> searchTerapeuti(String specializare, String judet,
                                                            String oras, Long locatieId,
                                                            String gen, String token) {
-        StringBuilder uriBuilder = new StringBuilder(
-                TERAPEUT_SERVICE_URL + "/terapeuti/search?specializare=" + specializare);
-        if (judet != null && !judet.isEmpty())
-            uriBuilder.append("&judet=").append(judet);
-        if (oras != null && !oras.isEmpty())
-            uriBuilder.append("&oras=").append(oras);
-        if (locatieId != null)
-            uriBuilder.append("&locatieId=").append(locatieId);
-
-        return webClientBuilder.build()
-                .get()
-                .uri(uriBuilder.toString())
+        return terapeutiWebClient.get()
+                .uri(uriBuilder -> {
+                    uriBuilder.path("/terapeuti/search")
+                            .queryParam("specializare", specializare);
+                    if (judet != null && !judet.isEmpty()) {
+                        uriBuilder.queryParam("judet", judet);
+                    }
+                    if (oras != null && !oras.isEmpty()) {
+                        uriBuilder.queryParam("oras", oras);
+                    }
+                    if (locatieId != null) {
+                        uriBuilder.queryParam("locatieId", locatieId);
+                    }
+                    return uriBuilder.build();
+                })
                 .header("Authorization", "Bearer " + token)
                 .retrieve()
                 .bodyToMono(new ParameterizedTypeReference<List<Map<String, Object>>>() {})
@@ -60,9 +68,8 @@ public class SearchTerapeutService {
 
     // obtine detaliile terapeutului asignat pacientului curent
     public Mono<Map<String, Object>> getMyTerapeut(String keycloakId, String token) {
-        return webClientBuilder.build()
-                .get()
-                .uri(PACIENT_SERVICE_URL + "/pacient/by-keycloak/" + keycloakId)
+        return pacientiWebClient.get()
+                .uri("/pacient/by-keycloak/{keycloakId}", keycloakId)
                 .header("Authorization", "Bearer " + token)
                 .retrieve()
                 .bodyToMono(new ParameterizedTypeReference<Map<String, Object>>() {})
@@ -75,16 +82,14 @@ public class SearchTerapeutService {
                         return Mono.just(noTerapeut);
                     }
 
-                    Mono<Map<String, Object>> terapeutDataMono = webClientBuilder.build()
-                            .get()
-                            .uri(TERAPEUT_SERVICE_URL + "/terapeuti/" + terapeutKeycloakId + "/details")
+                    Mono<Map<String, Object>> terapeutDataMono = terapeutiWebClient.get()
+                            .uri("/terapeuti/{id}/details", terapeutKeycloakId)
                             .header("Authorization", "Bearer " + token)
                             .retrieve()
                             .bodyToMono(new ParameterizedTypeReference<Map<String, Object>>() {});
 
-                    Mono<Map<String, Object>> userDataMono = webClientBuilder.build()
-                            .get()
-                            .uri(USER_SERVICE_URL + "/users/by-keycloak/" + terapeutKeycloakId)
+                    Mono<Map<String, Object>> userDataMono = userWebClient.get()
+                            .uri("/users/by-keycloak/{id}", terapeutKeycloakId)
                             .header("Authorization", "Bearer " + token)
                             .retrieve()
                             .bodyToMono(new ParameterizedTypeReference<Map<String, Object>>() {});
@@ -107,24 +112,45 @@ public class SearchTerapeutService {
     private Mono<List<Map<String, Object>>> enrichTerapeutiWithUserData(
             List<Map<String, Object>> terapeuti, String token) {
 
-        return Flux.fromIterable(terapeuti)
-                .flatMap(terapeut -> {
-                    String keycloakId = (String) terapeut.get("keycloakId");
+        if (terapeuti == null || terapeuti.isEmpty()) {
+            return Mono.just(terapeuti);
+        }
 
-                    return webClientBuilder.build()
-                            .get()
-                            .uri(USER_SERVICE_URL + "/users/by-keycloak/" + keycloakId)
-                            .header("Authorization", "Bearer " + token)
-                            .retrieve()
-                            .bodyToMono(new ParameterizedTypeReference<Map<String, Object>>() {})
-                            .map(userData -> {
-                                terapeut.put("nume", userData.get("nume"));
-                                terapeut.put("prenume", userData.get("prenume"));
-                                terapeut.put("gen", userData.get("gen"));
-                                return terapeut;
-                            })
-                            .onErrorReturn(terapeut);
+        List<String> keycloakIds = terapeuti.stream()
+                .map(t -> (String) t.get("keycloakId"))
+                .filter(id -> id != null && !id.isEmpty())
+                .distinct()
+                .collect(Collectors.toList());
+
+        if (keycloakIds.isEmpty()) {
+            return Mono.just(terapeuti);
+        }
+
+        return userWebClient.post()
+                .uri("/users/batch")
+                .header("Authorization", "Bearer " + token)
+                .bodyValue(keycloakIds)
+                .retrieve()
+                .bodyToMono(new ParameterizedTypeReference<List<Map<String, Object>>>() {})
+                .map(users -> {
+                    Map<String, Map<String, Object>> userMap = users.stream()
+                            .collect(Collectors.toMap(
+                                    u -> (String) u.get("keycloakId"),
+                                    u -> u,
+                                    (existing, replacement) -> existing
+                            ));
+
+                    for (Map<String, Object> terapeut : terapeuti) {
+                        String keycloakId = (String) terapeut.get("keycloakId");
+                        Map<String, Object> userData = userMap.get(keycloakId);
+                        if (userData != null) {
+                            terapeut.put("nume", userData.get("nume"));
+                            terapeut.put("prenume", userData.get("prenume"));
+                            terapeut.put("gen", userData.get("gen"));
+                        }
+                    }
+                    return terapeuti;
                 })
-                .collectList();
+                .onErrorReturn(terapeuti);
     }
 }

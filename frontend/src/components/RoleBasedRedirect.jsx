@@ -9,9 +9,8 @@ export default function RoleBasedRedirect() {
         return <Navigate to="/login" replace />;
     }
     
-    // ! momentan folosim endpoint-ul locatii, dar va fi schimbat
     if (userInfo.roles.includes('ADMIN')) {
-        return <Navigate to="/admin/locatii" replace />;
+        return <Navigate to="/admin/homepage" replace />;
     }
 
     if (userInfo.roles.includes('TERAPEUT')) {

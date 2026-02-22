@@ -55,4 +55,14 @@ public class TerapeutController {
         String keycloakId = terapeutService.getKeycloakIdById(terapeutId);
         return keycloakId != null ? ResponseEntity.ok(keycloakId) : ResponseEntity.notFound().build();
     }
+
+    // seteaza starea activa a terapeutului
+    // folosit in: user-service (toggleUserActive) — endpoint intern
+    @PatchMapping("/by-keycloak/{keycloakId}/toggle-active")
+    public ResponseEntity<Void> toggleActive(
+            @PathVariable String keycloakId,
+            @RequestParam boolean active) {
+        terapeutService.setActive(keycloakId, active);
+        return ResponseEntity.ok().build();
+    }
 }

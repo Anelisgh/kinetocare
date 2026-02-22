@@ -5,67 +5,35 @@ import com.example.pacienti_service.dto.PacientRequest;
 import com.example.pacienti_service.dto.PacientResponse;
 import com.example.pacienti_service.entity.Pacient;
 import com.example.pacienti_service.entity.FaceSport;
-import org.springframework.stereotype.Component;
-import java.util.Objects;
+import org.mapstruct.*;
 
-@Component
-public class PacientMapper {
+@Mapper(componentModel = "spring")
+public interface PacientMapper {
 
-    public Pacient toEntity(PacientCompleteProfileRequest request, String keycloakId) {
-        return Pacient.builder()
-                .keycloakId(keycloakId)
-                .dataNasterii(request.getDataNasterii())
-                .cnp(request.getCnp())
-                .faceSport(request.getFaceSport())
-                .detaliiSport(request.getFaceSport() == FaceSport.DA ? request.getDetaliiSport() : null)
-                .orasPreferat(null)
-                .locatiePreferataId(null)
-                .terapeutKeycloakId(null)
-                .build();
-    }
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "orasPreferat", ignore = true)
+    @Mapping(target = "locatiePreferataId", ignore = true)
+    @Mapping(target = "terapeutKeycloakId", ignore = true)
+    @Mapping(target = "active", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
+    @Mapping(target = "updatedAt", ignore = true)
+    @Mapping(target = "keycloakId", source = "keycloakId")
+    Pacient toEntity(PacientCompleteProfileRequest request, String keycloakId);
 
-    public PacientResponse toResponse(Pacient pacient) {
-        return new PacientResponse(
-                pacient.getId(),
-                pacient.getKeycloakId(),
-                pacient.getDataNasterii(),
-                pacient.getCnp(),
-                pacient.getFaceSport(),
-                pacient.getDetaliiSport(),
-                pacient.getOrasPreferat(),
-                pacient.getLocatiePreferataId(),
-                pacient.getTerapeutKeycloakId()
-        );
-    }
+    PacientResponse toResponse(Pacient pacient);
 
-    public void updateEntity(Pacient pacient, PacientRequest request) {
-        if (request.getDataNasterii() != null) {
-            pacient.setDataNasterii(request.getDataNasterii());
-        }
-        if (request.getCnp() != null) {
-            pacient.setCnp(request.getCnp());
-        }
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "keycloakId", ignore = true)
+    @Mapping(target = "active", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
+    @Mapping(target = "updatedAt", ignore = true)
+    void updateEntity(@MappingTarget Pacient pacient, PacientRequest request);
 
-        if (request.getFaceSport() != null) {
-            pacient.setFaceSport(request.getFaceSport());
-
-            if (request.getFaceSport() == FaceSport.NU) {
-                pacient.setDetaliiSport(null);
-            } else if (request.getDetaliiSport() != null) {
-                pacient.setDetaliiSport(request.getDetaliiSport());
-            }
-        } else if (request.getDetaliiSport() != null) {
-            pacient.setDetaliiSport(request.getDetaliiSport());
-        }
-
-        if (Objects.nonNull(request.getOrasPreferat())) {
-            pacient.setOrasPreferat(request.getOrasPreferat());
-        }
-        if (Objects.nonNull(request.getLocatiePreferataId())) {
-            pacient.setLocatiePreferataId(request.getLocatiePreferataId());
-        }
-        if (Objects.nonNull(request.getTerapeutKeycloakId())) {
-            pacient.setTerapeutKeycloakId(request.getTerapeutKeycloakId());
+    @AfterMapping
+    default void handleDetaliiSport(@MappingTarget Pacient pacient) {
+        if (pacient.getFaceSport() == FaceSport.NU) {
+            pacient.setDetaliiSport(null);
         }
     }
 }

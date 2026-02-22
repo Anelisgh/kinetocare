@@ -2,6 +2,7 @@ package com.example.programari_service.service;
 
 import com.example.programari_service.client.UserClient;
 import com.example.programari_service.dto.*;
+import com.example.programari_service.exception.*;
 import com.example.programari_service.entity.Evaluare;
 import com.example.programari_service.entity.Programare;
 import com.example.programari_service.mapper.EvaluareMapper;
@@ -31,6 +32,7 @@ public class EvaluareService {
     private final PacientMapper pacientMapper;
 
     // populeaza dropdown-ul din formularul de evaluare
+    @Transactional(readOnly = true)
     public List<UserNumeDTO> getPacientiTerapeut(Long terapeutId) {
         // luam user IDs din tabela Programare
         List<Long> pacientIds = programareRepository.findPacientiIdByTerapeutId(terapeutId);
@@ -58,6 +60,7 @@ public class EvaluareService {
     }
 
     // gaseste ultima programare dintre un pacient si un terapeut
+    @Transactional(readOnly = true)
     public Programare getUltimaProgramare(Long pacientId, Long terapeutId) {
         // luam prima programare din lista, adica cea mai recenta
         List<Programare> lista = programareRepository.findLatestAppointments(
@@ -75,9 +78,9 @@ public class EvaluareService {
         Evaluare evaluare = evaluareMapper.toEntity(request);
 
         // determinam programarea si data
-        if (request.getProgramareId() == null) {
+        if (request.programareId() == null) {
             // daca frontend-ul nu a trimis ID, il cautam noi
-            Programare ultima = getUltimaProgramare(request.getPacientId(), request.getTerapeutId());
+            Programare ultima = getUltimaProgramare(request.pacientId(), request.terapeutId());
 
             if (ultima != null) {
                 evaluare.setProgramareId(ultima.getId());
@@ -91,8 +94,8 @@ public class EvaluareService {
             }
         } else {
             // daca frontend-ul a trimis explicit un ID
-            Programare p = programareRepository.findById(request.getProgramareId())
-                    .orElseThrow(() -> new RuntimeException("Programarea specificată nu există"));
+            Programare p = programareRepository.findById(request.programareId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Programarea specificată nu există"));
 
             evaluare.setProgramareId(p.getId());
             evaluare.setData(p.getData());
@@ -103,8 +106,22 @@ public class EvaluareService {
         Evaluare evaluareSalvata = evaluareRepository.save(evaluare);
 
         // dupa ce a fost salvata evaluarea, ne asiguram ca relatia e activa
-        relatieService.asiguraRelatieActiva(request.getPacientId(), request.getTerapeutId(), evaluareSalvata.getData());
+        relatieService.asiguraRelatieActiva(request.pacientId(), request.terapeutId(), evaluareSalvata.getData());
 
         return evaluareSalvata;
+    }
+
+    // editare evaluare existenta
+    @Transactional
+    public Evaluare actualizeazaEvaluare(Long id, EvaluareRequestDTO request) {
+        Evaluare evaluare = evaluareRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Evaluarea cu ID-ul " + id + " nu a fost găsită."));
+
+        evaluare.setDiagnostic(request.diagnostic());
+        evaluare.setSedinteRecomandate(request.sedinteRecomandate());
+        evaluare.setServiciuRecomandatId(request.serviciuRecomandatId());
+        evaluare.setObservatii(request.observatii());
+
+        return evaluareRepository.save(evaluare);
     }
 }

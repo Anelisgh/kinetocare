@@ -14,4 +14,7 @@ public interface RelatieRepository extends JpaRepository<RelatiePacientTerapeut,
 
     // pacientii anteriori (arhiva) ai unui terapeut
     List<RelatiePacientTerapeut> findByTerapeutIdAndActivaFalse(Long terapeutId);
+
+    // relatia activa a unui pacient (cu orice terapeut)
+    Optional<RelatiePacientTerapeut> findByPacientIdAndActivaTrue(Long pacientId);
 }

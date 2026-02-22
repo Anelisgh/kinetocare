@@ -48,7 +48,7 @@ public class Pacient {
     private Long locatiePreferataId;
 
     @Column(name = "terapeut_keycloak_id", length = 36)
-    private String terapeutKeycloakId; // doar preferinta, relatia se cimenteaza in serviciu programari (RelatiePacientTerapeut) dupa prima evaluare
+    private String terapeutKeycloakId; // doar preferinta, relatia se cimenteaza in serviciu programari (RelatiePacientTerapeut) dupa prima programare
 
     @Column(nullable = false)
     @Builder.Default

@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/servicii/tipuri")
 @RequiredArgsConstructor
@@ -21,12 +23,12 @@ public class TipServiciuController {
     }
 
     @PostMapping
-    public ResponseEntity<TipServiciuDTO> createTip(@RequestBody TipServiciuDTO dto) {
+    public ResponseEntity<TipServiciuDTO> createTip(@Valid @RequestBody TipServiciuDTO dto) {
         return ResponseEntity.ok(tipServiciuService.createTip(dto));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<TipServiciuDTO> updateTip(@PathVariable Long id, @RequestBody TipServiciuDTO dto) {
+    public ResponseEntity<TipServiciuDTO> updateTip(@PathVariable Long id, @Valid @RequestBody TipServiciuDTO dto) {
         return ResponseEntity.ok(tipServiciuService.updateTip(id, dto));
     }
 

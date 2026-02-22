@@ -143,4 +143,34 @@ public class ProgramareController {
     public ResponseEntity<SituatiePacientDTO> getSituatiePacient(@PathVariable Long id) {
         return ResponseEntity.ok(programareService.getSituatiePacient(id));
     }
+
+    // Anulare programari vechi cand pacientul schimba terapeutul
+    // pacienti-service -> anuleazaProgramariCuTerapeut (ProgramariClient)
+    @DeleteMapping("/cancel-upcoming/pacient-keycloak/{pacientKeycloakId}/terapeut-keycloak/{terapeutKeycloakId}")
+    public ResponseEntity<Void> cancelUpcomingAssignments(
+            @PathVariable String pacientKeycloakId,
+            @PathVariable String terapeutKeycloakId) {
+        programareService.anuleazaProgramariVechi(pacientKeycloakId, terapeutKeycloakId);
+        return ResponseEntity.noContent().build();
+    }
+
+    // ADMIN: anulare programari la dezactivare cont
+
+    // anuleaza toate programarile viitoare ale unui terapeut
+    // folosit in: user-service (toggleUserActive) — endpoint intern
+    @PatchMapping("/admin/cancel-by-terapeut")
+    public ResponseEntity<AdminCancelResultDTO> cancelByTerapeut(@RequestParam String keycloakId) {
+        AdminCancelResultDTO result = programareService.anuleazaProgramariAdminByTerapeut(keycloakId);
+        log.info("Admin: {}", result.message());
+        return ResponseEntity.ok(result);
+    }
+
+    // anuleaza toate programarile viitoare ale unui pacient
+    // folosit in: user-service (toggleUserActive) — endpoint intern
+    @PatchMapping("/admin/cancel-by-pacient")
+    public ResponseEntity<AdminCancelResultDTO> cancelByPacient(@RequestParam String keycloakId) {
+        AdminCancelResultDTO result = programareService.anuleazaProgramariAdminByPacient(keycloakId);
+        log.info("Admin: {}", result.message());
+        return ResponseEntity.ok(result);
+    }
 }

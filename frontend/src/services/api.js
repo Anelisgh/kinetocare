@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { authService } from './authService.js';
+import { AppError } from '../utils/AppError.js';
 
 const api = axios.create({
     baseURL: '',
@@ -9,7 +10,7 @@ const api = axios.create({
 // inainte de fiecare request adauga access_token in header
 api.interceptors.request.use(
     (config) => {
-        const token = localStorage.getItem('access_token');
+        const token = authService.getToken();
         if (token) {
             config.headers.Authorization = `Bearer ${token}`;
         }
@@ -28,7 +29,7 @@ api.interceptors.response.use(
             // browser-ul trimite cookie cu refresh_token pentru a primi de la backend un nou access token
             try {
                 await authService.refreshToken();
-                const newToken = localStorage.getItem('access_token');
+                const newToken = authService.getToken();
                 originalRequest.headers.Authorization = `Bearer ${newToken}`;
                 return api(originalRequest); // trimite din nou request-ul original, dar acum cu access_token pentru ca utilizatorul sa nu sesizeze nimic
             } catch (refreshError) {
@@ -43,13 +44,23 @@ api.interceptors.response.use(
 
 export default api;
 
-// Functie centralizata de tratare a erorilor API
 export const handleApiError = (error, defaultMessage) => {
   console.error('API Error:', error);
-  const msg =
-    error.response?.data?.message ||
-    error.response?.data?.error ||
+  
+  const responseData = error.response?.data;
+  
+  // Conform RFC 7807 (ProblemDetail), mesajul principal este in "detail", 
+  // iar erorile la nivel de field in "erori_campuri".
+  const msg = 
+    responseData?.detail ||
+    responseData?.message ||
+    responseData?.error_description ||
+    responseData?.error ||
     error.message ||
     defaultMessage;
-  throw new Error(msg);
+
+  const status = error.response?.status || 500;
+  const eroriCampuri = responseData?.erori_campuri || null;
+
+  throw new AppError(msg, status, eroriCampuri, responseData?.detail);
 };

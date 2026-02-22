@@ -28,6 +28,9 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/actuator/health").permitAll()
                         .requestMatchers("/auth/**").permitAll()
+                        // admin-only endpoints
+                        .requestMatchers(org.springframework.http.HttpMethod.PATCH, "/users/*/toggle-active").hasRole("admin")
+                        .requestMatchers(org.springframework.http.HttpMethod.GET, "/users").hasRole("admin")
                         .anyRequest().authenticated())
                 .oauth2ResourceServer(oauth2 -> oauth2
                         .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter())))

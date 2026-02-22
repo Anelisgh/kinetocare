@@ -23,6 +23,13 @@ public class EvolutieController {
         return ResponseEntity.ok(evolutieService.adaugaEvolutie(request));
     }
 
+    // editeaza evolutie
+    // api-gateway -> updateEvolutie (EvolutieController)
+    @PutMapping("/{id}")
+    public ResponseEntity<EvolutieResponseDTO> updateEvolutie(@PathVariable Long id, @RequestBody EvolutieRequestDTO request) {
+        return ResponseEntity.ok(evolutieService.actualizeazaEvolutie(id, request));
+    }
+
     // afiseaza istoricul de evolutii pentru un pacient
     // api-gateway -> getIstoric (EvolutieController)
     @GetMapping

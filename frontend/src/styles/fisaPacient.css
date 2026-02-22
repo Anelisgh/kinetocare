@@ -743,6 +743,187 @@
 }
 
 /* ============================================ */
+/* INLINE EDIT MODE                             */
+/* ============================================ */
+
+.evaluare-header-right {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm, 0.5rem);
+}
+
+.evolutie-header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-xs, 0.25rem);
+}
+
+.fisa-edit-btn {
+    background: none;
+    border: 1px solid transparent;
+    border-radius: var(--radius-md, 10px);
+    padding: 0.25rem 0.5rem;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all var(--transition-base, 200ms ease-in-out);
+    opacity: 0;
+}
+
+.evaluare-card:hover .fisa-edit-btn,
+.evolutie-item:hover .fisa-edit-btn {
+    opacity: 1;
+}
+
+.fisa-edit-btn:hover {
+    background: var(--color-primary-subtle, #e0f2fe);
+    border-color: var(--color-primary-light, #0ea5e9);
+    transform: scale(1.1);
+}
+
+.evaluare-card.editing,
+.evolutie-item.editing {
+    border-color: var(--color-primary-light, #0ea5e9);
+    box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1);
+}
+
+.fisa-edit-textarea {
+    width: 100%;
+    padding: 0.65rem 0.85rem;
+    border: 1px solid var(--color-border, #e2e8f0);
+    border-radius: var(--radius-md, 10px);
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    resize: vertical;
+    transition: border-color var(--transition-base, 200ms ease-in-out);
+    color: var(--color-text-primary, #0f172a);
+    background: var(--color-surface-hover, #f8fafc);
+}
+
+.fisa-edit-textarea:focus {
+    outline: none;
+    border-color: var(--color-primary-light, #0ea5e9);
+    box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1);
+    background: white;
+}
+
+.fisa-edit-input {
+    padding: 0.5rem 0.75rem;
+    border: 1px solid var(--color-border, #e2e8f0);
+    border-radius: var(--radius-md, 10px);
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 600;
+    width: 100%;
+    color: var(--color-text-primary, #0f172a);
+    background: var(--color-surface-hover, #f8fafc);
+    transition: border-color var(--transition-base, 200ms ease-in-out);
+}
+
+.fisa-edit-input:focus {
+    outline: none;
+    border-color: var(--color-primary-light, #0ea5e9);
+    box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1);
+    background: white;
+}
+
+.fisa-edit-actions {
+    display: flex;
+    gap: var(--space-sm, 0.5rem);
+    margin-top: var(--space-md, 1rem);
+    justify-content: flex-end;
+}
+
+.fisa-save-btn {
+    padding: 0.45rem 1rem;
+    background: linear-gradient(135deg, var(--color-primary, #0369a1) 0%, var(--color-primary-light, #0ea5e9) 100%);
+    color: white;
+    border: none;
+    border-radius: var(--radius-md, 10px);
+    font-weight: 700;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all var(--transition-base, 200ms ease-in-out);
+    font-family: 'Nunito', sans-serif;
+}
+
+.fisa-save-btn:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(3, 105, 161, 0.3);
+}
+
+.fisa-save-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.fisa-cancel-btn {
+    padding: 0.45rem 1rem;
+    background: var(--color-surface-hover, #f8fafc);
+    color: var(--color-text-secondary, #475569);
+    border: 1px solid var(--color-border, #e2e8f0);
+    border-radius: var(--radius-md, 10px);
+    font-weight: 700;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all var(--transition-base, 200ms ease-in-out);
+    font-family: 'Nunito', sans-serif;
+}
+
+.fisa-cancel-btn:hover {
+    background: var(--color-error-bg, #fee2e2);
+    border-color: var(--color-error, #ef4444);
+    color: #991b1b;
+}
+
+.fisa-inline-message {
+    padding: 0.6rem 1rem;
+    border-radius: var(--radius-md, 10px);
+    font-size: 0.85rem;
+    font-weight: 600;
+    animation: fadeInTab 0.3s ease-out;
+}
+
+.fisa-inline-message.success {
+    background: var(--color-success-bg, #d1fae5);
+    color: #065f46;
+    border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+.fisa-inline-message.error {
+    background: var(--color-error-bg, #fee2e2);
+    color: #991b1b;
+    border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+/* Evaluare Row Layout */
+.evaluare-row {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-md, 1rem);
+    padding: var(--space-sm, 0.5rem) 0;
+}
+
+.ev-label {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--color-text-muted, #94a3b8);
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    min-width: 140px;
+    padding-top: 0.3rem;
+    flex-shrink: 0;
+}
+
+.ev-value {
+    color: var(--color-text-primary, #0f172a);
+    font-weight: 500;
+    line-height: 1.5;
+    flex: 1;
+}
+
+/* ============================================ */
 /* RESPONSIVE                                   */
 /* ============================================ */
 
@@ -790,4 +971,9 @@
         min-width: 65px;
         font-size: 0.65rem;
     }
+
+    .fisa-edit-btn {
+        opacity: 1;
+    }
 }
+

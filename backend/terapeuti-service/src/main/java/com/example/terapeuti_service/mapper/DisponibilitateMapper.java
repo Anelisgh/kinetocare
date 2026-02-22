@@ -4,59 +4,44 @@ import com.example.terapeuti_service.dto.DisponibilitateDTO;
 import com.example.terapeuti_service.dto.CreateDisponibilitateDTO;
 import com.example.terapeuti_service.entity.DisponibilitateTerapeut;
 import com.example.terapeuti_service.entity.Locatie;
-import org.springframework.stereotype.Component;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
 import java.time.DayOfWeek;
 import java.time.format.TextStyle;
 import java.util.Locale;
 
-@Component
-public class DisponibilitateMapper {
+@Mapper(componentModel = "spring")
+public interface DisponibilitateMapper {
 
-    public DisponibilitateDTO toDTO(DisponibilitateTerapeut entity, Locatie locatie) {
-        if (entity == null) {
-            return null;
-        }
+    @Mapping(target = "id", source = "entity.id")
+    @Mapping(target = "terapeutId", source = "entity.terapeutId")
+    @Mapping(target = "locatieId", source = "entity.locatieId")
+    @Mapping(target = "oraInceput", source = "entity.oraInceput")
+    @Mapping(target = "oraSfarsit", source = "entity.oraSfarsit")
+    @Mapping(target = "active", source = "entity.active")
+    @Mapping(target = "createdAt", source = "entity.createdAt")
+    @Mapping(target = "updatedAt", source = "entity.updatedAt")
+    @Mapping(target = "ziSaptamana", source = "entity.ziSaptamana")
+    @Mapping(target = "ziSaptamanaNume", expression = "java(getZiSaptamanaNume(entity.getZiSaptamana()))")
+    @Mapping(target = "locatieNume", source = "locatie.nume")
+    @Mapping(target = "locatieAdresa", source = "locatie.adresa")
+    @Mapping(target = "locatieOras", source = "locatie.oras")
+    DisponibilitateDTO toDTO(DisponibilitateTerapeut entity, Locatie locatie);
 
-        String ziNume = getZiSaptamanaNume(entity.getZiSaptamana());
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
+    @Mapping(target = "updatedAt", ignore = true)
+    @Mapping(target = "active", constant = "true")
+    DisponibilitateTerapeut toEntity(CreateDisponibilitateDTO dto, Long terapeutId);
 
-        return DisponibilitateDTO.builder()
-                .id(entity.getId())
-                .terapeutId(entity.getTerapeutId())
-                .ziSaptamana(entity.getZiSaptamana())
-                .ziSaptamanaNume(ziNume)
-                .locatieId(entity.getLocatieId())
-                .locatieNume(locatie != null ? locatie.getNume() : null)
-                .locatieAdresa(locatie != null ? locatie.getAdresa() : null)
-                .locatieOras(locatie != null ? locatie.getOras() : null)
-                .oraInceput(entity.getOraInceput())
-                .oraSfarsit(entity.getOraSfarsit())
-                .active(entity.getActive())
-                .createdAt(entity.getCreatedAt())
-                .updatedAt(entity.getUpdatedAt())
-                .build();
+    default String getZiSaptamanaNume(Integer zi) {
+    if (zi == null || zi < 1 || zi > 7) {
+        return "Nespecificat";
     }
-
-    public DisponibilitateTerapeut toEntity(CreateDisponibilitateDTO dto, Long terapeutId) {
-        if (dto == null) {
-            return null;
-        }
-
-        return DisponibilitateTerapeut.builder()
-                .terapeutId(terapeutId)
-                .ziSaptamana(dto.getZiSaptamana())
-                .locatieId(dto.getLocatieId())
-                .oraInceput(dto.getOraInceput())
-                .oraSfarsit(dto.getOraSfarsit())
-                .active(true)
-                .build();
-    }
-
-    private String getZiSaptamanaNume(Integer zi) {
-        if (zi == null || zi < 1 || zi > 7) {
-            return "Necunoscut";
-        }
-        DayOfWeek dayOfWeek = DayOfWeek.of(zi);
-        return dayOfWeek.getDisplayName(TextStyle.FULL, Locale.of("ro"));
-    }
+    return DayOfWeek.of(zi)
+            .getDisplayName(TextStyle.FULL, Locale.of("ro"))
+            .substring(0, 1).toUpperCase() + 
+            DayOfWeek.of(zi).getDisplayName(TextStyle.FULL, Locale.of("ro")).substring(1);
+}
 }

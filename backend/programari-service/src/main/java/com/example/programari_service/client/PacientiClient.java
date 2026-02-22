@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
 
-@FeignClient(name = "pacienti-service", url = "http://localhost:8083")
+@FeignClient(name = "pacienti-service", url = "http://localhost:8083", configuration = CustomErrorDecoder.class)
 public interface PacientiClient {
     // ia datele pacientului. returneaza keycloakId-ul pacientului
     @GetMapping("/pacient/{id}")
@@ -16,4 +16,8 @@ public interface PacientiClient {
 
     @GetMapping("/jurnal/{pacientId}/istoric")
     List<JurnalIstoricDTO> getIstoricJurnal(@PathVariable("pacientId") Long pacientId);
+
+    // keycloakId -> PacientKeycloakDTO (contine id-ul intern). folosit la admin cancel
+    @GetMapping("/pacient/by-keycloak/{keycloakId}")
+    PacientKeycloakDTO getByKeycloakId(@PathVariable("keycloakId") String keycloakId);
 }

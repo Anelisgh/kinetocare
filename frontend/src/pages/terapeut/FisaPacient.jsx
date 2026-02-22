@@ -3,6 +3,8 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { profileService } from '../../services/profileService';
 import { programariService } from '../../services/programariService';
+import { evolutiiService } from '../../services/evolutiiService';
+import { evaluariService } from '../../services/evaluariService';
 import '../../styles/fisaPacient.css';
 
 const FisaPacient = () => {
@@ -16,14 +18,23 @@ const FisaPacient = () => {
   const [terapeutId, setTerapeutId] = useState(null);
   const [activeTab, setActiveTab] = useState('evaluari');
 
+  const fetchFisa = async (tid) => {
+    try {
+      const data = await programariService.getFisaPacient(pacientId, tid);
+      setFisa(data);
+    } catch (err) {
+      console.error('Eroare la încărcarea fișei:', err);
+      setError(err.message);
+    }
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       try {
         const profile = await profileService.getProfile();
         const tid = profile.terapeutId || profile.id;
         setTerapeutId(tid);
-        const data = await programariService.getFisaPacient(pacientId, tid);
-        setFisa(data);
+        await fetchFisa(tid);
       } catch (err) {
         console.error('Eroare la încărcarea fișei:', err);
         setError(err.message);
@@ -33,6 +44,11 @@ const FisaPacient = () => {
     };
     fetchData();
   }, [pacientId]);
+
+  // Refresh fisa dupa o editare
+  const refreshFisa = () => {
+    if (terapeutId) fetchFisa(terapeutId);
+  };
 
   if (loading) return (
     <div className="fisa-loading">
@@ -127,8 +143,8 @@ const FisaPacient = () => {
 
       {/* Tab Content */}
       <div className="fisa-tab-content">
-        {activeTab === 'evaluari' && <EvaluariTab evaluari={fisa.evaluari} terapeutId={terapeutId} />}
-        {activeTab === 'evolutii' && <EvolutiiTab evolutii={fisa.evolutii} />}
+        {activeTab === 'evaluari' && <EvaluariTab evaluari={fisa.evaluari} terapeutId={terapeutId} onRefresh={refreshFisa} />}
+        {activeTab === 'evolutii' && <EvolutiiTab evolutii={fisa.evolutii} onRefresh={refreshFisa} />}
         {activeTab === 'programari' && <ProgramariTab programari={fisa.programari} terapeutId={terapeutId} />}
         {activeTab === 'jurnale' && <JurnaleTab jurnale={fisa.jurnale} />}
       </div>
@@ -138,18 +154,71 @@ const FisaPacient = () => {
 
 /* === TAB COMPONENTS === */
 
-const EvaluariTab = ({ evaluari, terapeutId }) => {
+const EvaluariTab = ({ evaluari, terapeutId, onRefresh }) => {
+  const [editingId, setEditingId] = useState(null);
+  const [editData, setEditData] = useState({});
+  const [saving, setSaving] = useState(false);
+  const [message, setMessage] = useState(null);
+  const [servicii, setServicii] = useState([]);
+
+  // incarcam lista de servicii (pentru dropdown-ul din edit mode)
+  useEffect(() => {
+    evaluariService.getAllServicii()
+      .then(data => setServicii(data || []))
+      .catch(() => setServicii([]));
+  }, []);
+
   if (!evaluari || evaluari.length === 0) {
     return <div className="tab-empty">Nu există evaluări pentru acest pacient.</div>;
   }
 
+  const startEdit = (ev) => {
+    setEditingId(ev.id);
+    setEditData({
+      diagnostic: ev.diagnostic || '',
+      sedinteRecomandate: ev.sedinteRecomandate || 10,
+      serviciuRecomandatId: ev.serviciuRecomandatId || '',
+      observatii: ev.observatii || ''
+    });
+    setMessage(null);
+  };
+
+  const cancelEdit = () => {
+    setEditingId(null);
+    setEditData({});
+  };
+
+  const saveEdit = async (ev) => {
+    try {
+      setSaving(true);
+      await evaluariService.updateEvaluare(ev.id, {
+        diagnostic: editData.diagnostic,
+        sedinteRecomandate: Number(editData.sedinteRecomandate),
+        serviciuRecomandatId: editData.serviciuRecomandatId ? Number(editData.serviciuRecomandatId) : null,
+        observatii: editData.observatii
+      });
+      setMessage({ type: 'success', text: 'Evaluare actualizată!' });
+      setEditingId(null);
+      onRefresh();
+      setTimeout(() => setMessage(null), 3000);
+    } catch (err) {
+      setMessage({ type: 'error', text: err.message });
+    } finally {
+      setSaving(false);
+    }
+  };
+
   return (
     <div className="evaluari-list">
+      {message && (
+        <div className={`fisa-inline-message ${message.type}`}>{message.text}</div>
+      )}
       {evaluari.map((ev, idx) => {
         const isOwnEvaluation = ev.terapeutId === terapeutId;
+        const isEditing = editingId === ev.id;
 
         return (
-          <div key={ev.id || idx} className="evaluare-card">
+          <div key={ev.id || idx} className={`evaluare-card ${isEditing ? 'editing' : ''}`}>
             <div className="evaluare-header">
               <div className="evaluare-header-left">
                 <span className={`evaluare-tip ${ev.tipEvaluare?.includes('Inițială') ? 'initiala' : 'reevaluare'}`}>
@@ -159,28 +228,93 @@ const EvaluariTab = ({ evaluari, terapeutId }) => {
                   <span className="evaluare-alt-terapeut">👤 {ev.numeTerapeut}</span>
                 )}
               </div>
-              <span className="evaluare-data">
-                {ev.data ? new Date(ev.data).toLocaleDateString('ro-RO') : '—'}
-              </span>
+              <div className="evaluare-header-right">
+                <span className="evaluare-data">
+                  {ev.data ? new Date(ev.data).toLocaleDateString('ro-RO') : '—'}
+                </span>
+                {isOwnEvaluation && !isEditing && (
+                  <button className="fisa-edit-btn" onClick={() => startEdit(ev)} title="Editează">
+                    ✏️
+                  </button>
+                )}
+              </div>
             </div>
             <div className="evaluare-body">
-              <div className="evaluare-row">
-                <span className="ev-label">Diagnostic</span>
-                <span className="ev-value">{ev.diagnostic || '—'}</span>
-              </div>
-              <div className="evaluare-row">
-                <span className="ev-label">Serviciu Recomandat</span>
-                <span className="ev-value">{ev.serviciuRecomandat || '—'}</span>
-              </div>
-              <div className="evaluare-row">
-                <span className="ev-label">Ședințe Recomandate</span>
-                <span className="ev-value">{ev.sedinteRecomandate || '—'}</span>
-              </div>
-              {ev.observatii && (
-                <div className="evaluare-observatii">
-                  <span className="ev-label">Observații</span>
-                  <p>{ev.observatii}</p>
-                </div>
+              {isEditing ? (
+                <>
+                  <div className="evaluare-row">
+                    <span className="ev-label">Diagnostic</span>
+                    <textarea
+                      value={editData.diagnostic}
+                      onChange={(e) => setEditData({ ...editData, diagnostic: e.target.value })}
+                      className="fisa-edit-textarea"
+                      rows="3"
+                    />
+                  </div>
+                  <div className="evaluare-row">
+                    <span className="ev-label">Serviciu Recomandat</span>
+                    <select
+                      value={editData.serviciuRecomandatId}
+                      onChange={(e) => setEditData({ ...editData, serviciuRecomandatId: e.target.value })}
+                      className="fisa-edit-input"
+                    >
+                      <option value="">— Selectează —</option>
+                      {servicii.map(s => (
+                        <option key={s.id} value={s.id}>{s.nume}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="evaluare-row">
+                    <span className="ev-label">Ședințe Recomandate</span>
+                    <input
+                      type="number"
+                      value={editData.sedinteRecomandate}
+                      onChange={(e) => setEditData({ ...editData, sedinteRecomandate: e.target.value })}
+                      className="fisa-edit-input"
+                      min="1"
+                      max="50"
+                    />
+                  </div>
+                  <div className="evaluare-row">
+                    <span className="ev-label">Observații</span>
+                    <textarea
+                      value={editData.observatii}
+                      onChange={(e) => setEditData({ ...editData, observatii: e.target.value })}
+                      className="fisa-edit-textarea"
+                      rows="2"
+                      placeholder="Observații..."
+                    />
+                  </div>
+                  <div className="fisa-edit-actions">
+                    <button className="fisa-save-btn" onClick={() => saveEdit(ev)} disabled={saving}>
+                      {saving ? 'Se salvează...' : '💾 Salvează'}
+                    </button>
+                    <button className="fisa-cancel-btn" onClick={cancelEdit}>
+                      ✕ Anulează
+                    </button>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className="evaluare-row">
+                    <span className="ev-label">Diagnostic</span>
+                    <span className="ev-value">{ev.diagnostic || '—'}</span>
+                  </div>
+                  <div className="evaluare-row">
+                    <span className="ev-label">Serviciu Recomandat</span>
+                    <span className="ev-value">{ev.serviciuRecomandat || '—'}</span>
+                  </div>
+                  <div className="evaluare-row">
+                    <span className="ev-label">Ședințe Recomandate</span>
+                    <span className="ev-value">{ev.sedinteRecomandate || '—'}</span>
+                  </div>
+                  {ev.observatii && (
+                    <div className="evaluare-observatii">
+                      <span className="ev-label">Observații</span>
+                      <p>{ev.observatii}</p>
+                    </div>
+                  )}
+                </>
               )}
             </div>
           </div>
@@ -190,23 +324,88 @@ const EvaluariTab = ({ evaluari, terapeutId }) => {
   );
 };
 
-const EvolutiiTab = ({ evolutii }) => {
+const EvolutiiTab = ({ evolutii, onRefresh }) => {
+  const [editingId, setEditingId] = useState(null);
+  const [editText, setEditText] = useState('');
+  const [saving, setSaving] = useState(false);
+  const [message, setMessage] = useState(null);
+
   if (!evolutii || evolutii.length === 0) {
     return <div className="tab-empty">Nu există note de evoluție pentru acest pacient.</div>;
   }
 
+  const startEdit = (ev) => {
+    setEditingId(ev.id);
+    setEditText(ev.observatii || '');
+    setMessage(null);
+  };
+
+  const cancelEdit = () => {
+    setEditingId(null);
+    setEditText('');
+  };
+
+  const saveEdit = async (ev) => {
+    if (!editText.trim()) return;
+    try {
+      setSaving(true);
+      await evolutiiService.updateEvolutie(ev.id, { observatii: editText });
+      setMessage({ type: 'success', text: 'Notă actualizată!' });
+      setEditingId(null);
+      onRefresh();
+      setTimeout(() => setMessage(null), 3000);
+    } catch (err) {
+      setMessage({ type: 'error', text: err.message });
+    } finally {
+      setSaving(false);
+    }
+  };
+
   return (
     <div className="evolutii-timeline">
-      {evolutii.map((ev, idx) => (
-        <div key={ev.id || idx} className="evolutie-item">
-          <div className="evolutie-date">
-            {ev.createdAt ? new Date(ev.createdAt).toLocaleDateString('ro-RO') : '—'}
+      {message && (
+        <div className={`fisa-inline-message ${message.type}`}>{message.text}</div>
+      )}
+      {evolutii.map((ev, idx) => {
+        const isEditing = editingId === ev.id;
+
+        return (
+          <div key={ev.id || idx} className={`evolutie-item ${isEditing ? 'editing' : ''}`}>
+            <div className="evolutie-header-row">
+              <div className="evolutie-date">
+                {ev.createdAt ? new Date(ev.createdAt).toLocaleDateString('ro-RO') : '—'}
+              </div>
+              {!isEditing && (
+                <button className="fisa-edit-btn" onClick={() => startEdit(ev)} title="Editează">
+                  ✏️
+                </button>
+              )}
+            </div>
+            <div className="evolutie-content">
+              {isEditing ? (
+                <>
+                  <textarea
+                    value={editText}
+                    onChange={(e) => setEditText(e.target.value)}
+                    className="fisa-edit-textarea"
+                    rows="3"
+                  />
+                  <div className="fisa-edit-actions">
+                    <button className="fisa-save-btn" onClick={() => saveEdit(ev)} disabled={saving || !editText.trim()}>
+                      {saving ? 'Se salvează...' : '💾 Salvează'}
+                    </button>
+                    <button className="fisa-cancel-btn" onClick={cancelEdit}>
+                      ✕ Anulează
+                    </button>
+                  </div>
+                </>
+              ) : (
+                <p>{ev.observatii}</p>
+              )}
+            </div>
           </div>
-          <div className="evolutie-content">
-            <p>{ev.observatii}</p>
-          </div>
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
 };
@@ -218,7 +417,6 @@ const ProgramariTab = ({ programari, terapeutId }) => {
     return <div className="tab-empty">Nu există programări pentru acest pacient.</div>;
   }
 
-  // Detectam locatia cea mai frecventa (pentru a o ascunde pe cele repetitive)
   const locationCounts = {};
   programari.forEach(p => {
     if (p.numeLocatie) {
@@ -256,7 +454,6 @@ const ProgramariTab = ({ programari, terapeutId }) => {
     return s.includes('anulat') || s.includes('neprezentare');
   };
 
-  // Filtram programarile anulate (default: ascunse)
   const anulateCount = programari.filter(p => isAnulata(p.status)).length;
   const filteredProgramari = showAnulate
     ? programari
@@ -264,7 +461,6 @@ const ProgramariTab = ({ programari, terapeutId }) => {
 
   return (
     <div className="programari-tab-wrapper">
-      {/* Filtru anulate */}
       {anulateCount > 0 && (
         <button
           className={`programari-filter-toggle ${showAnulate ? 'active' : ''}`}
@@ -308,7 +504,6 @@ const ProgramariTab = ({ programari, terapeutId }) => {
                   <span className="prog-locatie">📍 {prog.numeLocatie}</span>
                 )}
               </div>
-              {/* Motiv anulare */}
               {isAnulata(prog.status) && prog.motivAnulare && (
                 <div className="programare-motiv-anulare">
                   <span className="motiv-label">Motiv:</span> {prog.motivAnulare}

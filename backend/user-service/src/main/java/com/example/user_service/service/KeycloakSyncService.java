@@ -7,6 +7,8 @@ import org.keycloak.admin.client.resource.UserResource;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import com.example.user_service.exception.ResourceAlreadyExistsException;
+import com.example.user_service.exception.ExternalServiceException;
 
 @Service
 @RequiredArgsConstructor
@@ -28,9 +30,13 @@ public class KeycloakSyncService {
 
             if (email != null && !email.equals(user.getEmail())) {
                 // verificam daca email-ul exista deja in keycloak (exclusiv user-ul curent), fara aceasta metoda keycloak va returna o eroare (de obicei 409 conflict)
-                if (emailExistsInKeycloak(email, keycloakId)) {
-                    log.warn("Tentativa de update cu email duplicat: {}", email);
-                    throw new RuntimeException("Email-ul " + email + " este deja utilizat de un alt cont!");
+                var existingUsers = keycloak.realm(realm).users().search(email, true);
+                if (!existingUsers.isEmpty()) {
+                    String existingUserId = existingUsers.get(0).getId();
+                    if (!existingUserId.equals(keycloakId)) {
+                        log.warn("Tentativa de update cu email duplicat: {}", email);
+                        throw new ResourceAlreadyExistsException("Email-ul " + email + " este deja utilizat de un alt cont!");
+                    }
                 }
                 user.setEmail(email);
                 user.setUsername(email);
@@ -57,8 +63,8 @@ public class KeycloakSyncService {
             }
 
         } catch (Exception e) {
-            log.error("Failed to update Keycloak user for keycloakId: {}", keycloakId, e);
-            throw new RuntimeException("Failed to sync user data with Keycloak", e);
+            log.error("Failed to sync user data with Keycloak for user {}: {}", keycloakId, e.getMessage());
+            throw new ExternalServiceException("Failed to sync user data with Keycloak", e);
         }
     }
 
@@ -73,6 +79,20 @@ public class KeycloakSyncService {
         } catch (Exception e) {
             log.error("Error checking email existence in Keycloak for email: {}", email, e);
             return false;
+        }
+    }
+
+    // activeaza/dezactiveaza contul in keycloak
+    public void setUserEnabled(String keycloakId, boolean enabled) {
+        try {
+            UserResource userResource = keycloak.realm(realm).users().get(keycloakId);
+            UserRepresentation user = userResource.toRepresentation();
+            user.setEnabled(enabled);
+            userResource.update(user);
+            log.info("Keycloak user {} {} successfully", keycloakId, enabled ? "enabled" : "disabled");
+        } catch (Exception e) {
+            log.error("Error updating keycloak status for user {}: {}", keycloakId, e.getMessage());
+            throw new ExternalServiceException("Eroare la sincronizarea cu Keycloak: " + e.getMessage(), e);
         }
     }
 }

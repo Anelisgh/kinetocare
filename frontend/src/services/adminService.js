@@ -110,5 +110,87 @@ export const adminService = {
     } catch (error) {
       handleApiError(error, 'Eroare la schimbarea statusului tipului de serviciu');
     }
+  },
+
+  // --- ADMINISTRATE UTILIZATORI ---
+  getAllUsers: async (role, active) => {
+    try {
+      // contruim query params
+      const params = new URLSearchParams();
+      if (role) params.append('role', role);
+      if (active !== undefined && active !== null && active !== '') {
+        params.append('active', active);
+      }
+
+      const response = await api.get(`/api/users?${params.toString()}`);
+      return response.data;
+    } catch (error) {
+      handleApiError(error, 'Eroare la încărcarea utilizatorilor');
+    }
+  },
+
+  toggleUserActive: async (userId) => {
+    try {
+      const response = await api.patch(`/api/users/${userId}/toggle-active`);
+      return response.data;
+    } catch (error) {
+      handleApiError(error, 'Eroare la schimbarea statusului utilizatorului');
+      throw error;
+    }
+  },
+
+  // --- STATISTICI ---
+  getProgramariLunare: async (startDate, endDate) => {
+    try {
+      const response = await api.get(`/api/programari/statistici/locatii/programari-lunar?startDate=${startDate}&endDate=${endDate}`);
+      return response.data;
+    } catch (error) {
+      handleApiError(error, 'Eroare la încărcarea statisticilor programărilor');
+    }
+  },
+
+  getVenituriLocatie: async (startDate, endDate) => {
+    try {
+      const response = await api.get(`/api/programari/statistici/locatii/venituri?startDate=${startDate}&endDate=${endDate}`);
+      return response.data;
+    } catch (error) {
+      handleApiError(error, 'Eroare la încărcarea veniturilor');
+    }
+  },
+
+  getRataAnulare: async (startDate, endDate) => {
+    try {
+      const response = await api.get(`/api/programari/statistici/locatii/rata-anulare?startDate=${startDate}&endDate=${endDate}`);
+      return response.data;
+    } catch (error) {
+      handleApiError(error, 'Eroare la încărcarea ratei de anulare');
+    }
+  },
+
+  getPacientiNoi: async (startDate, endDate) => {
+    try {
+      const response = await api.get(`/api/programari/statistici/locatii/pacienti-noi?startDate=${startDate}&endDate=${endDate}`);
+      return response.data;
+    } catch (error) {
+      handleApiError(error, 'Eroare la încărcarea pacienților noi');
+    }
+  },
+
+  getProgramariTerapeut: async (startDate, endDate) => {
+    try {
+      const response = await api.get(`/api/programari/statistici/terapeuti/programari?startDate=${startDate}&endDate=${endDate}`);
+      return response.data;
+    } catch (error) {
+      handleApiError(error, 'Eroare la încărcarea statisticilor pe terapeuți');
+    }
+  },
+
+  getTerapeutiActivi: async () => {
+    try {
+      const response = await api.get('/api/terapeut/statistici/locatii/terapeuti-activi');
+      return response.data;
+    } catch (error) {
+      handleApiError(error, 'Eroare la încărcarea terapeuților activi');
+    }
   }
 };

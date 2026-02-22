@@ -5,7 +5,7 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
-@FeignClient(name = "user-service", url = "http://localhost:8082")
+@FeignClient(name = "user-service", url = "http://localhost:8082", configuration = CustomErrorDecoder.class)
 public interface UserClient {
     // folosim endpoint-ul existent, dar mapam doar campurile care ne intereseaza in DTO
     // afiseaza nume, prenume, telefon dupa keycloakId in jurnalul pacientului
@@ -16,4 +16,9 @@ public interface UserClient {
     // afiseaza doar numele in calendar
     @GetMapping("/users/{id}")
     UserDisplayCalendarDTO getUserById(@PathVariable("id") Long id);
+
+    // [STATISTICI] ia toti userii (sau filtrat prin params) pentru a mapa id -> nume eficient
+    @GetMapping("/users")
+    java.util.List<UserDisplayCalendarDTO> getAllUsers();
+
 }

@@ -18,7 +18,7 @@ public class NotificareConsumer {
 
     @RabbitListener(queues = RabbitMQConfig.QUEUE_NAME)
     public void primesteMesaj(NotificareEvent event) {
-        log.info("Mesaj primit din RabbitMQ: {} → userId={}", event.getTipNotificare(), event.getUserId());
+        log.info("Mesaj primit din RabbitMQ: {} → userId={}", event.tipNotificare(), event.userId());
         try {
             notificareService.proceseazaEveniment(event);
         } catch (Exception e) {

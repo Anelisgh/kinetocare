@@ -1,8 +1,8 @@
 package com.example.api_gateway.controller;
 
 import com.example.api_gateway.service.SearchTerapeutService;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -16,13 +16,18 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/terapeut")
-@RequiredArgsConstructor
 @Slf4j
 public class SearchTerapeutController {
 
     private final SearchTerapeutService searchTerapeutService;
-    private final WebClient.Builder webClientBuilder;
-    private static final String PACIENT_SERVICE_URL = "http://localhost:8083";
+    private final WebClient pacientiWebClient;
+
+    public SearchTerapeutController(
+            SearchTerapeutService searchTerapeutService,
+            @Qualifier("pacientiWebClient") WebClient pacientiWebClient) {
+        this.searchTerapeutService = searchTerapeutService;
+        this.pacientiWebClient = pacientiWebClient;
+    }
 
     // cauta terapeuti dupa criteriile pacientului -> SearchTerapeutService
     @GetMapping("/search-terapeuti")
@@ -35,11 +40,7 @@ public class SearchTerapeutController {
             @AuthenticationPrincipal Jwt jwt) {
 
         return searchTerapeutService.searchTerapeuti(specializare, judet, oras, locatieId, gen, jwt.getTokenValue())
-                .map(ResponseEntity::ok)
-                .onErrorResume(e -> {
-                    log.error("Error searching terapeuti", e);
-                    return Mono.just(ResponseEntity.internalServerError().build());
-                });
+                .map(ResponseEntity::ok);
     }
 
     // pacientul isi alege terapeutul -> pacienti-service
@@ -50,25 +51,19 @@ public class SearchTerapeutController {
             @AuthenticationPrincipal Jwt jwt) {
 
         String keycloakId = jwt.getSubject();
-        // parametrul fiind optional, altfel s-ar putea interpreta locatieId="null" dand
-        // o eroare de formatare (pt ca asteapta Long, nu String)
-        StringBuilder uriBuilder = new StringBuilder(
-                PACIENT_SERVICE_URL + "/pacient/" + keycloakId + "/choose-terapeut/" + terapeutKeycloakId);
-        if (locatieId != null) {
-            uriBuilder.append("?locatieId=").append(locatieId);
-        }
 
-        return webClientBuilder.build()
-                .post()
-                .uri(uriBuilder.toString())
+        return pacientiWebClient.post()
+                .uri(uriBuilder -> {
+                    uriBuilder.path("/pacient/{keycloakId}/choose-terapeut/{terapeutKeycloakId}");
+                    if (locatieId != null) {
+                        uriBuilder.queryParam("locatieId", locatieId);
+                    }
+                    return uriBuilder.build(keycloakId, terapeutKeycloakId);
+                })
                 .header("Authorization", "Bearer " + jwt.getTokenValue())
                 .retrieve()
                 .bodyToMono(new ParameterizedTypeReference<Map<String, Object>>() {})
-                .map(ResponseEntity::ok)
-                .onErrorResume(e -> {
-                    log.error("Error choosing terapeut for user: {}", keycloakId, e);
-                    return Mono.just(ResponseEntity.internalServerError().build());
-                });
+                .map(ResponseEntity::ok);
     }
 
     // pacientul renunta la terapeutul curent -> pacienti-service
@@ -76,17 +71,12 @@ public class SearchTerapeutController {
     public Mono<ResponseEntity<Map<String, Object>>> removeTerapeut(@AuthenticationPrincipal Jwt jwt) {
         String keycloakId = jwt.getSubject();
 
-        return webClientBuilder.build()
-                .delete()
-                .uri(PACIENT_SERVICE_URL + "/pacient/" + keycloakId + "/remove-terapeut")
+        return pacientiWebClient.delete()
+                .uri("/pacient/{keycloakId}/remove-terapeut", keycloakId)
                 .header("Authorization", "Bearer " + jwt.getTokenValue())
                 .retrieve()
                 .bodyToMono(new ParameterizedTypeReference<Map<String, Object>>() {})
-                .map(ResponseEntity::ok)
-                .onErrorResume(e -> {
-                    log.error("Error removing terapeut for user: {}", keycloakId, e);
-                    return Mono.just(ResponseEntity.internalServerError().build());
-                });
+                .map(ResponseEntity::ok);
     }
 
     // returneaza detaliile terapeutului asignat pacientului -> SearchTerapeutService
@@ -95,11 +85,6 @@ public class SearchTerapeutController {
         String keycloakId = jwt.getSubject();
 
         return searchTerapeutService.getMyTerapeut(keycloakId, jwt.getTokenValue())
-                .map(ResponseEntity::ok)
-                .onErrorResume(e -> {
-                    log.error("Error getting my terapeut for user: {}", keycloakId, e);
-                    return Mono.just(
-                            ResponseEntity.internalServerError().body(Map.<String, Object>of()));
-                });
+                .map(ResponseEntity::ok);
     }
 }

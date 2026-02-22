@@ -4,6 +4,9 @@ import com.example.user_service.dto.RegisterRequestDTO;
 import com.example.user_service.dto.RegisterResponseDTO;
 import com.example.user_service.entity.User;
 import com.example.user_service.entity.UserRole;
+import com.example.user_service.exception.ExternalServiceException;
+import com.example.user_service.exception.ForbiddenOperationException;
+import com.example.user_service.exception.ResourceAlreadyExistsException;
 import com.example.user_service.mapper.UserRegisterMapper;
 import com.example.user_service.repository.UserRepository;
 import jakarta.transaction.Transactional;
@@ -46,13 +49,13 @@ public class KeycloakService {
     @Transactional
     public RegisterResponseDTO registerUser(RegisterRequestDTO request) {
         // verificam rolul
-        if (request.getRole() == UserRole.ADMIN) {
-            log.warn("Încercare de înregistrare a unui cont ADMIN eșuată. Email: {}", request.getEmail());
-            throw new RuntimeException("Înregistrarea conturilor de admin nu este permisă prin acest formular.");
+        if (request.role() == UserRole.ADMIN) {
+            log.warn("Încercare de înregistrare a unui cont ADMIN eșuată. Email: {}", request.email());
+            throw new ForbiddenOperationException("Înregistrarea conturilor de admin nu este permisă prin acest formular.");
         }
         // verificam in db locala
-        if (userRepository.existsByEmail(request.getEmail())) {
-            throw new RuntimeException("Email-ul este deja înregistrat");
+        if (userRepository.existsByEmail(request.email())) {
+            throw new ResourceAlreadyExistsException("Email-ul este deja înregistrat");
         }
         String keycloakId = null;
         try {
@@ -60,26 +63,27 @@ public class KeycloakService {
             keycloakId = createUserInKeycloak(request);
 
             // adauga rolul
-            assignRoleInKeycloak(keycloakId, request.getRole());
+            assignRoleInKeycloak(keycloakId, request.role());
 
             // cream user in db local
             User user = userRegisterMapper.toEntity(request, keycloakId);
             user.setActive(true);
             userRepository.save(user);
-            log.info("User registered successfully: {} with role: {}", request.getEmail(), request.getRole());
+            log.info("User registered successfully: {} with role: {}", request.email(), request.role());
 
             // cream profilul gol in serviciul corespunzator
-            initializeRoleSpecificProfile(keycloakId, request.getRole());
+            initializeRoleSpecificProfile(keycloakId, request.role());
 
             return userRegisterMapper.toRegisterResponse(user, "Cont creat cu succes! Te poți autentifica acum.");
         } catch (Exception e) {
-            // daca a aparut o eroare DUPA ce user-ul a fost creat in keycloak -> facem rollback si il stergem
+            // Dacă pică DB-ul local, dar am creat în Keycloak, AR TREBUI SA STERGEM DIN KEYCLOAK AICI
+            // logica de rollback (ideal cu eventual consistency dar pt acum, catch si arunca)
+            log.error("Error during user registration, rolling back Keycloak if necessary", e);
             if (keycloakId != null) {
-                log.error("Registration failed after Keycloak user creation. Rolling back Keycloak user: {}",
-                        keycloakId);
+                log.warn("Attempting to delete Keycloak user {} due to registration failure.", keycloakId);
                 deleteUserInKeycloak(keycloakId);
             }
-            throw new RuntimeException("Eroare la înregistrare: " + e.getMessage(), e);
+            throw new ExternalServiceException("Eroare la înregistrare: " + e.getMessage(), e);
         }
     }
 
@@ -88,30 +92,41 @@ public class KeycloakService {
         try {
             if (role == UserRole.PACIENT) {
                 // endpoint-ul de initializare pentru pacient
-                String url = pacientiServiceUrl + "/pacient/initialize/" + keycloakId;
+                String url = org.springframework.web.util.UriComponentsBuilder
+                        .fromUriString(pacientiServiceUrl)
+                        .path("/pacient/initialize/{id}")
+                        .buildAndExpand(keycloakId)
+                        .toUriString();
                 ResponseEntity<Void> response = restTemplate.postForEntity(url, null, Void.class);
 
                 if (response.getStatusCode().is2xxSuccessful()) {
-                    log.info("Patient profile initialized for keycloakId: {}", keycloakId);
+                    log.info("Profil pacient inițializat pentru {}", keycloakId);
                 } else {
-                    log.error("Failed to initialize patient profile, status: {}", response.getStatusCode());
-                    throw new RuntimeException("Eroare la crearea profilului de pacient");
+                    log.error("Răspuns neașteptat la inițializarea profilului de pacient: {}",
+                            response.getStatusCode());
+                    throw new ExternalServiceException("Eroare la crearea profilului de pacient");
                 }
             } else if (role == UserRole.TERAPEUT) {
                 // endpoint-ul de initializare pentru terapeut
-                String url = terapeutiServiceUrl + "/terapeut/initialize/" + keycloakId;
+                String url = org.springframework.web.util.UriComponentsBuilder
+                        .fromUriString(terapeutiServiceUrl)
+                        .path("/terapeut/initialize/{id}")
+                        .buildAndExpand(keycloakId)
+                        .toUriString();
                 ResponseEntity<Void> response = restTemplate.postForEntity(url, null, Void.class);
 
                 if (response.getStatusCode().is2xxSuccessful()) {
-                    log.info("Terapeut profile initialized for keycloakId: {}", keycloakId);
+                    log.info("Profil terapeut inițializat pentru {}", keycloakId);
                 } else {
-                    log.error("Failed to initialize terapeut profile, status: {}", response.getStatusCode());
-                    throw new RuntimeException("Eroare la crearea profilului de terapeut");
+                    log.error("Răspuns neașteptat la inițializarea profilului de terapeut: {}",
+                            response.getStatusCode());
+                    throw new ExternalServiceException("Eroare la crearea profilului de terapeut");
                 }
             }
+
         } catch (Exception e) {
-            log.error("Failed to initialize role-specific profile for keycloakId: {}", keycloakId, e);
-            throw new RuntimeException("Eroare la inițializarea profilului specific: " + e.getMessage(), e);
+            log.error("Exceptie la apelul serviciilor de profil", e);
+            throw new ExternalServiceException("Eroare la inițializarea profilului specific: " + e.getMessage(), e);
         }
     }
 
@@ -131,33 +146,36 @@ public class KeycloakService {
         RealmResource realmResource = keycloak.realm(realm);
         UsersResource usersResource = realmResource.users();
 
-        List<UserRepresentation> existingUsers = usersResource.search(request.getEmail());
+        List<UserRepresentation> existingUsers = usersResource.search(request.email(), true);
         if (!existingUsers.isEmpty()) {
-            throw new RuntimeException("Utilizatorul există deja în Keycloak");
+            throw new ResourceAlreadyExistsException("Utilizatorul există deja în Keycloak");
         }
 
         // construim obiectul
         UserRepresentation user = new UserRepresentation();
         user.setEnabled(true);
-        user.setUsername(request.getEmail());
-        user.setEmail(request.getEmail());
-        user.setFirstName(request.getNume());
-        user.setLastName(request.getPrenume());
+        user.setUsername(request.email());
+        user.setEmail(request.email());
+        user.setFirstName(request.nume());
+        user.setLastName(request.prenume());
         user.setEmailVerified(true); // fara email verification
 
         // seteaza parola
         CredentialRepresentation credential = new CredentialRepresentation();
         credential.setType(CredentialRepresentation.PASSWORD);
-        credential.setValue(request.getPassword());
+        credential.setValue(request.password());
         credential.setTemporary(false); // parola nu e temporara
         user.setCredentials(Collections.singletonList(credential));
 
         Response response = usersResource.create(user);
 
         if (response.getStatus() != 201) {
+            log.error("Eroare la crearea utilizatorului în Keycloak. Status: {}, Info: {}",
+                    response.getStatus(), response.getStatusInfo());
+
             String error = response.readEntity(String.class);
-            log.error("Failed to create user in Keycloak: {}", error);
-            throw new RuntimeException("Eroare la crearea contului în Keycloak: " + error);
+            log.error("Keycloak response body: {}", error);
+            throw new ExternalServiceException("Eroare la crearea contului în Keycloak: " + error);
         }
 
         // extragem ID-ul user-ului din location header

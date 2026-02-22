@@ -14,7 +14,7 @@ export default function Navbar() {
   };
 
   let homepageLink = '/login';
-  if (roles.includes('ADMIN')) homepageLink = '/admin/locatii';
+  if (roles.includes('ADMIN')) homepageLink = '/admin/homepage';
   else if (roles.includes('TERAPEUT')) homepageLink = '/terapeut/homepage';
   else if (roles.includes('PACIENT')) homepageLink = '/pacient/homepage';
 
@@ -31,8 +31,10 @@ export default function Navbar() {
         {/* ADMIN */}
         {roles.includes('ADMIN') && (
           <>
-            <Link to="/admin/locatii">Administrare Locații</Link>
-            <Link to="/admin/servicii">Administrare Servicii</Link>
+            <Link to="/admin/locatii">Locații</Link>
+            <Link to="/admin/servicii">Servicii</Link>
+            <Link to="/admin/utilizatori">Utilizatori</Link>
+            <Link to="/admin/statistici">Statistici</Link>
           </>
         )}
 

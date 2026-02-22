@@ -22,6 +22,16 @@ export const evaluariService = {
         }
     },
 
+    // Editeaza evaluare
+    updateEvaluare: async (id, data) => {
+        try {
+            const response = await api.put(`/api/evaluari/${id}`, data);
+            return response.data;
+        } catch (error) {
+            handleApiError(error, 'Nu s-a putut actualiza evaluarea.');
+        }
+    },
+
     // Obtine lista de servicii
     getAllServicii: async () => {
         try {

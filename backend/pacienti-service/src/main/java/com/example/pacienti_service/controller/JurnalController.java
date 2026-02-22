@@ -24,6 +24,14 @@ public class JurnalController {
         return ResponseEntity.ok().build();
     }
 
+    // editeaza un jurnal existent
+    // api-gateway -> updateJurnal (JurnalController)
+    @PutMapping("/{pacientId}/{jurnalId}")
+    public ResponseEntity<Void> updateJurnal(@PathVariable Long pacientId, @PathVariable Long jurnalId, @RequestBody JurnalRequestDTO request) {
+        jurnalService.actualizeazaJurnal(pacientId, jurnalId, request);
+        return ResponseEntity.ok().build();
+    }
+
     // returneaza istoricul jurnalului
     // api-gateway -> getIstoricJurnal (JurnalController)
     @GetMapping("/{pacientId}/istoric")

@@ -1,8 +1,8 @@
 package com.example.api_gateway.service;
 
 import com.example.api_gateway.utils.SecurityUtils;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -12,14 +12,19 @@ import java.util.Map;
 
 @Slf4j
 @Service
-@RequiredArgsConstructor
 public class HomepageService {
 
     private final ProfileService profileService;
-    private final WebClient.Builder webClientBuilder;
+    private final WebClient programariWebClient;
     private final SecurityUtils securityUtils;
 
-    private static final String PROGRAMARI_SERVICE_URL = "http://localhost:8085";
+    public HomepageService(ProfileService profileService,
+                           @Qualifier("programariWebClient") WebClient programariWebClient,
+                           SecurityUtils securityUtils) {
+        this.profileService = profileService;
+        this.programariWebClient = programariWebClient;
+        this.securityUtils = securityUtils;
+    }
 
     public Mono<Map<String, Object>> getHomepageData(String keycloakId, String role) {
         // luam datele complete de profil (adica user, pacient, terapeut, locatie)
@@ -47,18 +52,16 @@ public class HomepageService {
                     // 2. "Situația Pacientului" (Diagnostic + Progres)
                     Long finalPacientId = pacientId;
 
-                    Mono<Map<String, Object>> nextApptMono = securityUtils.getJwtToken().flatMap(token -> webClientBuilder.build()
-                            .get()
-                            .uri(PROGRAMARI_SERVICE_URL + "/programari/pacient/" + finalPacientId + "/next")
+                    Mono<Map<String, Object>> nextApptMono = securityUtils.getJwtToken().flatMap(token -> programariWebClient.get()
+                            .uri("/programari/pacient/{id}/next", finalPacientId)
                             .header("Authorization", "Bearer " + token)
                             .retrieve()
                             .bodyToMono(new ParameterizedTypeReference<Map<String, Object>>() {
                             })
                             .onErrorResume(e -> Mono.empty())); // Daca nu are programare, returnam empty
 
-                    Mono<Map<String, Object>> situatieMono = securityUtils.getJwtToken().flatMap(token -> webClientBuilder.build()
-                            .get()
-                            .uri(PROGRAMARI_SERVICE_URL + "/programari/pacient/" + finalPacientId + "/situatie")
+                    Mono<Map<String, Object>> situatieMono = securityUtils.getJwtToken().flatMap(token -> programariWebClient.get()
+                            .uri("/programari/pacient/{id}/situatie", finalPacientId)
                             .header("Authorization", "Bearer " + token)
                             .retrieve()
                             .bodyToMono(new ParameterizedTypeReference<Map<String, Object>>() {

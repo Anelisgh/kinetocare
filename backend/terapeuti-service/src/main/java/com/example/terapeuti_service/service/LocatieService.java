@@ -4,7 +4,8 @@ import com.example.terapeuti_service.dto.LocatieDTO;
 import com.example.terapeuti_service.entity.Locatie;
 import com.example.terapeuti_service.mapper.LocatieMapper;
 import com.example.terapeuti_service.repository.LocatieRepository;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
+import com.example.terapeuti_service.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,7 @@ public class LocatieService {
     private final LocatieMapper locatieMapper;
 
     // gaseste locatiile active
+    @Transactional(readOnly = true)
     public List<LocatieDTO> getAllActiveLocatii() {
         return locatieRepository.findByActiveTrue()
                 .stream()
@@ -29,6 +31,7 @@ public class LocatieService {
     }
 
     // doar pt admin (include si locatiile inactive)
+    @Transactional(readOnly = true)
     public List<LocatieDTO> getAllLocatiiForAdmin() {
         return locatieRepository.findAll()
                 .stream()
@@ -37,9 +40,10 @@ public class LocatieService {
     }
 
     // gaseste o locatie dupa id
+    @Transactional(readOnly = true)
     public LocatieDTO getLocatieById(Long id) {
         Locatie locatie = locatieRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Locația nu a fost găsită"));
+                .orElseThrow(() -> new ResourceNotFoundException("Locația nu a fost găsită"));
         return locatieMapper.toDTO(locatie);
     }
 
@@ -56,7 +60,7 @@ public class LocatieService {
     @Transactional
     public LocatieDTO updateLocatie(Long id, LocatieDTO locatieDTO) {
         Locatie locatie = locatieRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Locația nu a fost găsită"));
+                .orElseThrow(() -> new ResourceNotFoundException("Locația nu a fost găsită"));
 
         locatieMapper.updateEntityFromDTO(locatie, locatieDTO);
         Locatie updated = locatieRepository.save(locatie);
@@ -68,7 +72,7 @@ public class LocatieService {
     @Transactional
     public void deleteLocatie(Long id) {
         Locatie locatie = locatieRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Locația nu a fost găsită"));
+                .orElseThrow(() -> new ResourceNotFoundException("Locația nu a fost găsită"));
         boolean statusNou = !Boolean.TRUE.equals(locatie.getActive());
         locatie.setActive(statusNou);
 

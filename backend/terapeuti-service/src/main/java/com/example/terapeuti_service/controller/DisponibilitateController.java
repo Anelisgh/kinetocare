@@ -9,6 +9,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,28 +26,31 @@ public class DisponibilitateController {
 
     // returneaza disponibilitatile active ale unui terapeut
     // api-gateway -> getDisponibilitati (DisponibilitateController)
-    @GetMapping("/terapeut/{keycloakId}")
-    public ResponseEntity<List<DisponibilitateDTO>> getDisponibilitati(@PathVariable String keycloakId) {
+    @GetMapping
+    public ResponseEntity<List<DisponibilitateDTO>> getDisponibilitati(@AuthenticationPrincipal Jwt jwt) {
+        String keycloakId = jwt.getSubject();
         log.info("Getting disponibilitati for terapeut: {}", keycloakId);
         return ResponseEntity.ok(disponibilitateService.getDisponibilitatiByKeycloakId(keycloakId));
     }
 
     // adauga o noua disponibilitate pentru un terapeut
     // api-gateway -> addDisponibilitate (DisponibilitateController)
-    @PostMapping("/terapeut/{keycloakId}")
+    @PostMapping
     public ResponseEntity<DisponibilitateDTO> addDisponibilitate(
-            @PathVariable String keycloakId,
+            @AuthenticationPrincipal Jwt jwt,
             @Valid @RequestBody CreateDisponibilitateDTO dto) {
+        String keycloakId = jwt.getSubject();
         log.info("Adding disponibilitate for terapeut: {}", keycloakId);
         return ResponseEntity.ok(disponibilitateService.addDisponibilitate(keycloakId, dto));
     }
 
     // sterge o disponibilitate a unui terapeut
     // api-gateway -> deleteDisponibilitate (DisponibilitateController)
-    @DeleteMapping("/{disponibilitateId}/terapeut/{keycloakId}")
+    @DeleteMapping("/{disponibilitateId}")
     public ResponseEntity<Void> deleteDisponibilitate(
-            @PathVariable String keycloakId,
+            @AuthenticationPrincipal Jwt jwt,
             @PathVariable Long disponibilitateId) {
+        String keycloakId = jwt.getSubject();
         log.info("Deleting disponibilitate {} for terapeut: {}", disponibilitateId, keycloakId);
         disponibilitateService.deleteDisponibilitate(keycloakId, disponibilitateId);
         return ResponseEntity.noContent().build();

@@ -7,7 +7,9 @@ import org.hibernate.annotations.UpdateTimestamp;
 import java.time.OffsetDateTime;
 
 @Entity
-@Table(name = "tip_serviciu")
+@Table(name = "tip_serviciu", indexes = {
+        @Index(name = "idx_tip_serviciu_nume", columnList = "nume")
+})
 @Getter
 @Setter
 @NoArgsConstructor

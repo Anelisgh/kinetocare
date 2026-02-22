@@ -3,25 +3,22 @@ package com.example.pacienti_service.mapper;
 import com.example.pacienti_service.dto.JurnalIstoricDTO;
 import com.example.pacienti_service.dto.ProgramareJurnalDTO;
 import com.example.pacienti_service.entity.JurnalPacient;
-import org.springframework.stereotype.Component;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
-@Component
-public class JurnalMapper {
+@Mapper(componentModel = "spring")
+public interface JurnalMapper {
 
-    public JurnalIstoricDTO toIstoricDTO(JurnalPacient jurnal, ProgramareJurnalDTO detalii) {
-        return JurnalIstoricDTO.builder()
-                .id(jurnal.getId())
-                .programareId(jurnal.getProgramareId())
-                .dataJurnal(jurnal.getData())
-                .oraSedinta(detalii != null ? detalii.getOra() : null)
-                .nivelDurere(jurnal.getNivelDurere())
-                .dificultateExercitii(jurnal.getDificultateExercitii())
-                .nivelOboseala(jurnal.getNivelOboseala())
-                .comentarii(jurnal.getComentarii())
-                // Detalii îmbogățite din programare
-                .tipServiciu(detalii != null ? detalii.getTipServiciu() : null)
-                .numeTerapeut(detalii != null ? detalii.getNumeTerapeut() : null)
-                .numeLocatie(detalii != null ? detalii.getNumeLocatie() : null)
-                .build();
-    }
+    @Mapping(target = "id", source = "jurnal.id")
+    @Mapping(target = "programareId", source = "jurnal.programareId")
+    @Mapping(target = "dataJurnal", source = "jurnal.data")
+    @Mapping(target = "oraSedinta", source = "detalii.ora")
+    @Mapping(target = "nivelDurere", source = "jurnal.nivelDurere")
+    @Mapping(target = "dificultateExercitii", source = "jurnal.dificultateExercitii")
+    @Mapping(target = "nivelOboseala", source = "jurnal.nivelOboseala")
+    @Mapping(target = "comentarii", source = "jurnal.comentarii")
+    @Mapping(target = "tipServiciu", source = "detalii.tipServiciu")
+    @Mapping(target = "numeTerapeut", source = "detalii.numeTerapeut")
+    @Mapping(target = "numeLocatie", source = "detalii.numeLocatie")
+    JurnalIstoricDTO toIstoricDTO(JurnalPacient jurnal, ProgramareJurnalDTO detalii);
 }

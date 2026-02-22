@@ -29,10 +29,6 @@ public class HomepageController {
         String role = securityUtils.extractRole(jwt);
 
         return homepageService.getHomepageData(keycloakId, role)
-                .map(ResponseEntity::ok)
-                .onErrorResume(e -> {
-                    log.error("Eroare la generarea homepage pentru user: {}", keycloakId, e);
-                    return Mono.just(ResponseEntity.internalServerError().build());
-                });
+                .map(ResponseEntity::ok);
     }
 }

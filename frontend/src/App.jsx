@@ -26,6 +26,9 @@ import ProtectedRoute from './components/ProtectedRoute';
 import AdminLayout from './layouts/AdminLayout';
 import AdminLocatii from './pages/admin/AdminLocatii';
 import AdminServicii from './pages/admin/AdminServicii';
+import AdminUsers from './pages/admin/AdminUsers';
+import AdminHomepage from './pages/admin/AdminHomepage';
+import AdminStatistici from './pages/admin/AdminStatistici';
 
 import './styles/navbar.css';
 
@@ -63,9 +66,11 @@ function App() {
 
         <Route element={<ProtectedRoute allowedRoles={['ADMIN']} />}>
           <Route element={<AdminLayout />}>
-            <Route path="/admin/homepage" element={<Navigate to="/admin/locatii" replace />} />
+            <Route path="/admin/homepage" element={<AdminHomepage />} />
             <Route path="/admin/locatii" element={<AdminLocatii />} />
             <Route path="/admin/servicii" element={<AdminServicii />} />
+            <Route path="/admin/utilizatori" element={<AdminUsers />} />
+            <Route path="/admin/statistici" element={<AdminStatistici />} />
           </Route>
         </Route>
 

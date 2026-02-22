@@ -10,12 +10,6 @@ import java.time.OffsetDateTime;
 
 @Entity
 @Table(name = "relatie_pacient_terapeut",
-        uniqueConstraints = {
-                @UniqueConstraint(
-                        name = "uk_pacient_activ",
-                        columnNames = {"pacient_id", "activa"}
-                )
-        },
         indexes = {
                 @Index(name = "idx_rel_pacient", columnList = "pacient_id"),
                 @Index(name = "idx_rel_terapeut", columnList = "terapeut_id"),

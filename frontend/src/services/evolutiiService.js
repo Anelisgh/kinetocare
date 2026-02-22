@@ -11,6 +11,16 @@ export const evolutiiService = {
         }
     },
 
+    // Editare evolutie
+    updateEvolutie: async (id, data) => {
+        try {
+            const response = await api.put(`/api/evolutii/${id}`, data);
+            return response.data;
+        } catch (error) {
+            handleApiError(error, 'Nu s-a putut actualiza evoluția.');
+        }
+    },
+
     // Incarcare istoric pentru un pacient
     getIstoric: async (pacientId, terapeutId) => {
         try {

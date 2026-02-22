@@ -2,6 +2,8 @@ package com.example.terapeuti_service.service;
 
 import com.example.terapeuti_service.dto.*;
 import com.example.terapeuti_service.entity.*;
+import com.example.terapeuti_service.exception.ResourceAlreadyExistsException;
+import com.example.terapeuti_service.exception.ResourceNotFoundException;
 import com.example.terapeuti_service.mapper.*;
 import com.example.terapeuti_service.repository.*;
 import lombok.RequiredArgsConstructor;
@@ -27,26 +29,25 @@ public class TerapeutService {
     private final ConcediuMapper concediuMapper;
     private final LocatieMapper locatieMapper;
 
-    // gaseste terapeutul dupa keycloakId si ii populeaza datele
+    @Transactional(readOnly = true)
     public TerapeutDTO getTerapeutByKeycloakId(String keycloakId) {
         Terapeut terapeut = findByKIdOrThrow(keycloakId);
         TerapeutDTO dto = terapeutMapper.toDTO(terapeut);
-        populateTerapeutData(terapeut.getId(), dto);
+        dto = populateTerapeutData(terapeut.getId(), dto);
         return dto;
     }
 
-    // gaseste keycloakId dupa terapeutId
+    @Transactional(readOnly = true)
     public String getKeycloakIdById(Long terapeutId) {
         return terapeutRepository.findById(terapeutId)
                 .map(Terapeut::getKeycloakId)
                 .orElse(null);
     }
 
-    // creeaza un terapeut nou
     @Transactional
     public TerapeutDTO createTerapeut(String keycloakId) {
         if (terapeutRepository.existsByKeycloakId(keycloakId)) {
-            throw new RuntimeException("Terapeutul există deja");
+            throw new ResourceAlreadyExistsException("Terapeutul există deja");
         }
         Terapeut terapeut = terapeutMapper.toNewEntity(keycloakId);
 
@@ -54,14 +55,15 @@ public class TerapeutService {
         log.info("Created terapeut profile for keycloakId: {}", keycloakId);
 
         TerapeutDTO dto = terapeutMapper.toDTO(saved);
-        dto.setProfileIncomplete(true);
-        return dto;
+        return new TerapeutDTO(
+            dto.id(), dto.keycloakId(), dto.specializare(), dto.pozaProfil(), 
+            dto.active(), dto.createdAt(), dto.updatedAt(),
+            dto.disponibilitati(), dto.concedii(), dto.locatiiDisponibile(), true
+        );
     }
 
-    // cream un terapeut nou gol (dupa register)
     @Transactional
     public void initializeEmptyTerapeut(String keycloakId) {
-        // verificam daca profil exista deja
         if (terapeutRepository.existsByKeycloakId(keycloakId)) {
             log.debug("Terapeut profile already exists for: {}", keycloakId);
             return;
@@ -73,7 +75,6 @@ public class TerapeutService {
         log.info("Empty terapeut profile initialized for: {}", keycloakId);
     }
 
-    // actualizeaza un terapeut
     @Transactional
     public TerapeutDTO updateTerapeut(String keycloakId, UpdateTerapeutDTO updateDTO) {
         Terapeut terapeut = findByKIdOrThrow(keycloakId);
@@ -83,12 +84,12 @@ public class TerapeutService {
         log.info("Updated terapeut with keycloakId: {}", keycloakId);
 
         TerapeutDTO dto = terapeutMapper.toDTO(updated);
-        populateTerapeutData(updated.getId(), dto);
+        dto = populateTerapeutData(updated.getId(), dto);
 
         return dto;
     }
 
-    // gaseste terapeutul dupa keycloakId si ii populeaza datele
+    @Transactional(readOnly = true)
     public TerapeutDetaliDTO getTerapeutDetails(String keycloakId) {
         Terapeut terapeut = findByKIdOrThrow(keycloakId);
 
@@ -98,7 +99,7 @@ public class TerapeutService {
         return terapeutMapper.toDetaliDTO(terapeut, disponibilitati, locatiiUnice);
     }
 
-    // cauta terapeuti dupa specializare, judet, oras si locatie
+    @Transactional(readOnly = true)
     public List<TerapeutSearchDTO> searchTerapeuti(Specializare specializare, String judet, String oras, Long locatieId) {
         List<Terapeut> terapeuti = terapeutRepository.findBySpecializareAndActiveTrue(specializare);
         if (terapeuti.isEmpty())
@@ -129,22 +130,23 @@ public class TerapeutService {
                 .collect(Collectors.toList());
     }
 
-    // HELPER methods
-    // gaseste terapeutul dupa keycloakId
     private Terapeut findByKIdOrThrow(String keycloakId) {
         return terapeutRepository.findByKeycloakId(keycloakId)
-                .orElseThrow(() -> new RuntimeException("Terapeutul nu a fost găsit"));
+                .orElseThrow(() -> new ResourceNotFoundException("Terapeutul nu a fost găsit"));
     }
 
-    // populeaza datele terapeutului cu disponibilitati, locatii si concedii
-    private void populateTerapeutData(Long terapeutId, TerapeutDTO dto) {
+    private TerapeutDTO populateTerapeutData(Long terapeutId, TerapeutDTO baseDto) {
         List<DisponibilitateDTO> disponibilitati = getDisponibilitatiForTerapeut(terapeutId);
-        dto.setDisponibilitati(disponibilitati);
-        dto.setLocatiiDisponibile(extrageLocatiiUnice(disponibilitati));
-        dto.setConcedii(getConcediiFutureForTerapeut(terapeutId));
+        List<LocatieDisponibilaDTO> locatiiList = extrageLocatiiUnice(disponibilitati);
+        List<ConcediuDTO> concediiList = getConcediiFutureForTerapeut(terapeutId);
+        
+        return new TerapeutDTO(
+            baseDto.id(), baseDto.keycloakId(), baseDto.specializare(), baseDto.pozaProfil(), 
+            baseDto.active(), baseDto.createdAt(), baseDto.updatedAt(), 
+            disponibilitati, concediiList, locatiiList, baseDto.profileIncomplete()
+        );
     }
 
-    // gaseste disponibilitatile terapeutului + locatii
     private List<DisponibilitateDTO> getDisponibilitatiForTerapeut(Long terapeutId) {
         List<DisponibilitateTerapeut> disponibilitati = disponibilitateRepository
                 .findByTerapeutIdAndActiveTrue(terapeutId);
@@ -155,7 +157,6 @@ public class TerapeutService {
                 .collect(Collectors.toList());
     }
 
-    // gaseste locatiile terapeutului
     private Map<Long, Locatie> getLocatiiMapFromDisponibilitati(List<DisponibilitateTerapeut> disponibilitati) {
         List<Long> locatieIds = disponibilitati.stream()
                 .map(DisponibilitateTerapeut::getLocatieId)
@@ -165,7 +166,6 @@ public class TerapeutService {
                 .collect(Collectors.toMap(Locatie::getId, loc -> loc));
     }
 
-    // extrage locatiile unice din disponibilitati
     private List<LocatieDisponibilaDTO> extrageLocatiiUnice(List<DisponibilitateDTO> disponibilitati) {
         return disponibilitati.stream()
                 .map(locatieMapper::fromDisponibilitateDTO)
@@ -173,7 +173,6 @@ public class TerapeutService {
                 .collect(Collectors.toList());
     }
 
-    // gaseste concediile viitoare ale terapeutului
     private List<ConcediuDTO> getConcediiFutureForTerapeut(Long terapeutId) {
         return concediuRepository.findFutureAndCurrentConcedii(terapeutId, LocalDate.now())
                 .stream()
@@ -181,7 +180,6 @@ public class TerapeutService {
                 .collect(Collectors.toList());
     }
 
-    // verifica daca terapeutul are disponibilitati in locatiile dorite
     private boolean isTerapeutValidForFilter(Terapeut t,
             Map<Long, List<DisponibilitateTerapeut>> dispByTerapeut,
             Map<Long, Locatie> locatiiMap,
@@ -206,4 +204,11 @@ public class TerapeutService {
         });
     }
 
+    @Transactional
+    public void setActive(String keycloakId, boolean active) {
+        Terapeut terapeut = findByKIdOrThrow(keycloakId);
+        terapeut.setActive(active);
+        terapeutRepository.save(terapeut);
+        log.info("Terapeut {} (keycloakId={}) setat active={}", terapeut.getId(), keycloakId, active);
+    }
 }

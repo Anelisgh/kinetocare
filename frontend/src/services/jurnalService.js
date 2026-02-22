@@ -22,6 +22,15 @@ export const jurnalService = {
         }
     },
 
+    // Editeaza un jurnal existent
+    updateJurnal: async (pacientId, jurnalId, data) => {
+        try {
+            await api.put(`/api/pacienti/${pacientId}/jurnal/${jurnalId}`, data);
+        } catch (error) {
+            handleApiError(error, 'Nu s-a putut actualiza jurnalul.');
+        }
+    },
+
     // Obtine istoricul jurnalelor
     getIstoric: async (pacientId) => {
         try {

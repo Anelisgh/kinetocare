@@ -25,19 +25,32 @@ public class RelatieService {
         Optional<RelatiePacientTerapeut> relatieOpt = relatieRepository.findByPacientIdAndTerapeutId(pacientId, terapeutId);
 
         if (relatieOpt.isPresent()) {
-            // cazul 1: relatia exista deja
+            // cazul 1: relatia exista deja cu acest terapeut
             RelatiePacientTerapeut relatie = relatieOpt.get();
             // daca era inactiva (poate au lucrat in trecut), o reactivam
             if (Boolean.FALSE.equals(relatie.getActiva())) {
+                // dezactivam orice alta relatie activa a pacientului
+                dezactiveazaRelatiaActiva(pacientId);
                 relatie.setActiva(true);
                 relatie.setDataSfarsit(null); // stergem data de sfarsit anterioara
                 relatieRepository.save(relatie);
             }
-            // daca e deja activa, nu facem nimic
+            // daca e deja activa cu acest terapeut, nu facem nimic
         } else {
-            // cazul 2: relatia noua
+            // cazul 2: relatia noua — dezactivam relatia veche (daca exista)
+            dezactiveazaRelatiaActiva(pacientId);
             RelatiePacientTerapeut nouaRelatie = relatieMapper.toEntity(pacientId, terapeutId, dataInceput);
             relatieRepository.save(nouaRelatie);
         }
+    }
+
+    // dezactiveaza relatia activa curenta a pacientului (cu orice terapeut)
+    private void dezactiveazaRelatiaActiva(Long pacientId) {
+        relatieRepository.findByPacientIdAndActivaTrue(pacientId).ifPresent(relatie -> {
+            relatie.setActiva(false);
+            relatie.setDataSfarsit(LocalDate.now());
+            relatieRepository.save(relatie);
+            log.info("Relația pacientului {} cu terapeutul {} a fost dezactivată.", pacientId, relatie.getTerapeutId());
+        });
     }
 }

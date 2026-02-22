@@ -1,8 +1,8 @@
 package com.example.api_gateway.service;
 
 import com.example.api_gateway.utils.SecurityUtils;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -16,24 +16,30 @@ import java.util.Map;
 
 @Slf4j
 @Service
-@RequiredArgsConstructor
 public class ProfileService {
 
-    private final WebClient.Builder webClientBuilder;
+    private final WebClient userWebClient;
+    private final WebClient pacientiWebClient;
+    private final WebClient terapeutiWebClient;
     private final SecurityUtils securityUtils;
 
-    private static final String USER_SERVICE_URL = "http://localhost:8082";
-    private static final String PACIENT_SERVICE_URL = "http://localhost:8083";
-    private static final String TERAPEUT_SERVICE_URL = "http://localhost:8084";
+    public ProfileService(@Qualifier("userWebClient") WebClient userWebClient,
+                          @Qualifier("pacientiWebClient") WebClient pacientiWebClient,
+                          @Qualifier("terapeutiWebClient") WebClient terapeutiWebClient,
+                          SecurityUtils securityUtils) {
+        this.userWebClient = userWebClient;
+        this.pacientiWebClient = pacientiWebClient;
+        this.terapeutiWebClient = terapeutiWebClient;
+        this.securityUtils = securityUtils;
+    }
 
     // obtine datele din user-service
     public Mono<Map<String, Object>> getProfile(String keycloakId, String role) {
         return securityUtils.getJwtToken().flatMap(token -> {
             // extragem datele de baza pentru orice user
-            Mono<Map<String, Object>> userDataMono = webClientBuilder.build()
-                    .get()
-                    .uri(USER_SERVICE_URL + "/users/by-keycloak/" + keycloakId)
-                    .header("Authorization", "Bearer " + token) // ✅ Adăugăm token-ul
+            Mono<Map<String, Object>> userDataMono = userWebClient.get()
+                    .uri("/users/by-keycloak/{id}", keycloakId)
+                    .header("Authorization", "Bearer " + token) // Adăugăm token-ul
                     .retrieve()
                     .bodyToMono(new ParameterizedTypeReference<Map<String, Object>>() {})
                     .onErrorResume(e -> {
@@ -43,9 +49,8 @@ public class ProfileService {
 
         // daca e pacient obtine datele si din pacienti-service
             if ("PACIENT".equals(role)) {
-                Mono<Map<String, Object>> pacientDataMono = webClientBuilder.build()
-                        .get()
-                        .uri(PACIENT_SERVICE_URL + "/pacient/by-keycloak/" + keycloakId)
+                Mono<Map<String, Object>> pacientDataMono = pacientiWebClient.get()
+                        .uri("/pacient/by-keycloak/{id}", keycloakId)
                         .header("Authorization", "Bearer " + token)
                         .retrieve()
                         .bodyToMono(new ParameterizedTypeReference<Map<String, Object>>() {})
@@ -86,18 +91,16 @@ public class ProfileService {
 
                         if (terapeutId != null && !terapeutId.isEmpty()) {
                             // 1. Luăm detalii profesionale (Specializare, ID Terapeut)
-                            Mono<Map<String, Object>> infoTerapeut = webClientBuilder.build()
-                                    .get()
-                                    .uri(TERAPEUT_SERVICE_URL + "/terapeut/by-keycloak/" + terapeutId)
+                            Mono<Map<String, Object>> infoTerapeut = terapeutiWebClient.get()
+                                    .uri("/terapeut/by-keycloak/{id}", terapeutId)
                                     .header("Authorization", "Bearer " + token)
                                     .retrieve()
                                     .bodyToMono(new ParameterizedTypeReference<Map<String, Object>>() {})
                                     .onErrorResume(e -> Mono.just(new HashMap<>()));
 
                             // 2. Luăm detalii personale (Nume, Prenume) din User Service
-                            Mono<Map<String, Object>> infoUserTerapeut = webClientBuilder.build()
-                                    .get()
-                                    .uri(USER_SERVICE_URL + "/users/by-keycloak/" + terapeutId)
+                            Mono<Map<String, Object>> infoUserTerapeut = userWebClient.get()
+                                    .uri("/users/by-keycloak/{id}", terapeutId)
                                     .header("Authorization", "Bearer " + token)
                                     .retrieve()
                                     .bodyToMono(new ParameterizedTypeReference<Map<String, Object>>() {})
@@ -124,9 +127,8 @@ public class ProfileService {
                         Mono<Map<String, Object>> locatieDetailsMono = Mono.just(Map.of()); // default gol
 
                         if (locatieId != null) {
-                            locatieDetailsMono = webClientBuilder.build()
-                                    .get()
-                                    .uri(TERAPEUT_SERVICE_URL + "/locatii/" + locatieId)
+                            locatieDetailsMono = terapeutiWebClient.get()
+                                    .uri("/locatii/{id}", locatieId)
                                     .header("Authorization", "Bearer " + token)
                                     .retrieve()
                                     .bodyToMono(new ParameterizedTypeReference<Map<String, Object>>() {})
@@ -156,9 +158,8 @@ public class ProfileService {
         }
             // daca e terapeut, obtine datele din terapeut-service
             if ("TERAPEUT".equals(role)) {
-                Mono<Map<String, Object>> terapeutDataMono = webClientBuilder.build()
-                        .get()
-                        .uri(TERAPEUT_SERVICE_URL + "/terapeut/by-keycloak/" + keycloakId)
+                Mono<Map<String, Object>> terapeutDataMono = terapeutiWebClient.get()
+                        .uri("/terapeut/by-keycloak/{id}", keycloakId)
                         .header("Authorization", "Bearer " + token)
                         .retrieve()
                         .bodyToMono(new ParameterizedTypeReference<Map<String, Object>>() {})
@@ -211,9 +212,8 @@ public class ProfileService {
             // Update pentru user-service
             if (!userUpdate.isEmpty()) {
                 log.debug("Updating user fields: {}", userUpdate.keySet());
-                Mono<Void> userUpdateMono = webClientBuilder.build()
-                        .patch()
-                        .uri(USER_SERVICE_URL + "/users/" + keycloakId)
+                Mono<Void> userUpdateMono = userWebClient.patch()
+                        .uri("/users/{id}", keycloakId)
                         .header("Authorization", "Bearer " + token)
                         .bodyValue(userUpdate)
                         .retrieve()
@@ -229,9 +229,8 @@ public class ProfileService {
             // Update pentru pacienti
             if ("PACIENT".equals(role) && !pacientUpdate.isEmpty()) {
                 log.debug("Updating patient fields: {}", pacientUpdate.keySet());
-                Mono<Void> pacientUpdateMono = webClientBuilder.build()
-                        .patch()
-                        .uri(PACIENT_SERVICE_URL + "/pacient/" + keycloakId)
+                Mono<Void> pacientUpdateMono = pacientiWebClient.patch()
+                        .uri("/pacient/{id}", keycloakId)
                         .header("Authorization", "Bearer " + token)
                         .bodyValue(pacientUpdate)
                         .retrieve()
@@ -247,9 +246,8 @@ public class ProfileService {
             // update pentru terapeuti
             if ("TERAPEUT".equals(role) && !terapeutUpdate.isEmpty()) {
                 log.debug("Updating terapeut fields: {}", terapeutUpdate.keySet());
-                Mono<Void> terapeutUpdateMono = webClientBuilder.build()
-                        .patch()
-                        .uri(TERAPEUT_SERVICE_URL + "/terapeut/" + keycloakId)
+                Mono<Void> terapeutUpdateMono = terapeutiWebClient.patch()
+                        .uri("/terapeut/{id}", keycloakId)
                         .header("Authorization", "Bearer " + token)
                         .bodyValue(terapeutUpdate)
                         .retrieve()

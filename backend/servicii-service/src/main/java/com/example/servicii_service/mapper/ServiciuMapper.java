@@ -1,75 +1,50 @@
 package com.example.servicii_service.mapper;
 
+import com.example.servicii_service.dto.ServiciuAdminDTO;
 import com.example.servicii_service.dto.ServiciuDTO;
 import com.example.servicii_service.entity.Serviciu;
-import org.springframework.stereotype.Component;
-
-import com.example.servicii_service.dto.ServiciuAdminDTO;
 import com.example.servicii_service.entity.TipServiciu;
+import org.mapstruct.*;
 
-@Component
-public class ServiciuMapper {
+@Mapper(componentModel = "spring", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+public interface ServiciuMapper {
 
-    public ServiciuDTO toDto(Serviciu serviciu) {
-        if (serviciu == null) {
-            return null;
-        }
+    @Mapping(target = "nume", expression = "java(formateazaNumeComplet(serviciu))")
+    ServiciuDTO toDto(Serviciu serviciu);
 
-        // Construim numele complet: Tip + Specific
-        // ex: "Kinetoterapie - Sedinta Scurta" sau doar "Kinetoterapie"
-        String numeComplet = (serviciu.getTipServiciu() != null)
+    @Mapping(source = "tipServiciu.id", target = "tipServiciuId")
+    @Mapping(source = "tipServiciu.nume", target = "numeTip")
+    ServiciuAdminDTO toAdminDto(Serviciu serviciu);
+
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "tipServiciu", source = "tipServiciu")
+    @Mapping(target = "nume", source = "dto.nume")
+    @Mapping(target = "pret", source = "dto.pret")
+    @Mapping(target = "durataMinute", source = "dto.durataMinute")
+    @Mapping(target = "active", source = "dto.active", defaultValue = "true")
+    @Mapping(target = "createdAt", ignore = true)
+    @Mapping(target = "updatedAt", ignore = true)
+    Serviciu toEntity(ServiciuAdminDTO dto, TipServiciu tipServiciu);
+
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "tipServiciu", source = "tipServiciu")
+    @Mapping(target = "nume", source = "dto.nume")
+    @Mapping(target = "pret", source = "dto.pret")
+    @Mapping(target = "durataMinute", source = "dto.durataMinute")
+    @Mapping(target = "active", source = "dto.active")
+    @Mapping(target = "createdAt", ignore = true)
+    @Mapping(target = "updatedAt", ignore = true)
+    void updateEntityFromDto(ServiciuAdminDTO dto, @MappingTarget Serviciu entity, TipServiciu tipServiciu);
+
+    default String formateazaNumeComplet(Serviciu serviciu) {
+        if (serviciu == null) return null;
+        String numeComplet = (serviciu.getTipServiciu() != null && serviciu.getTipServiciu().getNume() != null)
                 ? serviciu.getTipServiciu().getNume()
                 : "Necunoscut";
 
         if (serviciu.getNume() != null && !serviciu.getNume().trim().isEmpty()) {
             numeComplet += " - " + serviciu.getNume();
         }
-
-        return ServiciuDTO.builder()
-                .id(serviciu.getId())
-                .nume(numeComplet)
-                .pret(serviciu.getPret())
-                .durataMinute(serviciu.getDurataMinute())
-                .build();
-    }
-
-    public ServiciuAdminDTO toAdminDto(Serviciu serviciu) {
-        if (serviciu == null) return null;
-
-        return ServiciuAdminDTO.builder()
-                .id(serviciu.getId())
-                .tipServiciuId(serviciu.getTipServiciu() != null ? serviciu.getTipServiciu().getId() : null)
-                .numeTip(serviciu.getTipServiciu() != null ? serviciu.getTipServiciu().getNume() : null)
-                .nume(serviciu.getNume())
-                .pret(serviciu.getPret())
-                .durataMinute(serviciu.getDurataMinute())
-                .active(serviciu.getActive())
-                .build();
-    }
-
-    public Serviciu toEntity(ServiciuAdminDTO dto, TipServiciu tipServiciu) {
-        if (dto == null) return null;
-
-        return Serviciu.builder()
-                .tipServiciu(tipServiciu)
-                .nume(dto.getNume())
-                .pret(dto.getPret())
-                .durataMinute(dto.getDurataMinute())
-                .active(dto.getActive() != null ? dto.getActive() : true)
-                .build();
-    }
-
-    public void updateEntityFromDto(ServiciuAdminDTO dto, Serviciu entity, TipServiciu tipServiciu) {
-        if (dto == null || entity == null) return;
-        
-        if (tipServiciu != null) {
-            entity.setTipServiciu(tipServiciu);
-        }
-        
-        if (dto.getNume() != null) entity.setNume(dto.getNume());
-        
-        if (dto.getPret() != null) entity.setPret(dto.getPret());
-        if (dto.getDurataMinute() != null) entity.setDurataMinute(dto.getDurataMinute());
-        if (dto.getActive() != null) entity.setActive(dto.getActive());
+        return numeComplet;
     }
 }

@@ -2,146 +2,124 @@ package com.example.programari_service.mapper;
 
 import com.example.programari_service.dto.NotificareEvent;
 import com.example.programari_service.entity.Programare;
-import org.springframework.stereotype.Component;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
-// transforma datele brute in text prietenos pentru user si se contruieste link-ul dinamic
-@Component
-public class NotificareEventMapper {
+@Mapper(componentModel = "spring")
+public interface NotificareEventMapper {
 
-    private static final Locale RO = Locale.of("ro", "RO");
-    private static final DateTimeFormatter FORMAT_DATA = DateTimeFormatter.ofPattern("dd MMMM", RO);
-    private static final DateTimeFormatter FORMAT_ORA = DateTimeFormatter.ofPattern("HH:mm");
-
-    // Conversii Programare -> NotificareEvent
-
-    // PROGRAMARE_NOUA → terapeut
-    public NotificareEvent toProgramareNoua(Programare p) {
-        return toEventTerapeut(p, "PROGRAMARE_NOUA",
-                "Programare nouă",
-                "Ai o programare nouă pe " + formatData(p.getData()) + " la ora " + formatOra(p.getOraInceput()) + ".",
-                "/calendar");
+    default String formatData(LocalDate data) {
+        if (data == null) return "";
+        return data.format(DateTimeFormatter.ofPattern("dd MMMM", Locale.of("ro", "RO")));
     }
 
-    // EVALUARE_INITIALA_NOUA → terapeut
-    public NotificareEvent toEvaluareInitialaNoua(Programare p) {
-        return toEventTerapeut(p, "EVALUARE_INITIALA_NOUA",
-                "Cerere evaluare inițială",
-                "Un pacient nou s-a programat pentru evaluare inițială pe " + formatData(p.getData()) + " la ora " + formatOra(p.getOraInceput()) + ".",
-                "/calendar");
+    default String formatOra(LocalTime ora) {
+        if (ora == null) return "";
+        return ora.format(DateTimeFormatter.ofPattern("HH:mm"));
     }
 
-    // PROGRAMARE_ANULATA_DE_PACIENT → terapeut
-    public NotificareEvent toProgramareAnulataDePacient(Programare p) {
-        return toEventTerapeut(p, "PROGRAMARE_ANULATA_DE_PACIENT",
-                "Programare anulată de pacient",
-                "O programare din " + formatData(p.getData()) + " la ora " + formatOra(p.getOraInceput()) + " a fost anulată de pacient.",
-                "/calendar");
-    }
+    @Mapping(target = "tipNotificare", constant = "PROGRAMARE_NOUA")
+    @Mapping(target = "userId", source = "p.terapeutId")
+    @Mapping(target = "tipUser", constant = "TERAPEUT")
+    @Mapping(target = "titlu", constant = "Programare nouă")
+    @Mapping(target = "mesaj", expression = "java(\"Ai o programare nouă pe \" + formatData(p.getData()) + \" la ora \" + formatOra(p.getOraInceput()) + \".\")")
+    @Mapping(target = "entitateLegataId", source = "p.id")
+    @Mapping(target = "tipEntitateLegata", constant = "PROGRAMARE")
+    @Mapping(target = "urlActiune", constant = "/calendar")
+    NotificareEvent toProgramareNoua(Programare p);
 
-    // REEVALUARE_NECESARA → terapeut
-    public NotificareEvent toReevaluareNecesara(Programare p) {
-        return toEventTerapeut(p, "REEVALUARE_NECESARA",
-                "Pacient necesită re-evaluare",
-                "Un pacient s-a programat pe " + formatData(p.getData()) + " la ora " + formatOra(p.getOraInceput()) + ". Atenție: necesită reevaluare periodică.",
-                "/calendar");
-    }
+    @Mapping(target = "tipNotificare", constant = "EVALUARE_INITIALA_NOUA")
+    @Mapping(target = "userId", source = "p.terapeutId")
+    @Mapping(target = "tipUser", constant = "TERAPEUT")
+    @Mapping(target = "titlu", constant = "Cerere evaluare inițială")
+    @Mapping(target = "mesaj", expression = "java(\"Un pacient nou s-a programat pentru evaluare inițială pe \" + formatData(p.getData()) + \" la ora \" + formatOra(p.getOraInceput()) + \".\")")
+    @Mapping(target = "entitateLegataId", source = "p.id")
+    @Mapping(target = "tipEntitateLegata", constant = "PROGRAMARE")
+    @Mapping(target = "urlActiune", constant = "/calendar")
+    NotificareEvent toEvaluareInitialaNoua(Programare p);
 
-    // JURNAL_COMPLETAT → terapeut (fara Programare, doar ids)
-    public NotificareEvent toJurnalCompletat(Long terapeutId, Long pacientId, Long programareId) {
-        return NotificareEvent.builder()
-                .tipNotificare("JURNAL_COMPLETAT")
-                .userId(terapeutId)
-                .tipUser("TERAPEUT")
-                .titlu("Jurnal completat")
-                .mesaj("Un pacient a completat jurnalul pentru o ședință.")
-                .entitateLegataId(programareId)
-                .tipEntitateLegata("PROGRAMARE")
-                .urlActiune("/fisa-pacient/" + pacientId)
-                .build();
-    }
+    @Mapping(target = "tipNotificare", constant = "PROGRAMARE_ANULATA_DE_PACIENT")
+    @Mapping(target = "userId", source = "p.terapeutId")
+    @Mapping(target = "tipUser", constant = "TERAPEUT")
+    @Mapping(target = "titlu", constant = "Programare anulată de pacient")
+    @Mapping(target = "mesaj", expression = "java(\"O programare din \" + formatData(p.getData()) + \" la ora \" + formatOra(p.getOraInceput()) + \" a fost anulată de pacient.\")")
+    @Mapping(target = "entitateLegataId", source = "p.id")
+    @Mapping(target = "tipEntitateLegata", constant = "PROGRAMARE")
+    @Mapping(target = "urlActiune", constant = "/calendar")
+    NotificareEvent toProgramareAnulataDePacient(Programare p);
 
-    // PROGRAMARE_ANULATA_DE_TERAPEUT → pacient
-    public NotificareEvent toProgramareAnulataDeTerapeut(Programare p) {
-        return toEventPacient(p, "PROGRAMARE_ANULATA_DE_TERAPEUT",
-                "Programare anulată de terapeut",
-                "Programarea din " + formatData(p.getData()) + " la ora " + formatOra(p.getOraInceput()) + " a fost anulată de terapeut.",
-                "/programari");
-    }
+    @Mapping(target = "tipNotificare", constant = "REEVALUARE_NECESARA")
+    @Mapping(target = "userId", source = "p.terapeutId")
+    @Mapping(target = "tipUser", constant = "TERAPEUT")
+    @Mapping(target = "titlu", constant = "Pacient necesită re-evaluare")
+    @Mapping(target = "mesaj", expression = "java(\"Un pacient s-a programat pe \" + formatData(p.getData()) + \" la ora \" + formatOra(p.getOraInceput()) + \". Atenție: necesită reevaluare periodică.\")")
+    @Mapping(target = "entitateLegataId", source = "p.id")
+    @Mapping(target = "tipEntitateLegata", constant = "PROGRAMARE")
+    @Mapping(target = "urlActiune", constant = "/calendar")
+    NotificareEvent toReevaluareNecesara(Programare p);
 
-    // REMINDER_24H → pacient
-    public NotificareEvent toReminder24h(Programare p) {
-        return toEventPacient(p, "REMINDER_24H",
-                "Reminder: programare mâine",
-                "Ai o programare mâine, " + formatData(p.getData()) + ", la ora " + formatOra(p.getOraInceput()) + ".",
-                "/programari");
-    }
+    @Mapping(target = "tipNotificare", constant = "JURNAL_COMPLETAT")
+    @Mapping(target = "userId", source = "terapeutId")
+    @Mapping(target = "tipUser", constant = "TERAPEUT")
+    @Mapping(target = "titlu", constant = "Jurnal completat")
+    @Mapping(target = "mesaj", constant = "Un pacient a completat jurnalul pentru o ședință.")
+    @Mapping(target = "entitateLegataId", source = "programareId")
+    @Mapping(target = "tipEntitateLegata", constant = "PROGRAMARE")
+    @Mapping(target = "urlActiune", expression = "java(\"/fisa-pacient/\" + pacientId)")
+    NotificareEvent toJurnalCompletat(Long terapeutId, Long pacientId, Long programareId);
 
-    // REMINDER_2H → pacient
-    public NotificareEvent toReminder2h(Programare p) {
-        return toEventPacient(p, "REMINDER_2H",
-                "Reminder: programare în curând",
-                "Ai o programare în curând, astăzi la ora " + formatOra(p.getOraInceput()) + ".",
-                "/programari");
-    }
+    @Mapping(target = "tipNotificare", constant = "PROGRAMARE_ANULATA_DE_TERAPEUT")
+    @Mapping(target = "userId", source = "p.pacientId")
+    @Mapping(target = "tipUser", constant = "PACIENT")
+    @Mapping(target = "titlu", constant = "Programare anulată de terapeut")
+    @Mapping(target = "mesaj", expression = "java(\"Programarea din \" + formatData(p.getData()) + \" la ora \" + formatOra(p.getOraInceput()) + \" a fost anulată de terapeut.\")")
+    @Mapping(target = "entitateLegataId", source = "p.id")
+    @Mapping(target = "tipEntitateLegata", constant = "PROGRAMARE")
+    @Mapping(target = "urlActiune", constant = "/programari")
+    NotificareEvent toProgramareAnulataDeTerapeut(Programare p);
 
-    // REMINDER_JURNAL → pacient
-    public NotificareEvent toReminderJurnal(Programare p) {
-        return toEventPacient(p, "REMINDER_JURNAL",
-                "Completează jurnalul",
-                "Ședința din " + formatData(p.getData()) + " a fost finalizată. Nu uita să completezi jurnalul!",
-                "/jurnal");
-    }
+    @Mapping(target = "tipNotificare", constant = "REMINDER_24H")
+    @Mapping(target = "userId", source = "p.pacientId")
+    @Mapping(target = "tipUser", constant = "PACIENT")
+    @Mapping(target = "titlu", constant = "Reminder: programare mâine")
+    @Mapping(target = "mesaj", expression = "java(\"Ai o programare mâine, \" + formatData(p.getData()) + \", la ora \" + formatOra(p.getOraInceput()) + \".\")")
+    @Mapping(target = "entitateLegataId", source = "p.id")
+    @Mapping(target = "tipEntitateLegata", constant = "PROGRAMARE")
+    @Mapping(target = "urlActiune", constant = "/programari")
+    NotificareEvent toReminder24h(Programare p);
 
-    // REEVALUARE_RECOMANDATA → pacient
-    public NotificareEvent toReevaluareRecomandata(Programare p) {
-        return toEventPacient(p, "REEVALUARE_RECOMANDATA",
-                "Re-evaluare recomandată",
-                "Ai finalizat toate ședințele recomandate. Te rugăm să te programezi pentru o re-evaluare.",
-                "/programari");
-    }
+    @Mapping(target = "tipNotificare", constant = "REMINDER_2H")
+    @Mapping(target = "userId", source = "p.pacientId")
+    @Mapping(target = "tipUser", constant = "PACIENT")
+    @Mapping(target = "titlu", constant = "Reminder: programare în curând")
+    @Mapping(target = "mesaj", expression = "java(\"Ai o programare în curând, astăzi la ora \" + formatOra(p.getOraInceput()) + \".\")")
+    @Mapping(target = "entitateLegataId", source = "p.id")
+    @Mapping(target = "tipEntitateLegata", constant = "PROGRAMARE")
+    @Mapping(target = "urlActiune", constant = "/programari")
+    NotificareEvent toReminder2h(Programare p);
 
-    // Helpers
+    @Mapping(target = "tipNotificare", constant = "REMINDER_JURNAL")
+    @Mapping(target = "userId", source = "p.pacientId")
+    @Mapping(target = "tipUser", constant = "PACIENT")
+    @Mapping(target = "titlu", constant = "Completează jurnalul")
+    @Mapping(target = "mesaj", expression = "java(\"Ședința din \" + formatData(p.getData()) + \" a fost finalizată. Nu uita să completezi jurnalul!\")")
+    @Mapping(target = "entitateLegataId", source = "p.id")
+    @Mapping(target = "tipEntitateLegata", constant = "PROGRAMARE")
+    @Mapping(target = "urlActiune", constant = "/jurnal")
+    NotificareEvent toReminderJurnal(Programare p);
 
-    // helper comun pentru notificari catre terapeut
-    private NotificareEvent toEventTerapeut(Programare p, String tip, String titlu, String mesaj, String url) {
-        return NotificareEvent.builder()
-                .tipNotificare(tip)
-                .userId(p.getTerapeutId())
-                .tipUser("TERAPEUT")
-                .titlu(titlu)
-                .mesaj(mesaj)
-                .entitateLegataId(p.getId())
-                .tipEntitateLegata("PROGRAMARE")
-                .urlActiune(url)
-                .build();
-    }
-
-    // helper comun pentru notificari catre pacient
-    private NotificareEvent toEventPacient(Programare p, String tip, String titlu, String mesaj, String url) {
-        return NotificareEvent.builder()
-                .tipNotificare(tip)
-                .userId(p.getPacientId())
-                .tipUser("PACIENT")
-                .titlu(titlu)
-                .mesaj(mesaj)
-                .entitateLegataId(p.getId())
-                .tipEntitateLegata("PROGRAMARE")
-                .urlActiune(url)
-                .build();
-    }
-
-    // formateaza data in romana: "17 februarie"
-    private String formatData(LocalDate data) {
-        return data.format(FORMAT_DATA);
-    }
-
-    // formateaza ora: "14:30"
-    private String formatOra(LocalTime ora) {
-        return ora.format(FORMAT_ORA);
-    }
+    @Mapping(target = "tipNotificare", constant = "REEVALUARE_RECOMANDATA")
+    @Mapping(target = "userId", source = "p.pacientId")
+    @Mapping(target = "tipUser", constant = "PACIENT")
+    @Mapping(target = "titlu", constant = "Re-evaluare recomandată")
+    @Mapping(target = "mesaj", constant = "Ai finalizat toate ședințele recomandate. Te rugăm să te programezi pentru o re-evaluare.")
+    @Mapping(target = "entitateLegataId", source = "p.id")
+    @Mapping(target = "tipEntitateLegata", constant = "PROGRAMARE")
+    @Mapping(target = "urlActiune", constant = "/programari")
+    NotificareEvent toReevaluareRecomandata(Programare p);
 }

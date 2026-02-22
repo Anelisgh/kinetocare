@@ -73,7 +73,7 @@ export const profileService = {
   //  LOCAȚII 
   getLocatii: async () => {
     try {
-      const response = await api.get('/api/terapeut/locatii');
+      const response = await api.get('/api/locatii');
       return response.data;
     } catch (error) {
       handleApiError(error, 'Eroare la încărcarea locațiilor');
@@ -83,7 +83,7 @@ export const profileService = {
   //  DISPONIBILITATE (pentru terapeuti) 
   getDisponibilitati: async () => {
     try {
-      const response = await api.get('/api/terapeut/disponibilitate');
+      const response = await api.get('/api/disponibilitate');
       return response.data;
     } catch (error) {
       handleApiError(error, 'Eroare la încărcarea disponibilităților');
@@ -92,7 +92,7 @@ export const profileService = {
 
   addDisponibilitate: async (data) => {
     try {
-      const response = await api.post('/api/terapeut/disponibilitate', data);
+      const response = await api.post('/api/disponibilitate', data);
       return response.data;
     } catch (error) {
       handleApiError(error, 'Eroare la adăugarea disponibilității');
@@ -101,7 +101,7 @@ export const profileService = {
 
   deleteDisponibilitate: async (id) => {
     try {
-      await api.delete(`/api/terapeut/disponibilitate/${id}`);
+      await api.delete(`/api/disponibilitate/${id}`);
     } catch (error) {
       handleApiError(error, 'Eroare la ștergerea disponibilității');
     }
@@ -110,7 +110,7 @@ export const profileService = {
   // CONCEDII (pentru terapeuti)
   getConcedii: async () => {
     try {
-      const response = await api.get('/api/terapeut/concediu');
+      const response = await api.get('/api/concediu');
       return response.data;
     } catch (error) {
       handleApiError(error, 'Eroare la încărcarea concediilor');
@@ -119,7 +119,7 @@ export const profileService = {
 
   addConcediu: async (data) => {
     try {
-      const response = await api.post('/api/terapeut/concediu', data);
+      const response = await api.post('/api/concediu', data);
       return response.data;
     } catch (error) {
       handleApiError(error, 'Eroare la adăugarea concediului');
@@ -128,7 +128,7 @@ export const profileService = {
 
   deleteConcediu: async (id) => {
     try {
-      await api.delete(`/api/terapeut/concediu/${id}`);
+      await api.delete(`/api/concediu/${id}`);
     } catch (error) {
       handleApiError(error, 'Eroare la ștergerea concediului');
     }

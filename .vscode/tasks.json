@@ -5,6 +5,12 @@
       "type": "shell",
       "command": "timeout /T 10",
       "problemMatcher": []
+    },
+    {
+      "label": "wait-15s",
+      "type": "shell",
+      "command": "timeout /T 15",
+      "problemMatcher": []
     }
   ]
 }

@@ -3,34 +3,15 @@ package com.example.terapeuti_service.mapper;
 import com.example.terapeuti_service.dto.ConcediuDTO;
 import com.example.terapeuti_service.dto.CreateConcediuDTO;
 import com.example.terapeuti_service.entity.ConcediuTerapeut;
-import org.springframework.stereotype.Component;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
-@Component
-public class ConcediuMapper {
+@Mapper(componentModel = "spring")
+public interface ConcediuMapper {
 
-    public ConcediuDTO toDTO(ConcediuTerapeut entity) {
-        if (entity == null) {
-            return null;
-        }
+    ConcediuDTO toDTO(ConcediuTerapeut entity);
 
-        return ConcediuDTO.builder()
-                .id(entity.getId())
-                .terapeutId(entity.getTerapeutId())
-                .dataInceput(entity.getDataInceput())
-                .dataSfarsit(entity.getDataSfarsit())
-                .createdAt(entity.getCreatedAt())
-                .build();
-    }
-
-    public ConcediuTerapeut toEntity(CreateConcediuDTO dto, Long terapeutId) {
-        if (dto == null) {
-            return null;
-        }
-
-        return ConcediuTerapeut.builder()
-                .terapeutId(terapeutId)
-                .dataInceput(dto.getDataInceput())
-                .dataSfarsit(dto.getDataSfarsit())
-                .build();
-    }
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
+    ConcediuTerapeut toEntity(CreateConcediuDTO dto, Long terapeutId);
 }

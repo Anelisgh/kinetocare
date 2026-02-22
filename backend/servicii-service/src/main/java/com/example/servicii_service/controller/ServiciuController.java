@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import jakarta.validation.Valid;
+
 import com.example.servicii_service.dto.ServiciuAdminDTO;
 
 @RestController
@@ -31,13 +33,13 @@ public class ServiciuController {
 
     // ADMIN: Create
     @PostMapping
-    public ResponseEntity<ServiciuAdminDTO> createServiciu(@RequestBody ServiciuAdminDTO dto) {
+    public ResponseEntity<ServiciuAdminDTO> createServiciu(@Valid @RequestBody ServiciuAdminDTO dto) {
         return ResponseEntity.ok(serviciuService.createServiciu(dto));
     }
 
     // ADMIN: Update
     @PutMapping("/{id}")
-    public ResponseEntity<ServiciuAdminDTO> updateServiciu(@PathVariable Long id, @RequestBody ServiciuAdminDTO dto) {
+    public ResponseEntity<ServiciuAdminDTO> updateServiciu(@PathVariable Long id, @Valid @RequestBody ServiciuAdminDTO dto) {
         return ResponseEntity.ok(serviciuService.updateServiciu(id, dto));
     }
 

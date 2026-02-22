@@ -10,9 +10,12 @@ import com.example.terapeuti_service.repository.DisponibilitateRepository;
 import com.example.terapeuti_service.repository.LocatieRepository;
 import com.example.terapeuti_service.repository.TerapeutRepository;
 import lombok.RequiredArgsConstructor;
+import com.example.terapeuti_service.exception.ResourceAlreadyExistsException;
+import com.example.terapeuti_service.exception.ForbiddenOperationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import com.example.terapeuti_service.exception.ResourceNotFoundException;
 
 import java.util.List;
 import java.util.Map;
@@ -29,9 +32,10 @@ public class DisponibilitateService {
     private final DisponibilitateMapper disponibilitateMapper;
 
     // gaseste disponibilitatile active ale terapeutului si locatiile
+    @Transactional(readOnly = true)
     public List<DisponibilitateDTO> getDisponibilitatiByKeycloakId(String keycloakId) {
         Terapeut terapeut = terapeutRepository.findByKeycloakId(keycloakId)
-                .orElseThrow(() -> new RuntimeException("Terapeutul nu a fost găsit"));
+                .orElseThrow(() -> new ResourceNotFoundException("Terapeutul nu a fost găsit"));
 
         List<DisponibilitateTerapeut> disponibilitati =
                 disponibilitateRepository.findByTerapeutIdAndActiveTrue(terapeut.getId());
@@ -44,43 +48,43 @@ public class DisponibilitateService {
     @Transactional
     public DisponibilitateDTO addDisponibilitate(String keycloakId, CreateDisponibilitateDTO dto) {
         Terapeut terapeut = terapeutRepository.findByKeycloakId(keycloakId)
-                .orElseThrow(() -> new RuntimeException("Terapeutul nu a fost găsit"));
+                .orElseThrow(() -> new ResourceNotFoundException("Terapeutul nu a fost găsit"));
 
         // Validari
-        if (dto.getZiSaptamana() < 1 || dto.getZiSaptamana() > 7) {
-            throw new RuntimeException("Ziua săptămânii trebuie să fie între 1 (Luni) și 7 (Duminică)");
+        if (dto.ziSaptamana() < 1 || dto.ziSaptamana() > 7) {
+            throw new IllegalArgumentException("Ziua săptămânii trebuie să fie între 1 (Luni) și 7 (Duminică)");
         }
 
-        if (dto.getOraInceput().isAfter(dto.getOraSfarsit()) ||
-                dto.getOraInceput().equals(dto.getOraSfarsit())) {
-            throw new RuntimeException("Ora de început trebuie să fie înainte de ora de sfârșit");
+        if (dto.oraInceput().isAfter(dto.oraSfarsit()) ||
+                dto.oraInceput().equals(dto.oraSfarsit())) {
+            throw new IllegalArgumentException("Ora de început trebuie să fie înainte de ora de sfârșit");
         }
 
         // verifica daca locatia exista si e activa
-        Locatie locatie = locatieRepository.findById(dto.getLocatieId())
-                .orElseThrow(() -> new RuntimeException("Locația nu a fost găsită"));
+        Locatie locatie = locatieRepository.findById(dto.locatieId())
+                .orElseThrow(() -> new ResourceNotFoundException("Locația nu a fost găsită"));
 
         if (!locatie.getActive()) {
-            throw new RuntimeException("Locația nu este activă");
+            throw new ForbiddenOperationException("Locația nu este activă");
         }
         // verifica daca exista suprapuneri
         List<DisponibilitateTerapeut> overlapping = disponibilitateRepository.findOverlappingDisponibilitate(
                 terapeut.getId(),
-                dto.getLocatieId(),
-                dto.getZiSaptamana(),
-                dto.getOraInceput(),
-                dto.getOraSfarsit()
+                dto.locatieId(),
+                dto.ziSaptamana(),
+                dto.oraInceput(),
+                dto.oraSfarsit()
         );
 
         if (!overlapping.isEmpty()) {
-            throw new RuntimeException("Intervalul se suprapune cu o disponibilitate existentă.");
+            throw new ResourceAlreadyExistsException("Intervalul se suprapune cu o disponibilitate existentă.");
         }
 
         DisponibilitateTerapeut entity = disponibilitateMapper.toEntity(dto, terapeut.getId());
         DisponibilitateTerapeut saved = disponibilitateRepository.save(entity);
 
         log.info("Added disponibilitate for terapeut {}: {} at location {}",
-                keycloakId, dto.getZiSaptamana(), dto.getLocatieId());
+                keycloakId, dto.ziSaptamana(), dto.locatieId());
 
         return disponibilitateMapper.toDTO(saved, locatie);
     }
@@ -89,14 +93,14 @@ public class DisponibilitateService {
     @Transactional
     public void deleteDisponibilitate(String keycloakId, Long disponibilitateId) {
         Terapeut terapeut = terapeutRepository.findByKeycloakId(keycloakId)
-                .orElseThrow(() -> new RuntimeException("Terapeutul nu a fost găsit"));
+                .orElseThrow(() -> new ResourceNotFoundException("Terapeutul nu a fost găsit"));
 
         DisponibilitateTerapeut disponibilitate = disponibilitateRepository.findById(disponibilitateId)
-                .orElseThrow(() -> new RuntimeException("Disponibilitatea nu a fost găsită"));
+                .orElseThrow(() -> new ResourceNotFoundException("Disponibilitatea nu a fost găsită"));
 
         // Verifica ca disponibilitatea apartine terapeutului
         if (!disponibilitate.getTerapeutId().equals(terapeut.getId())) {
-            throw new RuntimeException("Nu aveți permisiunea să ștergeți această disponibilitate");
+            throw new ForbiddenOperationException("Nu aveți permisiunea să ștergeți această disponibilitate");
         }
 
         // soft delete

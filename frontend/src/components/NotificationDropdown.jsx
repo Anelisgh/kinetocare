@@ -113,6 +113,9 @@ export default function NotificationDropdown({ notificari, userId, tipUser, onCl
               className={`notification-item ${!notif.esteCitita ? 'necitita' : ''}`}
               onClick={() => handleClick(notif)}
             >
+                <div className="flex-shrink-0 text-xl mr-3">
+                  {getIcon(notif.tipNotificare)}
+                </div>
               <div className="notification-item-content">
                 <p className="notification-item-titlu">{notif.titlu}</p>
                 <p className="notification-item-mesaj">{notif.mesaj}</p>

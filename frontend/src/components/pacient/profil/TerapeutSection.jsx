@@ -51,9 +51,15 @@ export default function TerapeutSection({ dataNasterii, onProfileUpdate }) {
                     const map = new Map();
                     
                     for (const disp of data.disponibilitati) {
-                        if (disp.locatie && !map.has(disp.locatie.id)) {
-                            map.set(disp.locatie.id, true);
-                            uniqueLocatii.push(disp.locatie);
+                        if (disp.locatieId && !map.has(disp.locatieId)) {
+                            map.set(disp.locatieId, true);
+                            uniqueLocatii.push({
+                                id: disp.locatieId,
+                                nume: disp.locatieNume,
+                                adresa: disp.locatieAdresa || disp.adresa,
+                                oras: disp.locatieOras || disp.oras,
+                                judet: disp.locatieJudet || disp.judet
+                            });
                         }
                     }
                     data.locatiiDisponibile = uniqueLocatii;

@@ -11,7 +11,8 @@ import java.time.OffsetDateTime;
 @Entity
 @Table(name = "servicii",
         indexes = {
-                @Index(name = "idx_servicii_tip", columnList = "tip_serviciu_id")
+                @Index(name = "idx_servicii_tip", columnList = "tip_serviciu_id"),
+                @Index(name = "idx_serviciu_nume", columnList = "nume")
         })
 @Getter
 @Setter
@@ -24,7 +25,7 @@ public class Serviciu {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "tip_serviciu_id", nullable = false)
     private TipServiciu tipServiciu;
 
