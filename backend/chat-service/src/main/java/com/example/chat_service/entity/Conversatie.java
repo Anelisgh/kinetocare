@@ -9,15 +9,10 @@ import java.time.OffsetDateTime;
 
 @Entity
 @Table(name = "conversatii",
-        uniqueConstraints = {
-                @UniqueConstraint(
-                        name = "uk_conversatie_pair",
-                        columnNames = {"pacient_id", "terapeut_id"}
-                )
-        },
         indexes = {
-                @Index(name = "idx_conv_pacient", columnList = "pacient_id"),
-                @Index(name = "idx_conv_terapeut", columnList = "terapeut_id")
+                @Index(name = "idx_conv_pacient_kc", columnList = "pacient_keycloak_id"),
+                @Index(name = "idx_conv_terapeut_kc", columnList = "terapeut_keycloak_id"),
+                @Index(name = "idx_conv_ultim_mesaj", columnList = "ultimul_mesaj_la")
         })
 @Getter
 @Setter
@@ -30,11 +25,11 @@ public class Conversatie {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "pacient_id", nullable = false)
-    private Long pacientId;
+    @Column(name = "pacient_keycloak_id", nullable = false, length = 36)
+    private String pacientKeycloakId;
 
-    @Column(name = "terapeut_id", nullable = false)
-    private Long terapeutId;
+    @Column(name = "terapeut_keycloak_id", nullable = false, length = 36)
+    private String terapeutKeycloakId;
 
     @Column(name = "ultimul_mesaj_la")
     private OffsetDateTime ultimulMesajLa;

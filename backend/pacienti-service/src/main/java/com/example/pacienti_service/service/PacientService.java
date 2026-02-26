@@ -49,6 +49,13 @@ public class PacientService {
         return new PacientKeycloakDTO(pacient.getId(), pacient.getKeycloakId());
     }
 
+    // in -> List<Long> ids; out -> Map<Long, String> (id -> keycloakId)
+    @Transactional(readOnly = true)
+    public java.util.Map<Long, String> getBatchKeycloakIds(java.util.List<Long> ids) {
+        return pacientRepository.findAllById(ids).stream()
+                .collect(java.util.stream.Collectors.toMap(Pacient::getId, Pacient::getKeycloakId));
+    }
+
     // completarea datelor pentru a intregi profilul (la prima logare, imediat dupa register)
     @Transactional
     public PacientResponse createPacient(String keycloakId, PacientCompleteProfileRequest request) { // DTO schimbat

@@ -385,8 +385,9 @@ public class ProgramareService {
 
         return programari.stream().map(p -> {
             String numeTerapeut = getNumeTerapeut(p.getTerapeutId());
+            String terapeutKeycloakId = getKeycloakIdTerapeut(p.getTerapeutId());
             String numeLocatie = getNumeLocatie(p.getLocatieId());
-            return programareMapper.toProgramareJurnalDTO(p, numeTerapeut, numeLocatie);
+            return programareMapper.toProgramareJurnalDTO(p, numeTerapeut, terapeutKeycloakId, numeLocatie);
         }).toList();
     }
 
@@ -404,9 +405,27 @@ public class ProgramareService {
                 .orElseThrow(() -> new ResourceNotFoundException("Programarea nu a fost găsită"));
 
         String numeTerapeut = getNumeTerapeut(p.getTerapeutId());
+        String terapeutKeycloakId = getKeycloakIdTerapeut(p.getTerapeutId());
         String numeLocatie = getNumeLocatie(p.getLocatieId());
 
-        return programareMapper.toProgramareJurnalDTO(p, numeTerapeut, numeLocatie);
+        return programareMapper.toProgramareJurnalDTO(p, numeTerapeut, terapeutKeycloakId, numeLocatie);
+    }
+
+    // batch detalii - apelat de pacienti-service pentru a evita N+1 calls la jurnal/istoric
+    @Transactional(readOnly = true)
+    public List<ProgramareJurnalDTO> getDetaliiProgramareBatch(List<Long> programareIds) {
+        if (programareIds == null || programareIds.isEmpty()) {
+            return List.of();
+        }
+        // Încărcăm toate programările într-o singură interogare DB
+        List<Programare> programari = programareRepository.findAllById(programareIds);
+
+        return programari.stream().map(p -> {
+            String numeTerapeut = getNumeTerapeut(p.getTerapeutId());
+            String terapeutKeycloakId = getKeycloakIdTerapeut(p.getTerapeutId());
+            String numeLocatie = getNumeLocatie(p.getLocatieId());
+            return programareMapper.toProgramareJurnalDTO(p, numeTerapeut, terapeutKeycloakId, numeLocatie);
+        }).toList();
     }
 
     // returneaza istoricul complet al programarilor unui pacient
@@ -524,6 +543,9 @@ public class ProgramareService {
         Map<String, Object> terapeut = terapeutiClient.getTerapeutByKeycloakId(terapeutKeycloakId);
         Long terapeutId = ((Number) terapeut.get("id")).longValue();
 
+        // DEZACTIVAM Relația activă curentă cu fostul terapeut, forțându-l să ajungă în "arhivă"
+        relatieService.dezactiveazaRelatiaActiva(pacientId);
+
         List<Programare> programari = programareRepository.findByPacientIdAndTerapeutIdAndStatusAndDataGreaterThanEqual(
                 pacientId, terapeutId, StatusProgramare.PROGRAMATA, LocalDate.now(), LocalTime.now());
 
@@ -580,5 +602,15 @@ public class ProgramareService {
         programareRepository.saveAll(programari);
         log.info("Admin: anulate {} programări viitoare", programari.size());
         return programari.size();
+    }
+
+    // helper: terapeutId (terapeuti-service) → keycloakId
+    private String getKeycloakIdTerapeut(Long terapeutId) {
+        try {
+            return terapeutiClient.getKeycloakIdByTerapeutId(terapeutId);
+        } catch (Exception e) {
+            log.warn("Nu s-a putut obtine keycloakId pentru terapeutId={}: {}", terapeutId, e.getMessage());
+            return null;
+        }
     }
 }

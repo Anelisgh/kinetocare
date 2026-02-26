@@ -131,4 +131,10 @@ export const authService = {
       return null;
     }
   },
+
+  // returnează Keycloak ID (sub) direct din userInfo pentru a curăța codul API
+  getUserId: () => {
+    const userInfo = authService.getUserInfo();
+    return userInfo ? userInfo.keycloakId : null;
+  },
 };

@@ -132,6 +132,13 @@ public class ProgramareController {
         return ResponseEntity.ok(programareService.getDetaliiProgramare(id));
     }
 
+    // batch detalii programare - apelat de pacienti-service (JurnalService.getIstoric) pentru a evita N+1 calls
+    // pacienti-service -> getProgramariBatch (ProgramariClient)
+    @PostMapping("/batch-detalii")
+    public ResponseEntity<List<ProgramareJurnalDTO>> getDetaliiProgramareBatch(@RequestBody List<Long> programareIds) {
+        return ResponseEntity.ok(programareService.getDetaliiProgramareBatch(programareIds));
+    }
+
     // returneaza istoricul complet al programarilor unui pacient
     @GetMapping("/pacient/{id}/istoric")
     public ResponseEntity<List<IstoricProgramareDTO>> getIstoricPacient(@PathVariable Long id) {

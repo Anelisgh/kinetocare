@@ -60,10 +60,12 @@ public interface ProgramareMapper {
     @Mapping(target = "data", source = "programare.data")
     @Mapping(target = "ora", source = "programare.oraInceput")
     @Mapping(target = "terapeutId", source = "programare.terapeutId")
+    @Mapping(target = "terapeutKeycloakId", source = "terapeutKeycloakId")
     @Mapping(target = "numeTerapeut", source = "numeTerapeut")
     @Mapping(target = "numeLocatie", source = "numeLocatie")
     ProgramareJurnalDTO toProgramareJurnalDTO(Programare programare,
                                               String numeTerapeut,
+                                              String terapeutKeycloakId,
                                               String numeLocatie);
 
     ProgramareResponseDTO toResponseDTO(Programare programare);

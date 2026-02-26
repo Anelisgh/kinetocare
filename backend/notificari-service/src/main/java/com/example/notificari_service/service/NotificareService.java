@@ -28,7 +28,7 @@ public class NotificareService {
     @Transactional
     public void proceseazaEveniment(NotificareEvent event) {
         Notificare notificare = Notificare.builder()
-                .userId(event.userId())
+                .userKeycloakId(event.userKeycloakId())
                 .tipUser(TipUser.valueOf(event.tipUser()))
                 .tip(TipNotificare.valueOf(event.tipNotificare()))
                 .titlu(event.titlu())
@@ -40,13 +40,14 @@ public class NotificareService {
                 .build();
 
         notificareRepository.save(notificare);
-        log.info("Notificare salvată: {} → userId={}", event.tipNotificare(), event.userId());
+        log.info("Notificare salvată: {} → userKeycloakId={}", event.tipNotificare(), event.userKeycloakId());
     }
 
-    // returneaza notificarile unui user
+    // returneaza notificarile unui user dupa keycloakId
     @Transactional(readOnly = true)
-    public List<NotificareDTO> getNotificari(Long userId, TipUser tipUser) {
-        return notificareRepository.findByUserIdAndTipUserOrderByCreatedAtDesc(userId, tipUser)
+    public List<NotificareDTO> getNotificari(String userKeycloakId, TipUser tipUser) {
+        return notificareRepository
+                .findByUserKeycloakIdAndTipUserOrderByCreatedAtDesc(userKeycloakId, tipUser)
                 .stream()
                 .map(notificareMapper::toDto)
                 .toList();
@@ -64,14 +65,14 @@ public class NotificareService {
 
     // numara notificarile necitite
     @Transactional(readOnly = true)
-    public long getNumarNecitite(Long userId, TipUser tipUser) {
-        return notificareRepository.countByUserIdAndTipUserAndEsteCititaFalse(userId, tipUser);
+    public long getNumarNecitite(String userKeycloakId, TipUser tipUser) {
+        return notificareRepository.countByUserKeycloakIdAndTipUserAndEsteCititaFalse(userKeycloakId, tipUser);
     }
 
     // marcheaza toate notificarile necitite ca citite
     @Transactional
-    public void marcheazaToateCitite(Long userId, TipUser tipUser) {
-        int updatedCount = notificareRepository.markAllAsReadByUserIdAndTipUser(userId, tipUser);
-        log.info("Marcate {} notificări ca citite pentru userId={}", updatedCount, userId);
+    public void marcheazaToateCitite(String userKeycloakId, TipUser tipUser) {
+        int updatedCount = notificareRepository.markAllAsReadByUserKeycloakIdAndTipUser(userKeycloakId, tipUser);
+        log.info("Marcate {} notificări ca citite pentru userKeycloakId={}", updatedCount, userKeycloakId);
     }
 }

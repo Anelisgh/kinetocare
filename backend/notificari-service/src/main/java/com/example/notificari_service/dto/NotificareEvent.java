@@ -7,12 +7,12 @@ import java.io.Serializable;
 @Builder
 public record NotificareEvent(
         String tipNotificare,
-        Long userId,
-        String tipUser,       // "PACIENT" sau "TERAPEUT"
+        String userKeycloakId,      // keycloakId al destinatarului notificarii (uniform pentru toti)
+        String tipUser,             // "PACIENT" sau "TERAPEUT"
         String titlu,
         String mesaj,
         Long entitateLegataId,
-        String tipEntitateLegata, // "PROGRAMARE", "EVALUARE", "JURNAL"
-        String urlActiune         // URL redirect cand se apasa notificarea
+        String tipEntitateLegata,   // "PROGRAMARE", "EVALUARE", "JURNAL", "CONVERSATIE"
+        String urlActiune           // URL redirect cand se apasa notificarea
 ) implements Serializable {
 }

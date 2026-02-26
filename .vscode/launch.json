@@ -122,6 +122,13 @@
                 "Service: Notificari",
                 "Frontend: React"
             ]
+        },
+        {
+            "name": "Keycloak & React",
+            "configurations": [
+                "Keycloak: Start Dev",
+                "Frontend: React"
+            ]
         }
     ]
 }

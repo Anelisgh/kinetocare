@@ -17,12 +17,12 @@ public class NotificareController {
 
     private final NotificareService notificareService;
 
-    // lista notificarile unui user
+    // lista notificarile unui user dupa keycloakId
     @GetMapping
     public ResponseEntity<List<NotificareDTO>> getNotificari(
-            @RequestParam Long userId,
+            @RequestParam String userKeycloakId,
             @RequestParam TipUser tipUser) {
-        return ResponseEntity.ok(notificareService.getNotificari(userId, tipUser));
+        return ResponseEntity.ok(notificareService.getNotificari(userKeycloakId, tipUser));
     }
 
     // marcheaza o notificare ca citita
@@ -35,18 +35,18 @@ public class NotificareController {
     // numarul de notificari necitite
     @GetMapping("/necitite/count")
     public ResponseEntity<Map<String, Long>> getNumarNecitite(
-            @RequestParam Long userId,
+            @RequestParam String userKeycloakId,
             @RequestParam TipUser tipUser) {
-        long count = notificareService.getNumarNecitite(userId, tipUser);
+        long count = notificareService.getNumarNecitite(userKeycloakId, tipUser);
         return ResponseEntity.ok(Map.of("count", count));
     }
 
     // marcheaza toate notificarile ca citite
     @PutMapping("/citite-toate")
     public ResponseEntity<Void> marcheazaToateCitite(
-            @RequestParam Long userId,
+            @RequestParam String userKeycloakId,
             @RequestParam TipUser tipUser) {
-        notificareService.marcheazaToateCitite(userId, tipUser);
+        notificareService.marcheazaToateCitite(userKeycloakId, tipUser);
         return ResponseEntity.ok().build();
     }
 }

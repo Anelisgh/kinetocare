@@ -108,6 +108,38 @@ public class SearchTerapeutService {
                 });
     }
 
+    // returneaza doar numele si prenumele unui terapeut pe baza ID-ului intern (pentru chat istoric)
+    public Mono<Map<String, String>> getTerapeutNumeSiPrenume(Long terapeutId, String token) {
+        return terapeutiWebClient.get()
+                .uri("/terapeut/id/{terapeutId}/keycloak-id", terapeutId)
+                .header("Authorization", "Bearer " + token)
+                .retrieve()
+                .bodyToMono(String.class)
+                .flatMap(keycloakId -> userWebClient.get()
+                        .uri("/users/by-keycloak/{keycloakId}", keycloakId)
+                        .header("Authorization", "Bearer " + token)
+                        .retrieve()
+                        .bodyToMono(new ParameterizedTypeReference<Map<String, Object>>() {})
+                        .map(userData -> {
+                            Map<String, String> result = new HashMap<>();
+                            Object nume = userData.get("nume");
+                            Object prenume = userData.get("prenume");
+                            
+                            result.put("nume", nume != null ? nume.toString() : "");
+                            result.put("prenume", prenume != null ? prenume.toString() : "");
+                            
+                            return result;
+                        })
+                )
+                .onErrorResume(e -> {
+                    log.error("Eroare la preluarea numelui pentru terapeutul cu ID {}", terapeutId, e);
+                    Map<String, String> empty = new HashMap<>();
+                    empty.put("nume", "Terapeut");
+                    empty.put("prenume", "#" + terapeutId);
+                    return Mono.just(empty);
+                });
+    }
+
     // imbogateste lista de terapeuti cu date personale din user-service (nume, prenume, gen)
     private Mono<List<Map<String, Object>>> enrichTerapeutiWithUserData(
             List<Map<String, Object>> terapeuti, String token) {

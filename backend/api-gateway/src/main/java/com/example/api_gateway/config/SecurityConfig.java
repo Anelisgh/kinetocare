@@ -29,6 +29,7 @@ public class SecurityConfig {
                         .pathMatchers("/actuator/health").permitAll()
                         .pathMatchers("/api/auth/token", "/api/auth/logout").permitAll()
                         .pathMatchers("/api/users/auth/**").permitAll()
+                        .pathMatchers("/api/chat/ws-chat/**").permitAll()
                         .pathMatchers(HttpMethod.POST, "/api/locatii/**").hasRole("admin")
                         .pathMatchers(HttpMethod.PATCH, "/api/locatii/**").hasRole("admin")
                         .pathMatchers(HttpMethod.DELETE, "/api/locatii/**").hasRole("admin")

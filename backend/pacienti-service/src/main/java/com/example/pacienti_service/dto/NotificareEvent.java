@@ -6,8 +6,8 @@ import java.io.Serializable;
 @Builder
 public record NotificareEvent(
         String tipNotificare,
-        Long userId,
-        String tipUser,       // "PACIENT" sau "TERAPEUT"
+        String userKeycloakId,      // keycloakId al destinatarului (contractul RabbitMQ uniform)
+        String tipUser,             // "PACIENT" sau "TERAPEUT"
         String titlu,
         String mesaj,
         Long entitateLegataId,

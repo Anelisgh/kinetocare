@@ -9,7 +9,7 @@ const POLL_INTERVAL = 30000; // 30 secunde
 
 export default function NotificationBell() {
   const { userInfo } = useAuth();
-  const [userId, setUserId] = useState(null);
+  const [userKeycloakId, setUserKeycloakId] = useState(null);
   const [tipUser, setTipUser] = useState(null);
   const [countNecitite, setCountNecitite] = useState(0);
   const [notificari, setNotificari] = useState([]);
@@ -24,12 +24,13 @@ export default function NotificationBell() {
         const roles = userInfo?.roles || [];
 
         if (roles.includes('TERAPEUT')) {
-          setUserId(profile.terapeutId || profile.id);
           setTipUser('TERAPEUT');
         } else if (roles.includes('PACIENT')) {
-          setUserId(profile.id);
           setTipUser('PACIENT');
         }
+        
+        // indiferent de rol, setam keycloakId-ul userului curent
+        setUserKeycloakId(profile.keycloakId);
       } catch (err) {
         console.error('Eroare la încărcarea profilului pentru notificări:', err);
       }
@@ -39,20 +40,20 @@ export default function NotificationBell() {
 
   // fetch count necitite
   const fetchCount = useCallback(async () => {
-    if (!userId || !tipUser) return;
+    if (!userKeycloakId || !tipUser) return;
     try {
-      const count = await notificariService.getNumarNecitite(userId, tipUser);
+      const count = await notificariService.getNumarNecitite(userKeycloakId, tipUser);
       setCountNecitite(count || 0);
     } catch {
       // silently fail - nu blocam UI-ul
     }
-  }, [userId, tipUser]);
+  }, [userKeycloakId, tipUser]);
 
   // fetch lista completa de notificari (cand se deschide dropdown-ul)
   const fetchNotificari = useCallback(async () => {
-    if (!userId || !tipUser) return;
+    if (!userKeycloakId || !tipUser) return;
     try {
-      const data = await notificariService.getNotificari(userId, tipUser);
+      const data = await notificariService.getNotificari(userKeycloakId, tipUser);
       setNotificari(data || []);
       // actualizam si count-ul
       const necitite = (data || []).filter(n => !n.esteCitita).length;
@@ -60,11 +61,11 @@ export default function NotificationBell() {
     } catch {
       // silently fail
     }
-  }, [userId, tipUser]);
+  }, [userKeycloakId, tipUser]);
 
   // polling pentru count conditionat de vizibilitatea tab-ului
   useEffect(() => {
-    if (!userId || !tipUser) return;
+    if (!userKeycloakId || !tipUser) return;
 
     fetchCount(); // fetch initial
 
@@ -96,7 +97,7 @@ export default function NotificationBell() {
       document.removeEventListener('visibilitychange', handleVisibilityChange);
       if (intervalRef.current) clearInterval(intervalRef.current);
     };
-  }, [userId, tipUser, fetchCount]);
+  }, [userKeycloakId, tipUser, fetchCount]);
 
   // cand se deschide dropdown-ul, incarcam notificarile
   const toggleDropdown = () => {
@@ -141,7 +142,7 @@ export default function NotificationBell() {
       {isOpen && (
         <NotificationDropdown
           notificari={notificari}
-          userId={userId}
+          userKeycloakId={userKeycloakId}
           tipUser={tipUser}
           onClose={() => setIsOpen(false)}
           onRefresh={handleRefresh}

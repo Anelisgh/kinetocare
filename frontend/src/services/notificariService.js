@@ -2,10 +2,10 @@ import api, { handleApiError } from './api';
 
 export const notificariService = {
   // lista notificarile unui user
-  getNotificari: async (userId, tipUser) => {
+  getNotificari: async (userKeycloakId, tipUser) => {
     try {
       const response = await api.get('/api/notificari', {
-        params: { userId, tipUser }
+        params: { userKeycloakId, tipUser }
       });
       return response.data;
     } catch (error) {
@@ -23,10 +23,10 @@ export const notificariService = {
   },
 
   // numarul de notificari necitite
-  getNumarNecitite: async (userId, tipUser) => {
+  getNumarNecitite: async (userKeycloakId, tipUser) => {
     try {
       const response = await api.get('/api/notificari/necitite/count', {
-        params: { userId, tipUser }
+        params: { userKeycloakId, tipUser }
       });
       return response.data.count;
     } catch (error) {
@@ -35,10 +35,10 @@ export const notificariService = {
   },
 
   // marcheaza toate notificarile ca citite
-  marcheazaToateCitite: async (userId, tipUser) => {
+  marcheazaToateCitite: async (userKeycloakId, tipUser) => {
     try {
       await api.put('/api/notificari/citite-toate', null, {
-        params: { userId, tipUser }
+        params: { userKeycloakId, tipUser }
       });
     } catch (error) {
       handleApiError(error, 'Eroare la marcarea notificărilor');

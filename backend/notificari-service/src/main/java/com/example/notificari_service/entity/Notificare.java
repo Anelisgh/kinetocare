@@ -9,7 +9,7 @@ import java.time.OffsetDateTime;
 @Entity
 @Table(name = "notificari",
         indexes = {
-                @Index(name = "idx_notif_user", columnList = "user_id"),
+                @Index(name = "idx_notif_user_kc", columnList = "user_keycloak_id"),
                 @Index(name = "idx_notif_citita", columnList = "este_citita"),
                 @Index(name = "idx_notif_creata", columnList = "created_at")
         })
@@ -24,8 +24,8 @@ public class Notificare {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "user_id", nullable = false)
-    private Long userId;
+    @Column(name = "user_keycloak_id", nullable = false, length = 36)
+    private String userKeycloakId;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "tip_user", nullable = false, length = 20)

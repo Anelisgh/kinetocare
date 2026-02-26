@@ -37,6 +37,12 @@ public class PacientController {
         return ResponseEntity.ok(pacientService.getKeycloakIdById(id));
     }
 
+    // in -> List<Long> ids; out -> Map<Long, String>
+    @PostMapping("/batch/keycloak-ids")
+    public ResponseEntity<java.util.Map<Long, String>> getBatchKeycloakIds(@RequestBody java.util.List<Long> ids) {
+        return ResponseEntity.ok(pacientService.getBatchKeycloakIds(ids));
+    }
+
     // crearea unui pacient nou gol (dupa register)
     // folosit in user-service (initializeRoleSpecificProfile)
     @PostMapping("/initialize/{keycloakId}")

@@ -44,6 +44,12 @@ public class TerapeutService {
                 .orElse(null);
     }
 
+    @Transactional(readOnly = true)
+    public Map<Long, String> getBatchKeycloakIds(List<Long> ids) {
+        return terapeutRepository.findAllById(ids).stream()
+                .collect(Collectors.toMap(Terapeut::getId, Terapeut::getKeycloakId));
+    }
+
     @Transactional
     public TerapeutDTO createTerapeut(String keycloakId) {
         if (terapeutRepository.existsByKeycloakId(keycloakId)) {

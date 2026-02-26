@@ -70,6 +70,15 @@ export const profileService = {
     }
   },
 
+  getTerapeutNumeDupaId: async (terapeutId) => {
+    try {
+      const response = await api.get(`/api/terapeut/nume-dupa-id/${terapeutId}`);
+      return response.data;
+    } catch (error) {
+      handleApiError(error, 'Eroare la încărcarea numelui terapeutului');
+    }
+  },
+
   //  LOCAȚII 
   getLocatii: async () => {
     try {

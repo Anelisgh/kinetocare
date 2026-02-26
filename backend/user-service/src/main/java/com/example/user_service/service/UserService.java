@@ -55,6 +55,13 @@ public class UserService {
                 .toList(); // Java 16+ list collector
     }
 
+    @Transactional(readOnly = true)
+    public List<UserDTO> getUsersByIds(List<Long> ids) {
+        return userRepository.findAllById(ids).stream()
+                .map(userMapper::toDTO)
+                .toList();
+    }
+
     @Transactional
     public UserDTO updateUser(String keycloakId, UpdateUserDTO updateDTO) {
         User user = userRepository.findByKeycloakId(keycloakId)

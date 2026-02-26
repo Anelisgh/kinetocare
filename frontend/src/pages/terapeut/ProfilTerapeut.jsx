@@ -147,6 +147,7 @@ export default function ProfilTerapeut() {
             <div className="form-group">
               <label htmlFor="gen">Gen *</label>
               <select id="gen" name="gen" value={formData.gen} onChange={handleChange} required>
+                <option value="" disabled>Selectează genul</option>
                 <option value="MASCULIN">Masculin</option>
                 <option value="FEMININ">Feminin</option>
               </select>
@@ -162,6 +163,7 @@ export default function ProfilTerapeut() {
             <div className="form-group">
               <label htmlFor="specializare">Specializare *</label>
               <select id="specializare" name="specializare" value={formData.specializare} onChange={handleChange} required>
+                <option value="" disabled>Selectează specializarea</option>
                 <option value="ADULTI">Adulți</option>
                 <option value="PEDIATRIE">Pediatrie</option>
               </select>

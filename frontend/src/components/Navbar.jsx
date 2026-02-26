@@ -44,6 +44,7 @@ export default function Navbar() {
             <Link to="/pacient/programari">Programări</Link>
             <Link to="/pacient/jurnal">Jurnal</Link>
             <Link to="/pacient/profil">Profil</Link>
+            <Link to="/chat-pacient">Chat</Link>
           </>
         )}
 
@@ -54,6 +55,7 @@ export default function Navbar() {
             <Link to="/terapeut/evaluari">Evaluari</Link>
             <Link to="/terapeut/evolutii">Evolutii</Link>
             <Link to="/terapeut/profil">Profil</Link>
+            <Link to="/chat-terapeut">Chat</Link>
           </>
         )}
 

@@ -120,7 +120,8 @@ spring:
                 - Path=/api/notificari/**
               filters:
                 - StripPrefix=1
-          default-filters: []
+          default-filters:
+            - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials, RETAIN_UNIQUE
   security:
     oauth2:
       resourceserver:

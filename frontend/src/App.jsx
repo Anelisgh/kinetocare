@@ -15,12 +15,14 @@ import EvaluariTerapeut from './pages/terapeut/EvaluariTerapeut';
 import EvolutiiTerapeut from './pages/terapeut/EvolutiiTerapeut';
 import PacientiTerapeut from './pages/terapeut/PacientiTerapeut';
 import FisaPacient from './pages/terapeut/FisaPacient';
+import ChatTerapeut from './pages/terapeut/ChatTerapeut';
 
 import HomepagePacient from './pages/pacient/HomepagePacient';
 import ProfilPacient from './pages/pacient/ProfilPacient';
 import CompleteProfile from './pages/pacient/CompleteProfile';
 import JurnalPacient from './pages/pacient/JurnalPacient';
 import ProgramariPacient from './pages/pacient/ProgramariPacient';
+import ChatPacient from './pages/pacient/ChatPacient';
 import ProtectedRoute from './components/ProtectedRoute';
 
 import AdminLayout from './layouts/AdminLayout';
@@ -48,6 +50,7 @@ function App() {
             <Route path="/terapeut/evolutii" element={<EvolutiiTerapeut />} />
             <Route path="/terapeut/pacienti" element={<PacientiTerapeut />} />
             <Route path="/terapeut/pacienti/:pacientId" element={<FisaPacient />} />
+            <Route path="/chat-terapeut" element={<ChatTerapeut />} />
           </Route>
         </Route>
 
@@ -60,6 +63,7 @@ function App() {
               <Route path="/pacient/profil" element={<ProfilPacient />} />
               <Route path="/pacient/jurnal" element={<JurnalPacient />} />
               <Route path="/pacient/programari" element={<ProgramariPacient />} />
+              <Route path="/chat-pacient" element={<ChatPacient />} />
             </Route>
           </Route>
         </Route>

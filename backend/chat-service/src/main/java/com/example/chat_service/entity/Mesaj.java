@@ -10,7 +10,7 @@ import java.time.OffsetDateTime;
 @Table(name = "mesaje",
         indexes = {
                 @Index(name = "idx_mesaj_conversatie", columnList = "conversatie_id"),
-                @Index(name = "idx_mesaj_expeditor", columnList = "expeditor_id"),
+                @Index(name = "idx_mesaj_expeditor", columnList = "expeditor_keycloak_id"),
                 @Index(name = "idx_mesaj_trimis_la", columnList = "trimis_la")
         })
 @Getter
@@ -27,8 +27,8 @@ public class Mesaj {
     @Column(name = "conversatie_id", nullable = false)
     private Long conversatieId;
 
-    @Column(name = "expeditor_id", nullable = false)
-    private Long expeditorId;
+    @Column(name = "expeditor_keycloak_id", nullable = false, length = 36)
+    private String expeditorKeycloakId;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "tip_expeditor", nullable = false, length = 20)

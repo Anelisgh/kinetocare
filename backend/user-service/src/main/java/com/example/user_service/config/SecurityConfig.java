@@ -27,7 +27,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/actuator/health").permitAll()
-                        .requestMatchers("/auth/**").permitAll()
+                        .requestMatchers("/users/auth/**").permitAll()
                         // admin-only endpoints
                         .requestMatchers(org.springframework.http.HttpMethod.PATCH, "/users/*/toggle-active").hasRole("admin")
                         .requestMatchers(org.springframework.http.HttpMethod.GET, "/users").hasRole("admin")

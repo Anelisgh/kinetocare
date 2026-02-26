@@ -16,7 +16,7 @@ export const jurnalService = {
     addJurnal: async (pacientId, jurnalData) => {
         try {
             // jurnalData = { programareId, nivelDurere, dificultateExercitii, nivelOboseala, comentarii }
-            await api.post(`/api/pacienti/${pacientId}/jurnal`, jurnalData);
+            await api.post(`/api/jurnal/${pacientId}`, jurnalData);
         } catch (error) {
             handleApiError(error, 'Nu s-a putut salva jurnalul.');
         }
@@ -25,7 +25,7 @@ export const jurnalService = {
     // Editeaza un jurnal existent
     updateJurnal: async (pacientId, jurnalId, data) => {
         try {
-            await api.put(`/api/pacienti/${pacientId}/jurnal/${jurnalId}`, data);
+            await api.put(`/api/jurnal/${pacientId}/${jurnalId}`, data);
         } catch (error) {
             handleApiError(error, 'Nu s-a putut actualiza jurnalul.');
         }
@@ -34,7 +34,7 @@ export const jurnalService = {
     // Obtine istoricul jurnalelor
     getIstoric: async (pacientId) => {
         try {
-            const response = await api.get(`/api/pacienti/${pacientId}/jurnal/istoric`);
+            const response = await api.get(`/api/jurnal/${pacientId}/istoric`);
             return response.data;
         } catch (error) {
             handleApiError(error, 'Nu s-a putut încărca istoricul.');

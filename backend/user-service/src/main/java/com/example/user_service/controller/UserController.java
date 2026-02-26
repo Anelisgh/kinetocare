@@ -44,6 +44,12 @@ public class UserController {
         return ResponseEntity.ok(userService.getUsersByKeycloakIds(keycloakIds));
     }
 
+    // cauta mai multi useri dupa DB ID
+    @PostMapping("/batch/ids")
+    public ResponseEntity<List<UserDTO>> getUsersInBatchByIds(@RequestBody List<Long> ids) {
+        return ResponseEntity.ok(userService.getUsersByIds(ids));
+    }
+
     // actualizeaza un user
     // folosit in:
     // - api-gateway (ProfileService)

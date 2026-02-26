@@ -63,8 +63,8 @@ public class JurnalService {
         }
 
         // notificam terapeutul ca jurnalul a fost completat
-        if (detaliiProgramare.terapeutId() != null) {
-            notificarePublisher.jurnalCompletat(detaliiProgramare.terapeutId(), pacientId, request.programareId());
+        if (detaliiProgramare.terapeutKeycloakId() != null) {
+            notificarePublisher.jurnalCompletat(detaliiProgramare.terapeutKeycloakId(), pacientId, request.programareId());
         }
     }
 

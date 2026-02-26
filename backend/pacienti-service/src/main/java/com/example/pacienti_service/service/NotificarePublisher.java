@@ -15,10 +15,15 @@ public class NotificarePublisher {
     private final RabbitTemplate rabbitTemplate;
 
     // cand pacientul completeaza jurnalul, notificam terapeutul
-    public void jurnalCompletat(Long terapeutId, Long pacientId, Long programareId) {
+    // terapeutKeycloakId vine acum direct din ProgramareJurnalDTO (populat de programari-service)
+    public void jurnalCompletat(String terapeutKeycloakId, Long pacientId, Long programareId) {
+        if (terapeutKeycloakId == null) {
+            log.warn("Nu s-a putut trimite notificarea JURNAL_COMPLETAT: terapeutKeycloakId este null pt programareId={}", programareId);
+            return;
+        }
         NotificareEvent event = NotificareEvent.builder()
                 .tipNotificare("JURNAL_COMPLETAT")
-                .userId(terapeutId)
+                .userKeycloakId(terapeutKeycloakId)
                 .tipUser("TERAPEUT")
                 .titlu("Jurnal completat")
                 .mesaj("Un pacient a completat jurnalul pentru o ședință.")
@@ -30,7 +35,7 @@ public class NotificarePublisher {
         try {
             rabbitTemplate.convertAndSend(RabbitMQConfig.EXCHANGE_NAME,
                     "notificare.jurnal.completat", event);
-            log.info("Notificare trimisă: JURNAL_COMPLETAT → terapeutId={}", terapeutId);
+            log.info("Notificare trimisă: JURNAL_COMPLETAT → terapeutKeycloakId={}", terapeutKeycloakId);
         } catch (Exception e) {
             log.error("Eroare la trimiterea notificării JURNAL_COMPLETAT: {}", e.getMessage());
         }

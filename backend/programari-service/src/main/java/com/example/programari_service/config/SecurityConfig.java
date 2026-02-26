@@ -32,6 +32,11 @@ public class SecurityConfig {
                         .requestMatchers("/programari/admin/**").permitAll()
                         // endpoint intern apelat de pacienti-service
                         .requestMatchers("/programari/cancel-upcoming/**").permitAll()
+                        // endpoint intern apelat de pacienti-service (jurnal batch)
+                        .requestMatchers("/programari/batch-detalii").permitAll()
+                        // endpoint-uri interne apelate de chat-service si api-gateway
+                        // Nu sunt expuse prin API Gateway — /relatii/** le acopera pe toate
+                        .requestMatchers("/relatii/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .oauth2ResourceServer(oauth2 -> oauth2

@@ -1,4 +1,5 @@
 {
+  "version": "2.0.0",
   "tasks": [
     {
       "label": "wait-10s",
@@ -11,6 +12,87 @@
       "type": "shell",
       "command": "timeout /T 15",
       "problemMatcher": []
+    },
+
+    // ============================================================
+    // TASK-URI MAVEN - recompilare garantata pentru fiecare serviciu
+    // Cum se folosesc: Terminal > Run Task > alege serviciul dorit
+    // IMPORTANT: opreste serviciul din VSCode inainte de a rula task-ul!
+    // ============================================================
+
+    {
+      "label": "Build: Api Gateway",
+      "type": "shell",
+      "command": "mvn compile -DskipTests",
+      "options": { "cwd": "${workspaceFolder}/backend/api-gateway" },
+      "group": "build",
+      "problemMatcher": ["$javac"]
+    },
+    {
+      "label": "Build: User Service",
+      "type": "shell",
+      "command": "mvn compile -DskipTests",
+      "options": { "cwd": "${workspaceFolder}/backend/user-service" },
+      "group": "build",
+      "problemMatcher": ["$javac"]
+    },
+    {
+      "label": "Build: Pacienti Service",
+      "type": "shell",
+      "command": "mvn compile -DskipTests",
+      "options": { "cwd": "${workspaceFolder}/backend/pacienti-service" },
+      "group": "build",
+      "problemMatcher": ["$javac"]
+    },
+    {
+      "label": "Build: Terapeuti Service",
+      "type": "shell",
+      "command": "mvn compile -DskipTests",
+      "options": { "cwd": "${workspaceFolder}/backend/terapeuti-service" },
+      "group": "build",
+      "problemMatcher": ["$javac"]
+    },
+    {
+      "label": "Build: Programari Service",
+      "type": "shell",
+      "command": "mvn compile -DskipTests",
+      "options": { "cwd": "${workspaceFolder}/backend/programari-service" },
+      "group": "build",
+      "problemMatcher": ["$javac"]
+    },
+    {
+      "label": "Build: Servicii Service",
+      "type": "shell",
+      "command": "mvn compile -DskipTests",
+      "options": { "cwd": "${workspaceFolder}/backend/servicii-service" },
+      "group": "build",
+      "problemMatcher": ["$javac"]
+    },
+    {
+      "label": "Build: Chat Service",
+      "type": "shell",
+      "command": "mvn compile -DskipTests",
+      "options": { "cwd": "${workspaceFolder}/backend/chat-service" },
+      "group": "build",
+      "problemMatcher": ["$javac"]
+    },
+    {
+      "label": "Build: Notificari Service",
+      "type": "shell",
+      "command": "mvn compile -DskipTests",
+      "options": { "cwd": "${workspaceFolder}/backend/notificari-service" },
+      "group": "build",
+      "problemMatcher": ["$javac"]
+    },
+
+    // Build ALL (atentie: serviciile trebuie sa fie oprite)
+    {
+      "label": "Build: TOATE serviciile",
+      "type": "shell",
+      "command": "mvn compile -DskipTests",
+      "options": { "cwd": "${workspaceFolder}/backend" },
+      "group": { "kind": "build", "isDefault": true },
+      "problemMatcher": ["$javac"]
     }
   ]
 }

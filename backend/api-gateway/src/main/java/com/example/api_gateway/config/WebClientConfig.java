@@ -37,4 +37,9 @@ public class WebClientConfig {
     public WebClient serviciiWebClient(@Value("${application.urls.servicii-service}") String url, WebClient.Builder builder) {
         return builder.baseUrl(url).build();
     }
+
+    @Bean("chatWebClient")
+    public WebClient chatWebClient(@Value("${application.urls.chat-service}") String url, WebClient.Builder builder) {
+        return builder.baseUrl(url).build();
+    }
 }

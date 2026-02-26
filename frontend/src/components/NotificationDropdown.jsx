@@ -22,6 +22,10 @@ const mapUrlActiune = (urlActiune, tipUser) => {
   if (urlActiune === '/programari') return `${prefix}/programari`;
   // /jurnal -> /pacient/jurnal
   if (urlActiune === '/jurnal') return `${prefix}/jurnal`;
+  // /chat/123 -> /chat-terapeut sau /chat-pacient
+  if (urlActiune.startsWith('/chat/')) {
+    return tipUser === 'TERAPEUT' ? '/chat-terapeut' : '/chat-pacient';
+  }
 
   return `${prefix}/homepage`;
 };
@@ -42,7 +46,24 @@ const formatTimpRelativ = (dateStr) => {
   return data.toLocaleDateString('ro-RO', { day: 'numeric', month: 'short' });
 };
 
-export default function NotificationDropdown({ notificari, userId, tipUser, onClose, onRefresh }) {
+// returneaza o iconita in functie de tipul notificarii
+const getIcon = (tipNotificare) => {
+  switch (tipNotificare) {
+    case 'PROGRAMARE_NOUA': return '📅';
+    case 'EVALUARE_INITIALA_NOUA': return '📋';
+    case 'PROGRAMARE_ANULATA_DE_PACIENT': 
+    case 'PROGRAMARE_ANULATA_DE_TERAPEUT': return '❌';
+    case 'REEVALUARE_NECESARA':
+    case 'REEVALUARE_RECOMANDATA': return '🔄';
+    case 'JURNAL_COMPLETAT': return '📔';
+    case 'REMINDER_24H':
+    case 'REMINDER_2H':
+    case 'REMINDER_JURNAL': return '⏰';
+    default: return '🔔';
+  }
+};
+
+export default function NotificationDropdown({ notificari, userKeycloakId, tipUser, onClose, onRefresh }) {
   const navigate = useNavigate();
   const dropdownRef = useRef(null);
 
@@ -51,7 +72,7 @@ export default function NotificationDropdown({ notificari, userId, tipUser, onCl
   // marcheaza toate ca citite
   const handleMarkAllRead = async () => {
     try {
-      await notificariService.marcheazaToateCitite(userId, tipUser);
+      await notificariService.marcheazaToateCitite(userKeycloakId, tipUser);
       onRefresh();
     } catch (err) {
       console.error('Eroare la marcarea notificărilor:', err);

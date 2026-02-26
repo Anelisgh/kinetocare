@@ -56,6 +56,12 @@ public class TerapeutController {
         return keycloakId != null ? ResponseEntity.ok(keycloakId) : ResponseEntity.notFound().build();
     }
 
+    // in: List<Long> ids -> out: Map<Long, String>
+    @PostMapping("/batch/keycloak-ids")
+    public ResponseEntity<java.util.Map<Long, String>> getBatchKeycloakIds(@RequestBody java.util.List<Long> ids) {
+        return ResponseEntity.ok(terapeutService.getBatchKeycloakIds(ids));
+    }
+
     // seteaza starea activa a terapeutului
     // folosit in: user-service (toggleUserActive) — endpoint intern
     @PatchMapping("/by-keycloak/{keycloakId}/toggle-active")
