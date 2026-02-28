@@ -5,6 +5,7 @@ import { profileService } from '../../../services/profileService';
 const ManagementDisponibilitate = () => {
   const [disponibilitati, setDisponibilitati] = useState([]);
   const [locatii, setLocatii] = useState([]);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [formData, setFormData] = useState({
     ziSaptamana: '1',
@@ -42,8 +43,9 @@ const ManagementDisponibilitate = () => {
     e.preventDefault();
     setError(null);
     try {
+      setLoading(true);
       await profileService.addDisponibilitate(formData);
-      fetchDate(); // Refetch datele
+      await fetchDate(); // Refetch datele
       setFormData({
         ziSaptamana: '1',
         locatieId: locatii[0]?.id || '',
@@ -52,17 +54,22 @@ const ManagementDisponibilitate = () => {
       });
     } catch (err) {
       setError(err.message);
+    } finally {
+      setLoading(false);
     }
   };
 // Handle stergerea unei perioade de disponibilitate
   const handleDelete = async (id) => {
     if (window.confirm('Sunteți sigur că doriți să ștergeți acest interval?')) {
       try {
+        setLoading(true);
         setError(null);
         await profileService.deleteDisponibilitate(id);
         setDisponibilitati(prev => prev.filter(d => d.id !== id));
       } catch (err) {
         setError(err.message);
+      } finally {
+        setLoading(false);
       }
     }
   };
@@ -73,7 +80,7 @@ const ManagementDisponibilitate = () => {
       {error && <div className="error-message">{error}</div>}
 
       <form onSubmit={handleSubmit} className="disponibilitate-form">
-        <select name="ziSaptamana" value={formData.ziSaptamana} onChange={handleChange}>
+        <select name="ziSaptamana" value={formData.ziSaptamana} onChange={handleChange} disabled={loading}>
           <option value="1">Luni</option>
           <option value="2">Marți</option>
           <option value="3">Miercuri</option>
@@ -82,15 +89,15 @@ const ManagementDisponibilitate = () => {
           <option value="6">Sâmbătă</option>
           <option value="7">Duminică</option>
         </select>
-        <select name="locatieId" value={formData.locatieId} onChange={handleChange} required>
+        <select name="locatieId" value={formData.locatieId} onChange={handleChange} required disabled={loading}>
           <option value="">Alege locația</option>
           {locatii.map(loc => (
             <option key={loc.id} value={loc.id}>{loc.nume}</option>
           ))}
         </select>
-        <input type="time" name="oraInceput" value={formData.oraInceput} onChange={handleChange} required />
-        <input type="time" name="oraSfarsit" value={formData.oraSfarsit} onChange={handleChange} required />
-        <button type="submit" className="btn-add">+</button>
+        <input type="time" name="oraInceput" value={formData.oraInceput} onChange={handleChange} required disabled={loading} />
+        <input type="time" name="oraSfarsit" value={formData.oraSfarsit} onChange={handleChange} required disabled={loading} />
+        <button type="submit" className="btn-add" disabled={loading}>{loading ? '...' : '+'}</button>
       </form>
 
       <ul className="item-list">
@@ -101,7 +108,7 @@ const ManagementDisponibilitate = () => {
               <br />
               <em>{d.locatieNume}</em>
             </span>
-            <button onClick={() => handleDelete(d.id)} className="btn-delete">Șterge</button>
+            <button onClick={() => handleDelete(d.id)} className="btn-delete" disabled={loading}>Șterge</button>
           </li>
         ))}
       </ul>

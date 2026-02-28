@@ -14,8 +14,8 @@ public interface PacientiClient {
     @GetMapping("/pacient/{id}")
     PacientKeycloakDTO getPacientById(@PathVariable("id") Long id);
 
-    @GetMapping("/jurnal/{pacientId}/istoric")
-    List<JurnalIstoricDTO> getIstoricJurnal(@PathVariable("pacientId") Long pacientId);
+    @GetMapping("/jurnal/by-keycloak/{keycloakId}/istoric")
+    List<JurnalIstoricDTO> getIstoricJurnal(@PathVariable("keycloakId") String keycloakId);
 
     // keycloakId -> PacientKeycloakDTO (contine id-ul intern). folosit la admin cancel
     @GetMapping("/pacient/by-keycloak/{keycloakId}")

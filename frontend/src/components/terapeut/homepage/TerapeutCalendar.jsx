@@ -7,7 +7,7 @@ import roLocale from '@fullcalendar/core/locales/ro';
 import { programariService } from '../../../services/programariService';
 
 // Calendarul terapeutului folosind FullCalendar
-const TerapeutCalendar = ({ terapeutId, onEventClick, refreshTrigger, locatieId }) => {
+const TerapeutCalendar = ({ onEventClick, refreshTrigger, locatieId }) => {
     const calendarRef = useRef(null);
 
     const fetchEvents = async (info, successCallback, failureCallback) => {
@@ -18,7 +18,6 @@ const TerapeutCalendar = ({ terapeutId, onEventClick, refreshTrigger, locatieId 
             // Pasam locatieId catre backend (daca e selectat un ID, altfel e string gol/null)
             // Backend-ul filtreaza locatia.
             let data = await programariService.getCalendarAppointments(
-                terapeutId,
                 startStr,
                 endStr,
                 locatieId || null

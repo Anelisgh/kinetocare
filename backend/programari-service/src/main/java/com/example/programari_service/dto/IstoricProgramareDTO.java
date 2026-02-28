@@ -13,7 +13,7 @@ public record IstoricProgramareDTO(
     String tipServiciu,
     BigDecimal pret,
     StatusProgramare status,
-    Long terapeutId,
+    String terapeutKeycloakId,
     String numeTerapeut,
     String numeLocatie,
     Boolean areEvaluare,

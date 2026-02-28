@@ -4,8 +4,8 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 public record CreeazaProgramareRequest(
-    Long pacientId,
-    Long terapeutId,
+    String pacientKeycloakId,
+    String terapeutKeycloakId,
     Long locatieId,
     LocalDate data,
     LocalTime oraInceput

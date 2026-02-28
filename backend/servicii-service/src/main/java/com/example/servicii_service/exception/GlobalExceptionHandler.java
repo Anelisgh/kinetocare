@@ -50,7 +50,11 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ProblemDetail handleValidationExceptions(MethodArgumentNotValidException ex) {
         log.warn("Eroare de validare a datelor de intrare. Numar erori: {}", ex.getErrorCount());
-        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, "Eroare de validare a datelor de intrare.");
+        
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(
+            HttpStatus.BAD_REQUEST, 
+            "Datele introduse nu sunt valide. Vă rugăm să verificați erorile de mai jos."
+        );
         problemDetail.setTitle("Validare Eșuată");
 
         Map<String, String> eroriCampuri = new HashMap<>();

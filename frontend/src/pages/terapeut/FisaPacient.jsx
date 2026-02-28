@@ -15,12 +15,13 @@ const FisaPacient = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [fisa, setFisa] = useState(null);
-  const [terapeutId, setTerapeutId] = useState(null);
   const [activeTab, setActiveTab] = useState('evaluari');
 
-  const fetchFisa = async (tid) => {
+  const terapeutKeycloakId = userInfo?.keycloakId;
+
+  const fetchFisa = async () => {
     try {
-      const data = await programariService.getFisaPacient(pacientId, tid);
+      const data = await programariService.getFisaPacient(pacientId, terapeutKeycloakId);
       setFisa(data);
     } catch (err) {
       console.error('Eroare la încărcarea fișei:', err);
@@ -31,10 +32,7 @@ const FisaPacient = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const profile = await profileService.getProfile();
-        const tid = profile.terapeutId || profile.id;
-        setTerapeutId(tid);
-        await fetchFisa(tid);
+        await fetchFisa();
       } catch (err) {
         console.error('Eroare la încărcarea fișei:', err);
         setError(err.message);
@@ -42,12 +40,13 @@ const FisaPacient = () => {
         setLoading(false);
       }
     };
-    fetchData();
-  }, [pacientId]);
+    if (terapeutKeycloakId) fetchData();
+    else setLoading(false);
+  }, [pacientId, terapeutKeycloakId]);
 
   // Refresh fisa dupa o editare
   const refreshFisa = () => {
-    if (terapeutId) fetchFisa(terapeutId);
+    fetchFisa();
   };
 
   if (loading) return (
@@ -143,9 +142,9 @@ const FisaPacient = () => {
 
       {/* Tab Content */}
       <div className="fisa-tab-content">
-        {activeTab === 'evaluari' && <EvaluariTab evaluari={fisa.evaluari} terapeutId={terapeutId} onRefresh={refreshFisa} />}
+        {activeTab === 'evaluari' && <EvaluariTab evaluari={fisa.evaluari} terapeutKeycloakId={terapeutKeycloakId} onRefresh={refreshFisa} />}
         {activeTab === 'evolutii' && <EvolutiiTab evolutii={fisa.evolutii} onRefresh={refreshFisa} />}
-        {activeTab === 'programari' && <ProgramariTab programari={fisa.programari} terapeutId={terapeutId} />}
+        {activeTab === 'programari' && <ProgramariTab programari={fisa.programari} terapeutKeycloakId={terapeutKeycloakId} />}
         {activeTab === 'jurnale' && <JurnaleTab jurnale={fisa.jurnale} />}
       </div>
     </div>
@@ -154,7 +153,7 @@ const FisaPacient = () => {
 
 /* === TAB COMPONENTS === */
 
-const EvaluariTab = ({ evaluari, terapeutId, onRefresh }) => {
+const EvaluariTab = ({ evaluari, terapeutKeycloakId, onRefresh }) => {
   const [editingId, setEditingId] = useState(null);
   const [editData, setEditData] = useState({});
   const [saving, setSaving] = useState(false);
@@ -214,7 +213,7 @@ const EvaluariTab = ({ evaluari, terapeutId, onRefresh }) => {
         <div className={`fisa-inline-message ${message.type}`}>{message.text}</div>
       )}
       {evaluari.map((ev, idx) => {
-        const isOwnEvaluation = ev.terapeutId === terapeutId;
+        const isOwnEvaluation = ev.terapeutKeycloakId === terapeutKeycloakId;
         const isEditing = editingId === ev.id;
 
         return (
@@ -410,7 +409,7 @@ const EvolutiiTab = ({ evolutii, onRefresh }) => {
   );
 };
 
-const ProgramariTab = ({ programari, terapeutId }) => {
+const ProgramariTab = ({ programari, terapeutKeycloakId }) => {
   const [showAnulate, setShowAnulate] = useState(false);
 
   if (!programari || programari.length === 0) {
@@ -475,7 +474,7 @@ const ProgramariTab = ({ programari, terapeutId }) => {
 
       <div className="programari-list">
         {filteredProgramari.map((prog, idx) => {
-          const isOwnAppointment = prog.terapeutId === terapeutId;
+          const isOwnAppointment = prog.terapeutKeycloakId === terapeutKeycloakId;
           const showLocation = prog.numeLocatie && prog.numeLocatie !== defaultLocation;
 
           return (

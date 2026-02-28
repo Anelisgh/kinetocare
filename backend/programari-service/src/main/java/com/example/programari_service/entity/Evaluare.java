@@ -11,8 +11,8 @@ import java.time.OffsetDateTime;
 @Entity
 @Table(name = "evaluari",
         indexes = {
-                @Index(name = "idx_eval_pacient", columnList = "pacient_id"),
-                @Index(name = "idx_eval_terapeut", columnList = "terapeut_id"),
+                @Index(name = "idx_eval_pacient", columnList = "pacient_keycloak_id"),
+                @Index(name = "idx_eval_terapeut", columnList = "terapeut_keycloak_id"),
                 @Index(name = "idx_eval_programare", columnList = "programare_id"),
                 @Index(name = "idx_eval_tip", columnList = "tip")
         })
@@ -27,11 +27,11 @@ public class Evaluare {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "pacient_id", nullable = false)
-    private Long pacientId;
+    @Column(name = "pacient_keycloak_id", nullable = false, length = 36)
+    private String pacientKeycloakId;
 
-    @Column(name = "terapeut_id", nullable = false)
-    private Long terapeutId;
+    @Column(name = "terapeut_keycloak_id", nullable = false, length = 36)
+    private String terapeutKeycloakId;
 
     @Column(name = "programare_id")
     private Long programareId;

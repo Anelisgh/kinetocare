@@ -5,28 +5,25 @@ import { evolutiiService } from '../../services/evolutiiService';
 import '../../styles/evolutiiTerapeut.css';
 
 const EvolutiiTerapeut = () => {
-    const [terapeutId, setTerapeutId] = useState(null);
     const [pacienti, setPacienti] = useState([]);
 
     // Stare formular
+    const [selectedPacientKeycloakId, setSelectedPacientKeycloakId] = useState('');
     const [selectedPacientId, setSelectedPacientId] = useState('');
     const [observatii, setObservatii] = useState('');
 
     // Stare date
     const [istoric, setIstoric] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [submitting, setSubmitting] = useState(false);
     const [message, setMessage] = useState(null);
 
-    // 1. Inițializare (Terapeut + Dropdown Pacienți)
+    // 1. Inițializare (Pacienti dropdown)
     useEffect(() => {
         const initData = async () => {
             try {
-                const profile = await profileService.getProfile();
-                const tId = profile.terapeutId || profile.id;
-                setTerapeutId(tId);
-
-                // Refolosim endpoint-ul de la evaluări pentru a lua pacienții cu care a lucrat
-                const pacientiList = await evaluariService.getPacientiRecenti(tId);
+                // keycloakId-ul terapeutului e extras din JWT pe backend
+                const pacientiList = await evaluariService.getPacientiRecenti();
                 setPacienti(pacientiList);
             } catch (err) {
                 console.error(err);
@@ -40,39 +37,40 @@ const EvolutiiTerapeut = () => {
 
     // 2. Încărcare Istoric când se selectează un pacient
     useEffect(() => {
-        if (!selectedPacientId || !terapeutId) {
+        if (!selectedPacientKeycloakId) {
             setIstoric([]);
             return;
         }
 
         const fetchIstoric = async () => {
             try {
-                const data = await evolutiiService.getIstoric(selectedPacientId, terapeutId);
+                const data = await evolutiiService.getIstoric(selectedPacientKeycloakId, null);
                 setIstoric(data);
             } catch (err) {
                 console.error(err);
             }
         };
         fetchIstoric();
-    }, [selectedPacientId, terapeutId]);
+    }, [selectedPacientKeycloakId]);
 
     // 3. Submit
     const handleSubmit = async (e) => {
-        e.preventDefault();
-        if (!selectedPacientId || !observatii.trim()) return;
+        e.preventDefault(); // Prevent default form submission
+        if (!selectedPacientKeycloakId || !observatii.trim()) return;
 
         try {
+            setSubmitting(true);
             await evolutiiService.addEvolutie({
-                terapeutId,
-                pacientId: selectedPacientId,
+                pacientKeycloakId: selectedPacientKeycloakId,
+                // terapeutKeycloakId e extras din JWT pe backend
                 observatii
             });
 
             setMessage({ type: 'success', text: 'Notă adăugată cu succes!' });
             setObservatii('');
 
-            // Refresh la listă
-            const updatedIstoric = await evolutiiService.getIstoric(selectedPacientId, terapeutId);
+            // Refresh la listă (opțional, dar bun pentru UI)
+            const updatedIstoric = await evolutiiService.getIstoric(selectedPacientKeycloakId, null);
             setIstoric(updatedIstoric);
 
             // Șterge mesajul după 3 secunde
@@ -80,12 +78,14 @@ const EvolutiiTerapeut = () => {
 
         } catch (err) {
             setMessage({ type: 'error', text: err.message });
+        } finally {
+            setSubmitting(false);
         }
     };
 
     // Get selected patient name for header
     const getSelectedPatientName = () => {
-        const pacient = pacienti.find(p => p.id === Number(selectedPacientId));
+        const pacient = pacienti.find(p => p.keycloakId === selectedPacientKeycloakId);
         return pacient ? `- ${pacient.nume} ${pacient.prenume}` : '';
     };
 
@@ -109,13 +109,18 @@ const EvolutiiTerapeut = () => {
                     <div className="evolutii-form-group">
                         <label className="evolutii-label">Selectează Pacient</label>
                         <select
-                            value={selectedPacientId}
-                            onChange={(e) => setSelectedPacientId(e.target.value)}
+                            value={selectedPacientKeycloakId}
+                            onChange={(e) => {
+                                const keycloakId = e.target.value;
+                                setSelectedPacientKeycloakId(keycloakId);
+                                const found = pacienti.find(p => p.keycloakId === keycloakId);
+                                setSelectedPacientId(found?.id || '');
+                            }}
                             className="evolutii-select"
                         >
                             <option value="">Alege Pacient</option>
                             {pacienti.map(p => (
-                                <option key={p.id} value={p.id}>{p.nume} {p.prenume}</option>
+                                <option key={p.keycloakId} value={p.keycloakId}>{p.nume} {p.prenume}</option>
                             ))}
                         </select>
                     </div>
@@ -129,14 +134,14 @@ const EvolutiiTerapeut = () => {
                                 rows="3"
                                 placeholder="Scrie observațiile tale despre progresul pacientului..."
                                 className="evolutii-textarea"
-                                disabled={!selectedPacientId}
+                                disabled={!selectedPacientKeycloakId}
                             ></textarea>
                             <button
                                 type="submit"
-                                disabled={!selectedPacientId || !observatii.trim()}
-                                className="evolutii-submit-btn"
+                                disabled={!selectedPacientKeycloakId || !observatii.trim() || submitting}
+                                className={`evolutii-submit-btn ${submitting ? 'submitting' : ''}`}
                             >
-                                Adaugă Notă
+                                {submitting ? 'Se salvează...' : 'Adaugă Notă'}
                             </button>
                         </form>
                     </div>
@@ -148,7 +153,7 @@ const EvolutiiTerapeut = () => {
                         Istoric {getSelectedPatientName()}
                     </h3>
 
-                    {!selectedPacientId ? (
+                    {!selectedPacientKeycloakId ? (
                         <p className="evolutii-empty-message">Selectează un pacient pentru a vedea istoricul.</p>
                     ) : istoric.length === 0 ? (
                         <p className="evolutii-empty-message">Nu există notițe anterioare pentru acest pacient.</p>

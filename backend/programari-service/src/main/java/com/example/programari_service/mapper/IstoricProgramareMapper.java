@@ -17,7 +17,7 @@ public interface IstoricProgramareMapper {
     @Mapping(target = "tipServiciu", source = "p.tipServiciu")
     @Mapping(target = "pret", source = "p.pret")
     @Mapping(target = "status", source = "p.status")
-    @Mapping(target = "terapeutId", source = "p.terapeutId")
+    @Mapping(target = "terapeutKeycloakId", source = "p.terapeutKeycloakId")
     @Mapping(target = "numeTerapeut", source = "numeTerapeut")
     @Mapping(target = "numeLocatie", source = "numeLocatie")
     @Mapping(target = "areEvaluare", source = "p.areEvaluare")

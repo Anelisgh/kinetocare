@@ -33,27 +33,26 @@ public class EvaluareService {
 
     // populeaza dropdown-ul din formularul de evaluare
     @Transactional(readOnly = true)
-    public List<UserNumeDTO> getPacientiTerapeut(Long terapeutId) {
+    public List<UserNumeDTO> getPacientiTerapeut(String terapeutKeycloakId) {
         // luam user IDs din tabela Programare
-        List<Long> pacientIds = programareRepository.findPacientiIdByTerapeutId(terapeutId);
+        List<String> pacientIds = programareRepository.findPacientiIdByTerapeutId(terapeutKeycloakId);
         List<UserNumeDTO> rezultat = new ArrayList<>();
 
         // pentru fiecare user ID, cautam detalii user si il adaugam in lista
-        for (Long userId : pacientIds) {
+        for (String keycloakId : pacientIds) {
             try {
                 // apelam user-service pentru a obtine detalii user
-                // folosim getUserById din UserClient
-                UserDisplayCalendarDTO userDetails = userClient.getUserById(userId);
+                UserDisplayCalendarDTO userDetails = userClient.getUserByKeycloakId(keycloakId);
 
                 // daca user-ul exista, il adaugam in lista
                 if (userDetails != null) {
-                    UserNumeDTO pacientDTO = pacientMapper.toPacientNumeDTO(userDetails, userId);
+                    UserNumeDTO pacientDTO = pacientMapper.toPacientNumeDTO(userDetails, keycloakId);
                     if (pacientDTO != null) {
                         rezultat.add(pacientDTO);
                     }
                 }
             } catch (Exception e) {
-                log.warn("Nu s-au putut încărca datele pentru pacientul (User ID) {}: {}", userId, e.getMessage());
+                log.warn("Nu s-au putut încărca datele pentru pacientul (User ID) {}: {}", keycloakId, e.getMessage());
             }
         }
         return rezultat;
@@ -61,11 +60,11 @@ public class EvaluareService {
 
     // gaseste ultima programare dintre un pacient si un terapeut
     @Transactional(readOnly = true)
-    public Programare getUltimaProgramare(Long pacientId, Long terapeutId) {
+    public Programare getUltimaProgramare(String pacientKeycloakId, String terapeutKeycloakId) {
         // luam prima programare din lista, adica cea mai recenta
         List<Programare> lista = programareRepository.findLatestAppointments(
-                pacientId,
-                terapeutId,
+                pacientKeycloakId,
+                terapeutKeycloakId,
                 PageRequest.of(0, 1));
         // daca lista e goala, returnam null
         return lista.isEmpty() ? null : lista.get(0);
@@ -80,7 +79,7 @@ public class EvaluareService {
         // determinam programarea si data
         if (request.programareId() == null) {
             // daca frontend-ul nu a trimis ID, il cautam noi
-            Programare ultima = getUltimaProgramare(request.pacientId(), request.terapeutId());
+            Programare ultima = getUltimaProgramare(request.pacientKeycloakId(), request.terapeutKeycloakId());
 
             if (ultima != null) {
                 evaluare.setProgramareId(ultima.getId());
@@ -106,7 +105,7 @@ public class EvaluareService {
         Evaluare evaluareSalvata = evaluareRepository.save(evaluare);
 
         // dupa ce a fost salvata evaluarea, ne asiguram ca relatia e activa
-        relatieService.asiguraRelatieActiva(request.pacientId(), request.terapeutId(), evaluareSalvata.getData());
+        relatieService.asiguraRelatieActiva(request.pacientKeycloakId(), request.terapeutKeycloakId(), evaluareSalvata.getData());
 
         return evaluareSalvata;
     }

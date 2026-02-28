@@ -91,8 +91,8 @@ public class UserService {
 
     // ADMIN: dezactivare/reactivare cont
     @Transactional
-    public AdminUserDTO toggleUserActive(Long userId) {
-        User user = userRepository.findById(userId)
+    public AdminUserDTO toggleUserActive(String keycloakId) {
+        User user = userRepository.findByKeycloakId(keycloakId)
                 .orElseThrow(() -> new RuntimeException("Utilizator nu a fost găsit"));
 
         if (user.getRole() == UserRole.ADMIN) {
@@ -102,14 +102,14 @@ public class UserService {
         boolean newActive = !user.getActive();
         user.setActive(newActive);
         User saved = userRepository.save(user);
-        log.info("User {} (id={}) {} in DB", user.getEmail(), userId, newActive ? "reactivat" : "dezactivat");
+        log.info("User {} (keycloakId={}) {} in DB", user.getEmail(), keycloakId, newActive ? "reactivat" : "dezactivat");
 
         // 1. sincronizare Keycloak (enabled/disabled)
         try {
             keycloakSyncService.setUserEnabled(user.getKeycloakId(), newActive);
         } catch (Exception e) {
             log.warn("ATTENTION: User {} modificat in DB dar Keycloak sync a esuat. " +
-                     "Userul poate inca loga. Eroare: {}", userId, e.getMessage());
+                     "Userul poate inca loga. Eroare: {}", keycloakId, e.getMessage());
         }
 
         // 2. propagare catre serviciul de profil

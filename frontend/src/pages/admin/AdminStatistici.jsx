@@ -338,7 +338,13 @@ export default function AdminStatistici() {
             </select>
         </div>
 
-        <button className="btn-save-header" onClick={fetchData}>Actualizează Datele</button>
+        <button 
+          className="btn-save-header" 
+          onClick={fetchData} 
+          disabled={loading}
+        >
+          {loading ? 'Se încarcă...' : 'Actualizează Datele'}
+        </button>
       </div>
 
       {/* KPI Cards Section */}

@@ -13,6 +13,7 @@ export default function ProfilTerapeut() {
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
+  const [saving, setSaving] = useState(false);
 
   const [formData, setFormData] = useState({
     nume: '',
@@ -24,7 +25,7 @@ export default function ProfilTerapeut() {
     pozaProfil: '',
   });
 
-  const [error, setError] = useState(null);
+  const [errors, setErrors] = useState({});
   const [successMessage, setSuccessMessage] = useState('');
 
   useEffect(() => {
@@ -48,7 +49,7 @@ export default function ProfilTerapeut() {
       });
     } catch (error) {
       console.error('Eroare la încărcarea profilului:', error);
-      setError('Nu s-a putut încărca profilul. Încearcă din nou.');
+      setErrors({ submit: 'Nu s-a putut încărca profilul. Încearcă din nou.' });
     } finally {
       setLoading(false);
     }
@@ -56,6 +57,11 @@ export default function ProfilTerapeut() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+
+    if (errors[name]) {
+      setErrors(prev => ({ ...prev, [name]: '' }));
+    }
+
     setFormData(prev => ({
       ...prev,
       [name]: value
@@ -68,6 +74,7 @@ export default function ProfilTerapeut() {
     setSuccessMessage('');
 
     try {
+      setSaving(true);
       const updatedProfile = await profileService.updateProfile(formData);
       setProfile(updatedProfile);
       setFormData(prev => ({ ...prev, pozaProfil: updatedProfile.pozaProfil }));
@@ -77,7 +84,16 @@ export default function ProfilTerapeut() {
       setTimeout(() => setSuccessMessage(''), 3000);
     } catch (error) {
       console.error('Eroare la actualizare:', error);
-      setError(error.message || 'Nu s-a putut actualiza profilul.');
+      if (error.eroriCampuri) {
+        setErrors({
+          ...error.eroriCampuri,
+          submit: error.message
+        });
+      } else {
+        setErrors({ submit: error.message || 'Nu s-a putut actualiza profilul.' });
+      }
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -123,7 +139,7 @@ export default function ProfilTerapeut() {
       </div>
 
       {successMessage && <div className="success-message">{successMessage}</div>}
-      {error && <div className="error-message">{error}</div>}
+      {errors.submit && <div className="error-message">{errors.submit}</div>}
 
       {/* --- ZONA DE DATE PERSONALE --- */}
       <div className="profil-layout">
@@ -138,27 +154,32 @@ export default function ProfilTerapeut() {
           <form onSubmit={handleSubmit} className="profil-form-principal">
             <div className="form-group">
               <label htmlFor="nume">Nume *</label>
-              <input type="text" id="nume" name="nume" value={formData.nume} onChange={handleChange} required />
+              <input type="text" id="nume" name="nume" value={formData.nume} onChange={handleChange} required className={errors.nume ? 'input-error' : ''} />
+              {errors.nume && <small className="error-text">{errors.nume}</small>}
             </div>
             <div className="form-group">
               <label htmlFor="prenume">Prenume *</label>
-              <input type="text" id="prenume" name="prenume" value={formData.prenume} onChange={handleChange} required />
+              <input type="text" id="prenume" name="prenume" value={formData.prenume} onChange={handleChange} required className={errors.prenume ? 'input-error' : ''} />
+              {errors.prenume && <small className="error-text">{errors.prenume}</small>}
             </div>
             <div className="form-group">
               <label htmlFor="gen">Gen *</label>
-              <select id="gen" name="gen" value={formData.gen} onChange={handleChange} required>
+              <select id="gen" name="gen" value={formData.gen} onChange={handleChange} required className={errors.gen ? 'input-error' : ''}>
                 <option value="" disabled>Selectează genul</option>
                 <option value="MASCULIN">Masculin</option>
                 <option value="FEMININ">Feminin</option>
               </select>
+              {errors.gen && <small className="error-text">{errors.gen}</small>}
             </div>
             <div className="form-group">
               <label htmlFor="email">Email *</label>
-              <input type="email" id="email" name="email" value={formData.email} onChange={handleChange} required />
+              <input type="email" id="email" name="email" value={formData.email} onChange={handleChange} required className={errors.email ? 'input-error' : ''} />
+              {errors.email && <small className="error-text">{errors.email}</small>}
             </div>
             <div className="form-group">
               <label htmlFor="telefon">Telefon *</label>
-              <input type="tel" id="telefon" name="telefon" value={formData.telefon} onChange={handleChange} required pattern="[0-9]{10}" />
+              <input type="tel" id="telefon" name="telefon" value={formData.telefon} onChange={handleChange} required pattern="[0-9]{10}" className={errors.telefon ? 'input-error' : ''} />
+              {errors.telefon && <small className="error-text">{errors.telefon}</small>}
             </div>
             <div className="form-group">
               <label htmlFor="specializare">Specializare *</label>
@@ -170,8 +191,10 @@ export default function ProfilTerapeut() {
             </div>
 
             <div className="form-actions">
-              <button type="submit" className="btn-save">Salvează</button>
-              <button type="button" className="btn-cancel" onClick={handleCancel}>Anulează</button>
+              <button type="submit" className="btn-save" disabled={saving}>
+                {saving ? 'Se salvează...' : 'Salvează'}
+              </button>
+              <button type="button" className="btn-cancel" onClick={handleCancel} disabled={saving}>Anulează</button>
             </div>
           </form>
         ) : (

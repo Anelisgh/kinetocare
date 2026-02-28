@@ -11,6 +11,7 @@ import '../../styles/programariPacient.css';
 const ProgramariPacient = () => {
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [actionLoading, setActionLoading] = useState(false);
     const [error, setError] = useState(null);
     const [istoric, setIstoric] = useState([]);
 
@@ -21,8 +22,8 @@ const ProgramariPacient = () => {
             const result = await homepageService.getDashboardData();
             setData(result);
 
-            if (result && result.id) {
-                const historyData = await programariService.getIstoricPacient(result.id);
+            if (result && result.keycloakId) {
+                const historyData = await programariService.getIstoricPacient(result.keycloakId);
                 setIstoric(historyData);
             }
         } catch (err) {
@@ -39,10 +40,13 @@ const ProgramariPacient = () => {
     const handleCancel = async (programareId) => {
         if (!window.confirm('Sigur dorești să anulezi programarea?')) return;
         try {
+            setActionLoading(true);
             await programariService.cancelProgramare(programareId);
             refreshDashboard();
         } catch (err) {
             alert(err.message);
+        } finally {
+            setActionLoading(false);
         }
     };
 
@@ -75,19 +79,20 @@ const ProgramariPacient = () => {
                     {/* SCENARIO 2: Has Therapist -> Show Logic for Appointments */}
                     {terapeutDetalii && (
                         <>
-                             {/* Case A: Active Appointment -> Show It */}
+                            {/* Case A: Active Appointment -> Show It */}
                             {urmatoareaProgramare && (
                                 <ActiveAppointmentCard
                                     programare={urmatoareaProgramare}
                                     onCancel={handleCancel}
+                                    actionLoading={actionLoading}
                                 />
                             )}
 
                             {/* Case B: No Active Appointment -> Show Booking Widget */}
                             {!urmatoareaProgramare && (
                                 <BookingWidget
-                                    pacientId={data.id}
-                                    terapeutId={terapeutDetalii.id}
+                                    pacientKeycloakId={data.keycloakId}
+                                    terapeutKeycloakId={terapeutDetalii.keycloakId}
                                     locatieId={locatieDetalii?.id}
                                     onSuccess={refreshDashboard}
                                 />

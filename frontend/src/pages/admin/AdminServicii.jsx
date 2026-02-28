@@ -14,6 +14,7 @@ const AdminServicii = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingItem, setEditingItem] = useState(null); // Item being edited (or null for new)
     const [formData, setFormData] = useState({});
+    const [submitting, setSubmitting] = useState(false);
 
     // Sorting & Filtering State
     const [sortConfig, setSortConfig] = useState({ key: 'id', direction: 'ascending' });
@@ -143,6 +144,7 @@ const AdminServicii = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
+            setSubmitting(true);
             if (activeTab === 'servicii') {
                 if (editingItem) {
                     await adminService.updateServiciu(editingItem.id, formData);
@@ -160,12 +162,15 @@ const AdminServicii = () => {
             fetchData();
         } catch (err) {
             alert(err.message);
+        } finally {
+            setSubmitting(false);
         }
     };
 
     const handleToggleStatus = async (id) => {
         if (window.confirm('Sigur dorești să schimbi statusul?')) {
             try {
+                setSubmitting(true);
                 if (activeTab === 'servicii') {
                     await adminService.toggleServiciuStatus(id);
                 } else {
@@ -174,6 +179,8 @@ const AdminServicii = () => {
                 fetchData();
             } catch (err) {
                 alert(err.message);
+            } finally {
+                setSubmitting(false);
             }
         }
     };
@@ -281,12 +288,13 @@ const AdminServicii = () => {
                                     </span>
                                 </td>
                                 <td>
-                                    <button className="admin-btn-edit" onClick={() => openEditModal(item)}>Edit</button>
+                                    <button className="admin-btn-edit" onClick={() => openEditModal(item)} disabled={submitting}>Edit</button>
                                     <button 
                                         className={`action-btn ${item.active ? 'deactivate-btn' : 'activate-btn'}`}
                                         onClick={() => handleToggleStatus(item.id)}
+                                        disabled={submitting}
                                     >
-                                        {item.active ? 'Dezactivează' : 'Activează'}
+                                        {submitting ? '...' : (item.active ? 'Dezactivează' : 'Activează')}
                                     </button>
                                 </td>
                             </tr>
@@ -388,8 +396,10 @@ const AdminServicii = () => {
                             )}
 
                             <div className="modal-actions">
-                                <button type="button" className="btn-modal-cancel" onClick={() => setIsModalOpen(false)}>Anulează</button>
-                                <button type="submit" className="btn-modal-save">Salvează</button>
+                                <button type="button" className="btn-modal-cancel" onClick={() => setIsModalOpen(false)} disabled={submitting}>Anulează</button>
+                                <button type="submit" className="btn-modal-save" disabled={submitting}>
+                                    {submitting ? 'Se salvează...' : 'Salvează'}
+                                </button>
                             </div>
                         </form>
                     </div>

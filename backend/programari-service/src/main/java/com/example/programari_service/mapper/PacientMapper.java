@@ -8,8 +8,8 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring")
 public interface PacientMapper {
 
-    @Mapping(target = "id", source = "userId")
+    @Mapping(target = "keycloakId", source = "keycloakId")
     @Mapping(target = "nume", source = "userDTO.nume")
     @Mapping(target = "prenume", source = "userDTO.prenume")
-    UserNumeDTO toPacientNumeDTO(UserDisplayCalendarDTO userDTO, Long userId);
+    UserNumeDTO toPacientNumeDTO(UserDisplayCalendarDTO userDTO, String keycloakId);
 }

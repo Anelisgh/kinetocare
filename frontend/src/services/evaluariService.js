@@ -2,10 +2,10 @@ import api, { handleApiError } from './api';
 
 export const evaluariService = {
 
-    // Obtine lista de pacienti
-    getPacientiRecenti: async (terapeutId) => {
+    // Obtine lista de pacienti recenti (keycloakId-ul terapeutului e luat din JWT pe backend)
+    getPacientiRecenti: async () => {
         try {
-            const response = await api.get(`/api/evaluari/pacienti-recenti?terapeutId=${terapeutId}`);
+            const response = await api.get('/api/evaluari/pacienti-recenti');
             return response.data;
         } catch (error) {
             handleApiError(error, 'Nu s-a putut încărca lista de pacienți.');

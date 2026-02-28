@@ -3,7 +3,7 @@ import { programariService } from '../../../services/programariService';
 import '../../../styles/HomepagePacient.css';
 
 // widget pentru calendarul de programare
-const BookingWidget = ({ pacientId, terapeutId, locatieId, onSuccess }) => {
+const BookingWidget = ({ pacientKeycloakId, terapeutKeycloakId, locatieId, onSuccess }) => {
   const [selectedDate, setSelectedDate] = useState(null);
   const [slots, setSlots] = useState([]);
   const [loadingSlots, setLoadingSlots] = useState(false);
@@ -11,6 +11,7 @@ const BookingWidget = ({ pacientId, terapeutId, locatieId, onSuccess }) => {
   const [currentWeekOffset, setCurrentWeekOffset] = useState(0);
   const [serviciuRecomandat, setServiciuRecomandat] = useState(null);
   const [loadingService, setLoadingService] = useState(true);
+  const [isBooking, setIsBooking] = useState(false);
 
   // generam datele si aflam serviciul recomandat
   useEffect(() => {
@@ -28,7 +29,7 @@ const BookingWidget = ({ pacientId, terapeutId, locatieId, onSuccess }) => {
 
       // aflam ce serviciul trebuie sa faca pacientul
       try {
-        const serviciu = await programariService.getServiciuRecomandat(pacientId);
+        const serviciu = await programariService.getServiciuRecomandat();
         setServiciuRecomandat(serviciu);
       } catch (err) {
         console.error("Eroare la preluarea serviciului", err);
@@ -38,11 +39,11 @@ const BookingWidget = ({ pacientId, terapeutId, locatieId, onSuccess }) => {
     };
 
     initWidget();
-  }, [pacientId]);
+  }, []);
 
   // cand se schimba data SAU serviciul a fost incarcat adaucem sloturile
   useEffect(() => {
-    if (!selectedDate || !terapeutId || !locatieId || !serviciuRecomandat) return;
+    if (!selectedDate || !terapeutKeycloakId || !locatieId || !serviciuRecomandat) return;
 
     const fetchSlots = async () => {
       setLoadingSlots(true);
@@ -52,7 +53,7 @@ const BookingWidget = ({ pacientId, terapeutId, locatieId, onSuccess }) => {
         const localDate = new Date(selectedDate.getTime() - (offset * 60 * 1000));
         const dateStr = localDate.toISOString().split('T')[0];
         const available = await programariService.getDisponibilitate(
-          terapeutId,
+          terapeutKeycloakId,
           locatieId,
           dateStr,
           serviciuRecomandat.id
@@ -66,11 +67,11 @@ const BookingWidget = ({ pacientId, terapeutId, locatieId, onSuccess }) => {
     };
 
     fetchSlots();
-  }, [selectedDate, terapeutId, locatieId, serviciuRecomandat]);
+  }, [selectedDate, terapeutKeycloakId, locatieId, serviciuRecomandat]);
 
   // creare programare
   const handleBooking = async (timeSlot) => {
-    if (!serviciuRecomandat) return;
+    if (!serviciuRecomandat || isBooking) return;
 
     const confirmMsg = `Confirmi programarea pentru ${serviciuRecomandat.nume} (${serviciuRecomandat.durataMinute} min)\n` +
       `Pe data: ${selectedDate.toLocaleDateString('ro-RO')}\n` +
@@ -79,13 +80,14 @@ const BookingWidget = ({ pacientId, terapeutId, locatieId, onSuccess }) => {
     if (!window.confirm(confirmMsg)) return;
 
     try {
+      setIsBooking(true);
       const offset = selectedDate.getTimezoneOffset();
       const localDate = new Date(selectedDate.getTime() - (offset * 60 * 1000));
       const dateStr = localDate.toISOString().split('T')[0];
 
       await programariService.createProgramare({
-        pacientId: pacientId,
-        terapeutId: terapeutId,
+        pacientKeycloakId: pacientKeycloakId,
+        terapeutKeycloakId: terapeutKeycloakId,
         locatieId: locatieId,
         data: dateStr,
         oraInceput: timeSlot
@@ -94,6 +96,8 @@ const BookingWidget = ({ pacientId, terapeutId, locatieId, onSuccess }) => {
       onSuccess();
     } catch (error) {
       alert(error.message);
+    } finally {
+      setIsBooking(false);
     }
   };
 
@@ -158,6 +162,7 @@ const BookingWidget = ({ pacientId, terapeutId, locatieId, onSuccess }) => {
               <button
                 key={index}
                 onClick={() => setSelectedDate(date)}
+                disabled={isBooking}
                 className={`booking-date-card ${isSelected ? 'selected' : ''} ${isToday ? 'today' : ''} ${isWeekend ? 'weekend' : ''}`}
               >
                 <div className="booking-date-day">{dayName}</div>
@@ -208,8 +213,9 @@ const BookingWidget = ({ pacientId, terapeutId, locatieId, onSuccess }) => {
                   key={time}
                   onClick={() => handleBooking(time)}
                   className="booking-slot-btn"
+                  disabled={isBooking}
                 >
-                  {time.substring(0, 5)}
+                  {isBooking ? '...' : time.substring(0, 5)}
                 </button>
               ))}
             </div>

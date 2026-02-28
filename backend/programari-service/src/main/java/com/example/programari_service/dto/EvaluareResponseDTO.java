@@ -12,5 +12,5 @@ public record EvaluareResponseDTO(
     Integer sedinteRecomandate,
     String observatii,
     String numeTerapeut,
-    Long terapeutId
+    String terapeutKeycloakId
 ) {}

@@ -57,13 +57,14 @@ public class ProgramariController {
     // determina serviciul recomandat pentru un pacient -> programari-service
     @GetMapping("/serviciu-recomandat")
     public Mono<ResponseEntity<Map<String, Object>>> getServiciuRecomandat(
-            @RequestParam Long pacientId,
             @AuthenticationPrincipal Jwt jwt) {
+
+        String keycloakId = jwt.getSubject();
 
         return programariWebClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .path("/programari/serviciu-recomandat")
-                        .queryParam("pacientId", pacientId)
+                        .queryParam("pacientKeycloakId", keycloakId)
                         .build()
                 )
                 .header("Authorization", "Bearer " + jwt.getTokenValue())
@@ -75,7 +76,7 @@ public class ProgramariController {
 
     // returneaza sloturile orare disponibile pentru o zi -> programari-service
     @GetMapping("/disponibilitate")
-    public Mono<ResponseEntity<List<String>>> getDisponibilitate(@RequestParam Long terapeutId,
+    public Mono<ResponseEntity<List<String>>> getDisponibilitate(@RequestParam String terapeutKeycloakId,
                                                                  @RequestParam Long locatieId,
                                                                  @RequestParam String data,
                                                                  @RequestParam Long serviciuId,
@@ -84,7 +85,7 @@ public class ProgramariController {
         return programariWebClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .path("/programari/disponibilitate")
-                        .queryParam("terapeutId", terapeutId)
+                        .queryParam("terapeutKeycloakId", terapeutKeycloakId)
                         .queryParam("locatieId", locatieId)
                         .queryParam("data", data)
                         .queryParam("serviciuId", serviciuId)
@@ -97,7 +98,7 @@ public class ProgramariController {
                 .map(ResponseEntity::ok)
                 .onErrorResume(e -> Mono.just(ResponseEntity.ok(List.of())));
     }
-    // pacientul anuleaza o programare (extrage pacientId din profil) -> programari-service
+    // pacientul anuleaza o programare -> programari-service
     @PatchMapping("/{programareId}/cancel")
     public Mono<ResponseEntity<Void>> anuleazaProgramare(
             @PathVariable Long programareId,
@@ -105,44 +106,34 @@ public class ProgramariController {
 
         String keycloakId = jwt.getSubject();
 
-        // cautam id-ul pacientului folosind ProfileService
-        return profileService.getProfile(keycloakId, "PACIENT")
-                .flatMap(profile -> {
-                    // Extragem ID-ul numeric (Long)
-                    Object idObj = profile.get("id");
-                    if (idObj == null) {
-                        return Mono.error(new RuntimeException("Profilul pacientului nu are ID valid."));
-                    }
-                    Long pacientId = ((Number) idObj).longValue();
-
-                    // trimitem cererea de anulare catre serviciul de programari
-                    return programariWebClient.patch()
-                            .uri(uriBuilder -> uriBuilder
-                                    .path("/programari/{programareId}/cancel")
-                                    .queryParam("pacientId", pacientId) // gateway pune id-ul real
-                                    .build(programareId)
-                            )
-                            .header("Authorization", "Bearer " + jwt.getTokenValue())
-                            .retrieve()
-                            .toBodilessEntity();
-                })
+        // trimitem cererea de anulare catre serviciul de programari
+        return programariWebClient.patch()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/programari/{programareId}/cancel")
+                        .queryParam("pacientKeycloakId", keycloakId) 
+                        .build(programareId)
+                )
+                .header("Authorization", "Bearer " + jwt.getTokenValue())
+                .retrieve()
+                .toBodilessEntity()
                 .map(response -> ResponseEntity.ok().<Void>build());
     }
 
     // returneaza programarile unui terapeut pentru calendar -> programari-service
     @GetMapping("/calendar")
     public Mono<ResponseEntity<List<Map<String, Object>>>> getCalendarTerapeut(
-            @RequestParam Long terapeutId,
+            @AuthenticationPrincipal Jwt jwt,
             @RequestParam String start,
             @RequestParam String end,
-            @RequestParam(required = false) Long locatieId,
-            @AuthenticationPrincipal Jwt jwt) {
+            @RequestParam(required = false) Long locatieId) {
+
+        String terapeutKeycloakId = jwt.getSubject();
 
         return programariWebClient.get()
                 .uri(uriBuilder -> {
                     var builder = uriBuilder
                             .path("/programari/calendar")
-                            .queryParam("terapeutId", terapeutId)
+                            .queryParam("terapeutKeycloakId", terapeutKeycloakId)
                             .queryParam("start", start)
                             .queryParam("end", end);
 
@@ -163,13 +154,14 @@ public class ProgramariController {
     @PatchMapping("/{programareId}/cancel-terapeut")
     public Mono<ResponseEntity<Void>> anuleazaProgramareTerapeut(
             @PathVariable Long programareId,
-            @RequestParam Long terapeutId, // din frontend
             @AuthenticationPrincipal Jwt jwt) {
+
+        String terapeutKeycloakId = jwt.getSubject();
 
         return programariWebClient.patch()
                 .uri(uriBuilder -> uriBuilder
                         .path("/programari/{programareId}/cancel-terapeut")
-                        .queryParam("terapeutId", terapeutId)
+                        .queryParam("terapeutKeycloakId", terapeutKeycloakId)
                         .build(programareId))
                 .header("Authorization", "Bearer " + jwt.getTokenValue())
                 .retrieve()
@@ -181,49 +173,36 @@ public class ProgramariController {
     @PatchMapping("/{programareId}/neprezentare")
     public Mono<ResponseEntity<Void>> marcheazaNeprezentare(
             @PathVariable Long programareId,
-            @RequestParam(required = false) Long terapeutId, // Poate veni din frontend sau nu
             @AuthenticationPrincipal Jwt jwt) {
 
         String role = securityUtils.extractRole(jwt);
         boolean isAdmin = "ADMIN".equals(role);
+        String terapeutKeycloakId = jwt.getSubject();
 
-        // Logica de decizie
-        Mono<Long> terapeutIdMono;
-
-        if (isAdmin) {
-            // Dacă e admin, nu ne pasă de ID-ul terapeutului (trimitem null sau 0)
-            terapeutIdMono = Mono.just(0L);
-        } else if ("TERAPEUT".equals(role)) {
-            if (terapeutId == null) {
-                return Mono.error(new RuntimeException("ID-ul terapeutului este necesar."));
-            }
-            terapeutIdMono = Mono.just(terapeutId);
-        } else {
+        if (!isAdmin && !"TERAPEUT".equals(role)) {
             return Mono.just(ResponseEntity.status(403).build()); // Pacienții nu au voie
         }
 
-        return terapeutIdMono.flatMap(finalTId ->
-                programariWebClient.patch()
-                        .uri(uriBuilder -> uriBuilder
-                                .path("/programari/{programareId}/neprezentare")
-                                .queryParam("terapeutId", finalTId)
-                                .queryParam("isAdmin", isAdmin)
-                                .build(programareId))
-                        .header("Authorization", "Bearer " + jwt.getTokenValue())
-                        .retrieve()
-                        .toBodilessEntity()
-                        .map(response -> ResponseEntity.ok().<Void>build())
-        );
+        return programariWebClient.patch()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/programari/{programareId}/neprezentare")
+                        .queryParam("terapeutKeycloakId", terapeutKeycloakId)
+                        .queryParam("isAdmin", isAdmin)
+                        .build(programareId))
+                .header("Authorization", "Bearer " + jwt.getTokenValue())
+                .retrieve()
+                .toBodilessEntity()
+                .map(response -> ResponseEntity.ok().<Void>build());
     }
 
     // returneaza programarile finalizate fara jurnal completat -> programari-service
-    @GetMapping("/pacient/{id}/necompletate")
+    @GetMapping("/pacient/by-keycloak/{keycloakId}/necompletate")
     public Mono<ResponseEntity<List<Map<String, Object>>>> getProgramariFaraJurnal(
-            @PathVariable Long id,
+            @PathVariable String keycloakId,
             @AuthenticationPrincipal Jwt jwt) {
 
         return programariWebClient.get()
-                .uri("/programari/pacient/{id}/necompletate", id)
+                .uri("/programari/pacient/by-keycloak/{keycloakId}/necompletate", keycloakId)
                 .header("Authorization", "Bearer " + jwt.getTokenValue())
                 .retrieve()
                 .bodyToMono(new ParameterizedTypeReference<List<Map<String, Object>>>() {})

@@ -13,8 +13,8 @@ import java.time.OffsetDateTime;
 @Entity
 @Table(name = "programari",
         indexes = {
-                @Index(name = "idx_prog_terapeut_data_status", columnList = "terapeut_id, data, status"),
-                @Index(name = "idx_prog_pacient_data", columnList = "pacient_id, data"),
+                @Index(name = "idx_prog_terapeut_data_status", columnList = "terapeut_keycloak_id, data, status"),
+                @Index(name = "idx_prog_pacient_data", columnList = "pacient_keycloak_id, data"),
                 @Index(name = "idx_prog_status_data", columnList = "status, data")
         })
 @Getter
@@ -28,11 +28,11 @@ public class Programare {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "pacient_id", nullable = false)
-    private Long pacientId;
+    @Column(name = "pacient_keycloak_id", nullable = false, length = 36)
+    private String pacientKeycloakId;
 
-    @Column(name = "terapeut_id", nullable = false)
-    private Long terapeutId;
+    @Column(name = "terapeut_keycloak_id", nullable = false, length = 36)
+    private String terapeutKeycloakId;
 
     @Column(name = "locatie_id", nullable = false)
     private Long locatieId;

@@ -128,8 +128,8 @@ const HomepagePacient = () => {
         {/* STAREA 3: Booking Mode (Are terapeut, dar nu are programare viitoare) -> Afiseaza widget-ul de programare */}
         {terapeutDetalii && !urmatoareaProgramare && (
           <BookingWidget
-            pacientId={data.id}
-            terapeutId={terapeutDetalii.id}
+            pacientKeycloakId={data.keycloakId}
+            terapeutKeycloakId={terapeutDetalii.keycloakId}
             locatieId={locatieDetalii?.id}
             onSuccess={refreshDashboard}
           />

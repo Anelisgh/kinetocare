@@ -70,9 +70,9 @@ export const profileService = {
     }
   },
 
-  getTerapeutNumeDupaId: async (terapeutId) => {
+  getTerapeutNumeDupaKeycloakId: async (terapeutKeycloakId) => {
     try {
-      const response = await api.get(`/api/terapeut/nume-dupa-id/${terapeutId}`);
+      const response = await api.get(`/api/terapeut/nume-dupa-keycloak/${terapeutKeycloakId}`);
       return response.data;
     } catch (error) {
       handleApiError(error, 'Eroare la încărcarea numelui terapeutului');

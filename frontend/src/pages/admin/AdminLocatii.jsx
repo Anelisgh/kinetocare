@@ -6,6 +6,7 @@ import '../../styles/adminShared.css';
 export default function AdminLocatii() {
   const [locatii, setLocatii] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -110,6 +111,7 @@ export default function AdminLocatii() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      setSubmitting(true);
       if (editingLocatie) {
         await adminService.updateLocatie(editingLocatie.id, formData);
       } else {
@@ -119,16 +121,21 @@ export default function AdminLocatii() {
       fetchLocatii();
     } catch (err) {
       alert(err.message);
+    } finally {
+      setSubmitting(false);
     }
   };
   // toggle status locatie
   const handleToggleStatus = async (id) => {
     if (window.confirm('Sigur dorești să schimbi statusul acestei locații?')) {
       try {
+        setSubmitting(true);
         await adminService.toggleLocatieStatus(id);
         fetchLocatii();
       } catch (err) {
         alert(err.message);
+      } finally {
+        setSubmitting(false);
       }
     }
   };
@@ -206,14 +213,16 @@ export default function AdminLocatii() {
                   <button 
                     className="admin-btn-edit" 
                     onClick={() => openEditModal(loc)}
+                    disabled={submitting}
                   >
                     Edit
                   </button>
                   <button 
                     className={`action-btn ${loc.active ? 'deactivate-btn' : 'activate-btn'}`}
                     onClick={() => handleToggleStatus(loc.id)}
+                    disabled={submitting}
                   >
-                    {loc.active ? 'Dezactivează' : 'Activează'}
+                    {submitting ? '...' : (loc.active ? 'Dezactivează' : 'Activează')}
                   </button>
                 </td>
               </tr>
@@ -258,8 +267,10 @@ export default function AdminLocatii() {
               </div>
               
               <div className="modal-actions">
-                <button type="button" className="btn-modal-cancel" onClick={() => setIsModalOpen(false)}>Anulează</button>
-                <button type="submit" className="btn-modal-save">Salvează</button>
+                <button type="button" className="btn-modal-cancel" onClick={() => setIsModalOpen(false)} disabled={submitting}>Anulează</button>
+                <button type="submit" className="btn-modal-save" disabled={submitting}>
+                  {submitting ? 'Se salvează...' : 'Salvează'}
+                </button>
               </div>
             </form>
           </div>

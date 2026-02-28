@@ -8,11 +8,11 @@ import java.util.Optional;
 
 public interface EvaluareRepository extends JpaRepository<Evaluare, Long> {
     // gaseste ultima evaluare, sortand dupa data descrescator
-    Optional<Evaluare> findFirstByPacientIdOrderByDataDesc(Long pacientId);
+    Optional<Evaluare> findFirstByPacientKeycloakIdOrderByDataDesc(String pacientKeycloakId);
 
     // gaseste evaluarea unei programari specifice
     Optional<Evaluare> findByProgramareId(Long programareId);
 
     // toate evaluarile unui pacient (de la toti terapeutii), ordonate desc
-    List<Evaluare> findAllByPacientIdOrderByDataDesc(Long pacientId);
+    List<Evaluare> findAllByPacientKeycloakIdOrderByDataDesc(String pacientKeycloakId);
 }

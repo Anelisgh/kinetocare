@@ -22,9 +22,9 @@ export const evolutiiService = {
     },
 
     // Incarcare istoric pentru un pacient
-    getIstoric: async (pacientId, terapeutId) => {
+    getIstoric: async (pacientKeycloakId, terapeutKeycloakId) => {
         try {
-            const response = await api.get(`/api/evolutii?pacientId=${pacientId}&terapeutId=${terapeutId}`);
+            const response = await api.get(`/api/evolutii?pacientKeycloakId=${pacientKeycloakId}&terapeutKeycloakId=${terapeutKeycloakId}`);
             return response.data;
         } catch (error) {
             handleApiError(error, 'Nu s-a putut încărca istoricul.');

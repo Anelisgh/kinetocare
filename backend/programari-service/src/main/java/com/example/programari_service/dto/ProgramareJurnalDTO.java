@@ -9,7 +9,6 @@ public record ProgramareJurnalDTO(
     LocalDate data,
     LocalTime ora,
     String numeTerapeut,
-    Long terapeutId,
     String terapeutKeycloakId,   // keycloakId al terapeutului — pentru notificari
     String numeLocatie
 ) {}

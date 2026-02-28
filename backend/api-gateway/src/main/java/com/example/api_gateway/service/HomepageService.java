@@ -35,25 +35,12 @@ public class HomepageService {
                     if (!"PACIENT".equals(role)) {
                         return Mono.just(profileData);
                     }
-                    // extragem id-ul pacientului
-                    Object idObj = profileData.get("id");
-                    Long pacientId = null;
-
-                    if (idObj instanceof Number) {
-                        pacientId = ((Number) idObj).longValue();
-                    }
-
-                    if (pacientId == null) {
-                        log.warn("Nu s-a găsit ID-ul numeric de pacient pentru keycloakId: {}", keycloakId);
-                        return Mono.just(profileData);
-                    }
                     // apelam serviciul de programari pentru a lua:
                     // 1. "Următoarea Programare"
                     // 2. "Situația Pacientului" (Diagnostic + Progres)
-                    Long finalPacientId = pacientId;
 
                     Mono<Map<String, Object>> nextApptMono = securityUtils.getJwtToken().flatMap(token -> programariWebClient.get()
-                            .uri("/programari/pacient/{id}/next", finalPacientId)
+                            .uri("/programari/pacient/by-keycloak/{keycloakId}/next", keycloakId)
                             .header("Authorization", "Bearer " + token)
                             .retrieve()
                             .bodyToMono(new ParameterizedTypeReference<Map<String, Object>>() {
@@ -61,7 +48,7 @@ public class HomepageService {
                             .onErrorResume(e -> Mono.empty())); // Daca nu are programare, returnam empty
 
                     Mono<Map<String, Object>> situatieMono = securityUtils.getJwtToken().flatMap(token -> programariWebClient.get()
-                            .uri("/programari/pacient/{id}/situatie", finalPacientId)
+                            .uri("/programari/pacient/by-keycloak/{keycloakId}/situatie", keycloakId)
                             .header("Authorization", "Bearer " + token)
                             .retrieve()
                             .bodyToMono(new ParameterizedTypeReference<Map<String, Object>>() {

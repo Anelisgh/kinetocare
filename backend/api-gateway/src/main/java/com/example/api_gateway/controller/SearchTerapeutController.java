@@ -89,12 +89,12 @@ public class SearchTerapeutController {
     }
     
     // returneaza numele si prenumele unui terapeut, utilizat de chat-ul pacientului pentru istoric
-    @GetMapping("/nume-dupa-id/{terapeutId}")
+    @GetMapping("/nume-dupa-keycloak/{terapeutKeycloakId}")
     public Mono<ResponseEntity<Map<String, String>>> getTerapeutNumeSiPrenume(
-            @PathVariable Long terapeutId, 
+            @PathVariable String terapeutKeycloakId,
             @AuthenticationPrincipal Jwt jwt) {
         
-        return searchTerapeutService.getTerapeutNumeSiPrenume(terapeutId, jwt.getTokenValue())
+        return searchTerapeutService.getTerapeutNumeSiPrenume(terapeutKeycloakId, jwt.getTokenValue())
                 .map(ResponseEntity::ok);
     }
 }

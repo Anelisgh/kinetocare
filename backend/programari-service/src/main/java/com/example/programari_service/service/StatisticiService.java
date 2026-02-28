@@ -118,21 +118,21 @@ public class StatisticiService {
 
     @Transactional(readOnly = true)
     public List<StatisticiTerapeutDTO> getProgramariTerapeut(LocalDate startDate, LocalDate endDate) {
-        List<StatisticiTerapeutDTO> stats = programareRepository.countByTerapeutIdAndMonth(
+        List<StatisticiTerapeutDTO> stats = programareRepository.countByTerapeutKeycloakIdAndMonth(
                 startDate, endDate, StatusProgramare.ANULATA);
 
         return stats.stream()
                 .map(s -> {
-                    UserDisplayCalendarDTO user = statisticiCacheService.getTerapeutUser(s.terapeutId());
+                    UserDisplayCalendarDTO user = statisticiCacheService.getTerapeutUser(s.terapeutKeycloakId());
                     if (user != null) {
                         return new StatisticiTerapeutDTO(
-                                user.id(),
+                                s.terapeutKeycloakId(),
                                 user.nume() + " " + user.prenume(),
                                 s.count()
                         );
                     } else {
                         return new StatisticiTerapeutDTO(
-                                s.terapeutId(),
+                                s.terapeutKeycloakId(),
                                 "Necunoscut",
                                 s.count()
                         );

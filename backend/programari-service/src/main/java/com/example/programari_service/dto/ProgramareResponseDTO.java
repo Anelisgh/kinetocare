@@ -7,8 +7,8 @@ import java.time.LocalTime;
 
 public record ProgramareResponseDTO(
     Long id,
-    Long pacientId,
-    Long terapeutId,
+    String pacientKeycloakId,
+    String terapeutKeycloakId,
     Long locatieId,
     Long serviciuId,
     String tipServiciu,

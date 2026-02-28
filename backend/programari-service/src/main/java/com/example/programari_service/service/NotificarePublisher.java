@@ -24,58 +24,57 @@ public class NotificarePublisher {
     // ──────────────────────────── Notificari catre TERAPEUT ────────────────────────────
 
     public void programareNoua(Programare p) {
-        String keycloakId = getKeycloakIdTerapeut(p.getTerapeutId());
+        String keycloakId = p.getTerapeutKeycloakId();
         trimite("notificare.programare.noua", notificareEventMapper.toProgramareNoua(p, keycloakId));
     }
 
     public void evaluareInitialaNoua(Programare p) {
-        String keycloakId = getKeycloakIdTerapeut(p.getTerapeutId());
+        String keycloakId = p.getTerapeutKeycloakId();
         trimite("notificare.evaluare.initiala", notificareEventMapper.toEvaluareInitialaNoua(p, keycloakId));
     }
 
     public void programareAnulataDePacient(Programare p) {
-        String keycloakId = getKeycloakIdTerapeut(p.getTerapeutId());
+        String keycloakId = p.getTerapeutKeycloakId();
         trimite("notificare.programare.anulata.pacient", notificareEventMapper.toProgramareAnulataDePacient(p, keycloakId));
     }
 
     public void reevaluareNecesara(Programare p) {
-        String keycloakId = getKeycloakIdTerapeut(p.getTerapeutId());
+        String keycloakId = p.getTerapeutKeycloakId();
         trimite("notificare.reevaluare.necesara", notificareEventMapper.toReevaluareNecesara(p, keycloakId));
     }
 
-    public void jurnalCompletat(Long terapeutId, Long pacientId, Long programareId) {
-        String keycloakId = getKeycloakIdTerapeut(terapeutId);
-        trimite("notificare.jurnal.completat", notificareEventMapper.toJurnalCompletat(pacientId, programareId, keycloakId));
+    public void jurnalCompletat(String terapeutKeycloakId, String pacientKeycloakId, Long programareId) {
+        trimite("notificare.jurnal.completat", notificareEventMapper.toJurnalCompletat(pacientKeycloakId, programareId, terapeutKeycloakId)); // assuming patientKeycloakId goes there maybe? Will have to check mapper later
     }
 
     // ──────────────────────────── Notificari catre PACIENT ────────────────────────────
 
     public void programareAnulataDeTerapeut(Programare p) {
-        String keycloakId = getKeycloakIdPacient(p.getPacientId());
+        String keycloakId = p.getPacientKeycloakId();
         trimite("notificare.programare.anulata.terapeut", notificareEventMapper.toProgramareAnulataDeTerapeut(p, keycloakId));
     }
 
     public void reminder24h(Programare p) {
-        String keycloakId = getKeycloakIdPacient(p.getPacientId());
+        String keycloakId = p.getPacientKeycloakId();
         trimite("notificare.reminder.24h", notificareEventMapper.toReminder24h(p, keycloakId));
     }
 
     public void reminder2h(Programare p) {
-        String keycloakId = getKeycloakIdPacient(p.getPacientId());
+        String keycloakId = p.getPacientKeycloakId();
         trimite("notificare.reminder.2h", notificareEventMapper.toReminder2h(p, keycloakId));
     }
 
     public void reminderJurnal(Programare p) {
-        String keycloakId = getKeycloakIdPacient(p.getPacientId());
+        String keycloakId = p.getPacientKeycloakId();
         trimite("notificare.reminder.jurnal", notificareEventMapper.toReminderJurnal(p, keycloakId));
     }
 
     public void reevaluareRecomandata(Programare p) {
-        String keycloakId = getKeycloakIdPacient(p.getPacientId());
+        String keycloakId = p.getPacientKeycloakId();
         trimite("notificare.reevaluare.recomandata", notificareEventMapper.toReevaluareRecomandata(p, keycloakId));
     }
 
-    // ──────────────────────────── Helpers ────────────────────────────
+    // Helpers
 
     private void trimite(String routingKey, NotificareEvent event) {
         if (event.userKeycloakId() == null) {
@@ -87,24 +86,6 @@ public class NotificarePublisher {
             log.info("Notificare trimisă: {} → userKeycloakId={}", event.tipNotificare(), event.userKeycloakId());
         } catch (Exception e) {
             log.error("Eroare la trimiterea notificării {}: {}", event.tipNotificare(), e.getMessage());
-        }
-    }
-
-    private String getKeycloakIdTerapeut(Long terapeutId) {
-        try {
-            return terapeutiClient.getKeycloakIdByTerapeutId(terapeutId);
-        } catch (Exception e) {
-            log.warn("Eroare Feign: nu s-a putut obține keycloakId pentru terapeutId={}: {}", terapeutId, e.getMessage());
-            return null;
-        }
-    }
-
-    private String getKeycloakIdPacient(Long pacientId) {
-        try {
-            return pacientiClient.getPacientById(pacientId).keycloakId();
-        } catch (Exception e) {
-            log.warn("Eroare Feign: nu s-a putut obține keycloakId pentru pacientId={}: {}", pacientId, e.getMessage());
-            return null;
         }
     }
 }

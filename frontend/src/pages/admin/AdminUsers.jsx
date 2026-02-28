@@ -7,6 +7,7 @@ import '../../styles/adminShared.css';
 export default function AdminUsers() {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState(null);
 
   // Filtre
@@ -109,6 +110,7 @@ export default function AdminUsers() {
     if (!userToToggle) return;
 
     try {
+      setSubmitting(true);
       const updatedUser = await adminService.toggleUserActive(userToToggle.id);
       
       // Actualizam lista local
@@ -120,6 +122,8 @@ export default function AdminUsers() {
       setUserToToggle(null);
     } catch (err) {
       alert('Eroare la modificarea statusului: ' + err.message);
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -222,6 +226,7 @@ export default function AdminUsers() {
                       <button 
                         className={`action-btn ${user.active ? 'deactivate-btn' : 'activate-btn'}`}
                         onClick={() => handleToggleClick(user)}
+                        disabled={submitting}
                       >
                         {user.active ? 'Dezactivează' : 'Reactivează'}
                       </button>
@@ -257,12 +262,13 @@ export default function AdminUsers() {
             )}
             
             <div className="modal-actions">
-              <button className="cancel-btn" onClick={cancelToggle}>Anulează</button>
+              <button className="cancel-btn" onClick={cancelToggle} disabled={submitting}>Anulează</button>
               <button 
                 className={`confirm-btn ${userToToggle.active ? 'danger' : 'success'}`} 
                 onClick={confirmToggle}
+                disabled={submitting}
               >
-                Da, {userToToggle.active ? 'Dezactivează' : 'Reactivează'}
+                {submitting ? 'Se procesează...' : 'Da, ' + (userToToggle.active ? 'Dezactivează' : 'Reactivează')}
               </button>
             </div>
           </div>

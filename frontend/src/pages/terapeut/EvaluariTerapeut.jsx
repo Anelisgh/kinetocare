@@ -4,38 +4,30 @@ import { evaluariService } from '../../services/evaluariService';
 import '../../styles/evaluariTerapeut.css'
 
 const EvaluariTerapeut = () => {
-    const [terapeutId, setTerapeutId] = useState(null);
     const [pacienti, setPacienti] = useState([]);
     const [servicii, setServicii] = useState([]);
 
     const [formData, setFormData] = useState({
         pacientId: '',
-        tip: 'INITIALA', // Default
+        tip: 'INITIALA',
         diagnostic: '',
-        sedinteRecomandate: 10, // Default
+        sedinteRecomandate: 10,
         serviciuRecomandatId: '',
         observatii: ''
     });
 
     const [loading, setLoading] = useState(true);
     const [submitting, setSubmitting] = useState(false);
-    const [message, setMessage] = useState({ type: '', text: '' }); // type: 'success' | 'error'
+    const [message, setMessage] = useState({ type: '', text: '' });
 
-    // 1. Încarcare Initiala (Profil -> TerapeutID -> Pacienti & Servicii)
+    // 1. Înarcare Initială (Pacienti & Servicii)
     useEffect(() => {
         const initData = async () => {
             try {
                 setLoading(true);
-                // A. Aflam cine e terapeutul logat
-                const profile = await profileService.getProfile();
-                const tId = profile.terapeutId || profile.id;
-                setTerapeutId(tId);
-
-                if (!tId) throw new Error("Nu s-a găsit ID-ul terapeutului.");
-
-                // B. Incarcam listele necesare în paralel
+                // keycloakId-ul terapeutului e extras din JWT pe backend
                 const [pacientiList, serviciiList] = await Promise.all([
-                    evaluariService.getPacientiRecenti(tId),
+                    evaluariService.getPacientiRecenti(),
                     evaluariService.getAllServicii()
                 ]);
 
@@ -88,12 +80,10 @@ const EvaluariTerapeut = () => {
 
             const payload = {
                 ...formData,
-                terapeutId: terapeutId,
-                // Convertim string-urile numerice din form în numere reale
-                pacientId: Number(formData.pacientId),
+                // terapeutKeycloakId e extras din JWT pe backend
+                pacientKeycloakId: formData.pacientId,
                 sedinteRecomandate: Number(formData.sedinteRecomandate),
                 serviciuRecomandatId: Number(formData.serviciuRecomandatId),
-                // programareId il lasam null, se ocupa backend-ul
             };
 
             await evaluariService.creeazaEvaluare(payload);
@@ -147,7 +137,7 @@ const EvaluariTerapeut = () => {
             >
                 <option value="">Selectează Pacient</option>
                 {pacienti.map(p => (
-                    <option key={p.id} value={p.id}>
+                    <option key={p.keycloakId} value={p.keycloakId}>
                         {p.nume} {p.prenume}
                     </option>
                 ))}

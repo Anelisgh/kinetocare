@@ -64,9 +64,9 @@ public class UserController {
 
     // dezactivare/reactivare cont
     // folosit in: admin UI
-    @PatchMapping("/{id}/toggle-active")
-    public ResponseEntity<AdminUserDTO> toggleActive(@PathVariable Long id) {
-        return ResponseEntity.ok(userService.toggleUserActive(id));
+    @PatchMapping("/by-keycloak/{keycloakId}/toggle-active")
+    public ResponseEntity<AdminUserDTO> toggleActive(@PathVariable String keycloakId) {
+        return ResponseEntity.ok(userService.toggleUserActive(keycloakId));
     }
 
     // listing useri cu filtre optionale

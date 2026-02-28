@@ -1,7 +1,7 @@
 import React from 'react';
 
 // fereastra laterala care apare peste calendar la click-ul unei programari ce contine detaliile programarii
-const AppointmentSidePanel = ({ appointment, onClose, onCancel, onMarkNeprezentare }) => {
+const AppointmentSidePanel = ({ appointment, onClose, onCancel, onMarkNeprezentare, actionLoading }) => {
     if (!appointment) return null;
 
     // Datele vin din "extendedProps" ale evenimentului FullCalendar
@@ -76,15 +76,23 @@ const AppointmentSidePanel = ({ appointment, onClose, onCancel, onMarkNeprezenta
                 <div className="panel-actions">
                     {/* BUTONUL ANULARE (DOAR PENTRU VIITOR) */}
                     {isCancelable && (
-                        <button className="btn-cancel-appointment" onClick={() => onCancel(appointment.id)}>
-                            Anulează Programarea
+                        <button 
+                            className="btn-cancel-appointment" 
+                            onClick={() => onCancel(appointment.id)}
+                            disabled={actionLoading}
+                        >
+                            {actionLoading ? 'Se anulează...' : 'Anulează Programarea'}
                         </button>
                     )}
 
                     {/* BUTON NEPREZENTARE (DOAR PENTRU PROGRAMARI MARCATE CA FINALIZATE) */}
                     {isMarkableAsNeprezentare && (
-                        <button className="btn-mark-neprezentare" onClick={() => onMarkNeprezentare(appointment.id)}>
-                            Marchează ca Neprezentare
+                        <button 
+                            className="btn-mark-neprezentare" 
+                            onClick={() => onMarkNeprezentare(appointment.id)}
+                            disabled={actionLoading}
+                        >
+                            {actionLoading ? 'Se procesează...' : 'Marchează ca Neprezentare'}
                         </button>
                     )}
                 </div>

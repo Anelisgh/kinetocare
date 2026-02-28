@@ -42,8 +42,8 @@ public class EvolutieService {
 
     // istoric evolutii pentru un pacient specific (doar notele acestui terapeut)
     @Transactional(readOnly = true)
-    public List<EvolutieResponseDTO> getIstoricEvolutii(Long pacientId, Long terapeutId) {
-        return evolutieRepository.findAllByPacientIdAndTerapeutIdOrderByCreatedAtDesc(pacientId, terapeutId)
+    public List<EvolutieResponseDTO> getIstoricEvolutii(String pacientKeycloakId, String terapeutKeycloakId) {
+        return evolutieRepository.findAllByPacientKeycloakIdAndTerapeutKeycloakIdOrderByCreatedAtDesc(pacientKeycloakId, terapeutKeycloakId)
                 .stream()
                 .map(evolutieMapper::toDto)
                 .toList();

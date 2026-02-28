@@ -11,9 +11,9 @@ export const programariService = {
     }
   },
 
-  getIstoricPacient: async (pacientId) => {
+  getIstoricPacient: async (keycloakId) => {
     try {
-      const response = await api.get(`/api/programari/pacient/${pacientId}/istoric`);
+      const response = await api.get(`/api/programari/pacient/by-keycloak/${keycloakId}/istoric`);
       return response.data;
     } catch (error) {
       handleApiError(error, 'Eroare la preluarea istoricului pacientului');
@@ -21,23 +21,22 @@ export const programariService = {
   },
 
   // extrage serviciul recomandat de terapeut pentru pacient
-  getServiciuRecomandat: async (pacientId) => {
+  // keycloakId-ul pacientului e extras din JWT pe backend, nu e nevoie sa-l trimitem
+  getServiciuRecomandat: async () => {
     try {
-      const response = await api.get('/api/programari/serviciu-recomandat', {
-        params: { pacientId }
-      });
+      const response = await api.get('/api/programari/serviciu-recomandat');
       return response.data;
     } catch (error) {
       handleApiError(error, 'Nu s-a putut determina serviciul necesar');
     }
   },
 
-  // sloturi libere
-  getDisponibilitate: async (terapeutId, locatieId, dataStr, serviciuId) => {
+  // sloturi libere — terapeutKeycloakId in loc de terapeutId
+  getDisponibilitate: async (terapeutKeycloakId, locatieId, dataStr, serviciuId) => {
     try {
       const response = await api.get('/api/programari/disponibilitate', {
         params: {
-          terapeutId,
+          terapeutKeycloakId,
           locatieId,
           data: dataStr,
           serviciuId
@@ -57,11 +56,10 @@ export const programariService = {
     }
   },
 
-  // PENTRU TERAPEUT
-  getCalendarAppointments: async (terapeutId, startStr, endStr, locatieId = null) => {
+  // PENTRU TERAPEUT — extrage keycloakId-ul terapeutului din JWT pe backend, nu mai trebuie trimis
+  getCalendarAppointments: async (startStr, endStr, locatieId = null) => {
     try {
       const params = new URLSearchParams();
-      params.append('terapeutId', terapeutId);
       params.append('start', startStr); //YYYY-MM-DD
       params.append('end', endStr);     //YYYY-MM-DD
 
@@ -76,42 +74,39 @@ export const programariService = {
     }
   },
 
-  cancelProgramareTerapeut: async (programareId, terapeutId) => {
+  // Anulare de terapeut — keycloakId-ul terapeutului e extras din JWT pe backend
+  cancelProgramareTerapeut: async (programareId) => {
     try {
-      const params = new URLSearchParams();
-      params.append('terapeutId', terapeutId);
-
-      await api.patch(`/api/programari/${programareId}/cancel-terapeut?${params.toString()}`);
+      await api.patch(`/api/programari/${programareId}/cancel-terapeut`);
     } catch (error) {
       handleApiError(error, 'Eroare la anularea programării');
     }
   },
 
-  markNeprezentare: async (programareId, terapeutId) => {
+  // Neprezentare — keycloakId-ul terapeutului e extras din JWT pe backend
+  markNeprezentare: async (programareId) => {
     try {
-      const params = new URLSearchParams();
-      params.append('terapeutId', terapeutId);
-      await api.patch(`/api/programari/${programareId}/neprezentare?${params.toString()}`);
+      await api.patch(`/api/programari/${programareId}/neprezentare`);
     } catch (error) {
       handleApiError(error, 'Eroare la marcarea neprezentării');
     }
   },
 
-  // FISA PACIENT - lista pacienti terapeut
-  getListaPacienti: async (terapeutId) => {
+  // FISA PACIENT - lista pacienti terapeut — keycloakId-ul terapeutului e extras din JWT pe backend
+  getListaPacienti: async () => {
     try {
-      const response = await api.get(`/api/fisa-pacient/terapeut/${terapeutId}/lista`);
+      const response = await api.get('/api/fisa-pacient/lista');
       return response.data;
     } catch (error) {
       handleApiError(error, 'Eroare la preluarea listei de pacienți');
     }
   },
 
-  // FISA PACIENT - detalii pacient
-  getFisaPacient: async (pacientId, terapeutId) => {
+  // FISA PACIENT - detalii pacient — ambele keycloakId-uri sunt trimise explicit
+  getFisaPacient: async (pacientKeycloakId, terapeutKeycloakId) => {
     try {
-      const response = await api.get(`/api/fisa-pacient/pacient/${pacientId}`, {
-        params: { terapeutId }
+      const response = await api.get(`/api/fisa-pacient/pacient/by-keycloak/${pacientKeycloakId}`, {
+        params: { terapeutKeycloakId }
       });
       return response.data;
     } catch (error) {

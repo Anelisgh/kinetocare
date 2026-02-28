@@ -1,7 +1,7 @@
 import React, { useMemo, useEffect } from 'react';
 
 // componenta pentru vizualizarea si editarea datelor personale si preferintelor din profil
-export default function PersonalInfo({ profile, formData, isEditing, onChange, locatii = [], assignedTerapeut }) {
+export default function PersonalInfo({ profile, formData, isEditing, onChange, locatii = [], assignedTerapeut, errors = {} }) {
     
     // lista de locatii disponibile 
     const availableLocatii = useMemo(() => {
@@ -63,41 +63,107 @@ export default function PersonalInfo({ profile, formData, isEditing, onChange, l
                 {/* SECȚIUNEA 1: DATE PERSONALE */}
                 <div className="form-group">
                     <label htmlFor="prenume">Prenume *</label>
-                    <input type="text" id="prenume" name="prenume" value={formData.prenume} onChange={onChange} required />
+                    <input 
+                        type="text" 
+                        id="prenume" 
+                        name="prenume" 
+                        value={formData.prenume} 
+                        onChange={onChange} 
+                        required 
+                        className={errors.prenume ? 'input-error' : ''}
+                    />
+                    {errors.prenume && <small className="error-text">{errors.prenume}</small>}
                 </div>
 
                 <div className="form-group">
                     <label htmlFor="nume">Nume *</label>
-                    <input type="text" id="nume" name="nume" value={formData.nume} onChange={onChange} required />
+                    <input 
+                        type="text" 
+                        id="nume" 
+                        name="nume" 
+                        value={formData.nume} 
+                        onChange={onChange} 
+                        required 
+                        className={errors.nume ? 'input-error' : ''}
+                    />
+                    {errors.nume && <small className="error-text">{errors.nume}</small>}
                 </div>
 
                 <div className="form-group">
                     <label htmlFor="email">Email *</label>
-                    <input type="email" id="email" name="email" value={formData.email} onChange={onChange} required />
+                    <input 
+                        type="email" 
+                        id="email" 
+                        name="email" 
+                        value={formData.email} 
+                        onChange={onChange} 
+                        required 
+                        className={errors.email ? 'input-error' : ''}
+                    />
+                    {errors.email && <small className="error-text">{errors.email}</small>}
                 </div>
 
                 <div className="form-group">
                     <label htmlFor="telefon">Telefon *</label>
-                    <input type="tel" id="telefon" name="telefon" value={formData.telefon} onChange={onChange} required pattern="[0-9]{10}" title="10 cifre" />
+                    <input 
+                        type="tel" 
+                        id="telefon" 
+                        name="telefon" 
+                        value={formData.telefon} 
+                        onChange={onChange} 
+                        required 
+                        pattern="[0-9]{10}" 
+                        title="10 cifre" 
+                        className={errors.telefon ? 'input-error' : ''}
+                    />
+                    {errors.telefon && <small className="error-text">{errors.telefon}</small>}
                 </div>
 
                 <div className="form-group">
                     <label htmlFor="cnp">CNP *</label>
-                    <input type="text" id="cnp" name="cnp" value={formData.cnp} onChange={onChange} required maxLength="13" pattern="[0-9]{13}" />
+                    <input 
+                        type="text" 
+                        id="cnp" 
+                        name="cnp" 
+                        value={formData.cnp} 
+                        onChange={onChange} 
+                        required 
+                        maxLength="13" 
+                        pattern="[0-9]{13}" 
+                        className={errors.cnp ? 'input-error' : ''}
+                    />
+                    {errors.cnp && <small className="error-text">{errors.cnp}</small>}
                 </div>
 
                 <div className="form-group">
                     <label htmlFor="dataNasterii">Data Nașterii *</label>
-                    <input type="date" id="dataNasterii" name="dataNasterii" value={formData.dataNasterii} onChange={onChange} required />
+                    <input 
+                        type="date" 
+                        id="dataNasterii" 
+                        name="dataNasterii" 
+                        value={formData.dataNasterii} 
+                        onChange={onChange} 
+                        required 
+                        className={errors.dataNasterii ? 'input-error' : ''}
+                    />
+                    {errors.dataNasterii && <small className="error-text">{errors.dataNasterii}</small>}
                 </div>
 
                 <div className="form-group">
                     <label htmlFor="gen">Gen *</label>
-                    <select id="gen" name="gen" value={formData.gen} onChange={onChange} required>
+                    <select 
+                        id="gen" 
+                        name="gen" 
+                        value={formData.gen} 
+                        onChange={onChange} 
+                        required
+                        className={errors.gen ? 'input-error' : ''}
+                    >
                         <option value="">Selectează...</option>
                         <option value="MASCULIN">Masculin</option>
                         <option value="FEMININ">Feminin</option>
                     </select>
+                    {errors.gen && <small className="error-text">{errors.gen}</small>}
                 </div>
 
                 <div className="form-group">

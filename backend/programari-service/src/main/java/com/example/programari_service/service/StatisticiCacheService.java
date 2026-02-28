@@ -32,16 +32,15 @@ public class StatisticiCacheService {
         }
     }
 
-    // Helper pentru mapare terapeutId -> User curent (prin keycloakId)
-    @Cacheable(value = "terapeutUser", key = "#terapeutId")
-    public UserDisplayCalendarDTO getTerapeutUser(Long terapeutId) {
+    // Helper pentru mapare terapeutKeycloakId -> User curent (prin keycloakId)
+    @Cacheable(value = "terapeutUser", key = "#terapeutKeycloakId")
+    public UserDisplayCalendarDTO getTerapeutUser(String terapeutKeycloakId) {
         try {
-            String keycloakId = terapeutiClient.getKeycloakIdByTerapeutId(terapeutId);
-            if (keycloakId != null) {
-                return userClient.getUserByKeycloakId(keycloakId);
+            if (terapeutKeycloakId != null) {
+                return userClient.getUserByKeycloakId(terapeutKeycloakId);
             }
         } catch (Exception e) {
-            log.error("Nu s-au putut prelua datele userului pt terapeutId: {}", terapeutId, e);
+            log.error("Nu s-au putut prelua datele userului pt terapeutKeycloakId: {}", terapeutKeycloakId, e);
         }
         return null;
     }

@@ -7,14 +7,14 @@ import java.util.List;
 import java.util.Optional;
 
 public interface RelatieRepository extends JpaRepository<RelatiePacientTerapeut, Long> {
-    Optional<RelatiePacientTerapeut> findByPacientIdAndTerapeutId(Long pacientId, Long terapeutId);
+    Optional<RelatiePacientTerapeut> findByPacientKeycloakIdAndTerapeutKeycloakId(String pacientKeycloakId, String terapeutKeycloakId);
 
     // pacientii activi ai unui terapeut
-    List<RelatiePacientTerapeut> findByTerapeutIdAndActivaTrue(Long terapeutId);
+    List<RelatiePacientTerapeut> findByTerapeutKeycloakIdAndActivaTrue(String terapeutKeycloakId);
 
     // pacientii anteriori (arhiva) ai unui terapeut
-    List<RelatiePacientTerapeut> findByTerapeutIdAndActivaFalse(Long terapeutId);
+    List<RelatiePacientTerapeut> findByTerapeutKeycloakIdAndActivaFalse(String terapeutKeycloakId);
 
     // relatia activa a unui pacient (cu orice terapeut)
-    Optional<RelatiePacientTerapeut> findByPacientIdAndActivaTrue(Long pacientId);
+    Optional<RelatiePacientTerapeut> findByPacientKeycloakIdAndActivaTrue(String pacientKeycloakId);
 }

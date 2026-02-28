@@ -13,5 +13,5 @@ public record UrmatoareaProgramareDTO(
     LocalTime oraInceput,
     LocalTime oraSfarsit,
     Long locatieId,
-    Long terapeutId
+    String terapeutKeycloakId
 ) {}

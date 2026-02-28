@@ -1,12 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { profileService } from '../../services/profileService';
 import { jurnalService } from '../../services/jurnalService';
 import { useAuth } from '../../context/AuthContext';
 import '../../styles/jurnalPacient.css';
 
 const JurnalPacient = () => {
     const { userInfo } = useAuth();
-    const [pacientId, setPacientId] = useState(null);
     const [loading, setLoading] = useState(true);
     const [necompletate, setNecompletate] = useState([]);
     const [istoric, setIstoric] = useState([]);
@@ -27,29 +25,13 @@ const JurnalPacient = () => {
     const [editJurnalData, setEditJurnalData] = useState({});
     const [savingEdit, setSavingEdit] = useState(false);
 
-    // Initializare - Luam ID-ul pacientului din profil
-    useEffect(() => {
-        const initData = async () => {
-            try {
-                const profile = await profileService.getProfile();
-                const id = profile.id;
-                setPacientId(id);
-            } catch (err) {
-                console.error('Eroare la încărcarea profilului:', err);
-                setMessage({ type: 'error', text: 'Nu s-a putut încărca profilul.' });
-                setLoading(false);
-            }
-        };
-        initData();
-    }, []);
-
-    // Incarcare date jurnal cand avem pacientId
-    const fetchData = async (id) => {
+    // Incarcare date jurnal
+    const fetchData = async () => {
         try {
             setLoading(true);
             const [listNecompletate, listIstoric] = await Promise.all([
-                jurnalService.getSedinteNecompletate(id),
-                jurnalService.getIstoric(id)
+                jurnalService.getSedinteNecompletate(),
+                jurnalService.getIstoric()
             ]);
 
             setNecompletate(listNecompletate || []);
@@ -67,18 +49,17 @@ const JurnalPacient = () => {
     };
 
     useEffect(() => {
-        if (pacientId) {
-            fetchData(pacientId);
-        }
-    }, [pacientId]);
+        fetchData();
+    }, []);
 
     // Handler Submit
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (!selectedProgramareId || !pacientId) return;
+        if (!selectedProgramareId) return;
 
         try {
-            await jurnalService.addJurnal(pacientId, {
+            setSavingEdit(true);
+            await jurnalService.addJurnal({
                 programareId: Number(selectedProgramareId),
                 ...formData
             });
@@ -86,10 +67,12 @@ const JurnalPacient = () => {
             setMessage({ type: 'success', text: 'Jurnal salvat cu succes!' });
             setFormData({ nivelDurere: 5, dificultateExercitii: 5, nivelOboseala: 5, comentarii: '' });
             setSelectedProgramareId('');
-            fetchData(pacientId);
+            fetchData();
             setTimeout(() => setMessage({ type: '', text: '' }), 3000);
         } catch (err) {
             setMessage({ type: 'error', text: err.message });
+        } finally {
+            setSavingEdit(false);
         }
     };
 
@@ -112,10 +95,10 @@ const JurnalPacient = () => {
     const saveEditJurnal = async (j) => {
         try {
             setSavingEdit(true);
-            await jurnalService.updateJurnal(pacientId, j.id, editJurnalData);
+            await jurnalService.updateJurnal(j.id, editJurnalData);
             setMessage({ type: 'success', text: 'Jurnal actualizat!' });
             setEditingJurnalId(null);
-            fetchData(pacientId);
+            fetchData();
             setTimeout(() => setMessage({ type: '', text: '' }), 3000);
         } catch (err) {
             setMessage({ type: 'error', text: err.message });
@@ -250,7 +233,9 @@ const JurnalPacient = () => {
                             </div>
                         )}
 
-                        <button type="submit" className="btn-submit">Salvează Jurnal</button>
+                        <button type="submit" className="btn-submit" disabled={savingEdit}>
+                            {savingEdit ? 'Se salvează...' : 'Salvează Jurnal'}
+                        </button>
                     </form>
                 </div>
             ) : (

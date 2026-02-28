@@ -93,7 +93,16 @@ export default function RegisterPage() {
       }, 2000);
       
     } catch (error) {
-      setErrors({ submit: error.message });
+      if (error.eroriCampuri) {
+        // Mapăm erorile primite de la backend peste starea de erori
+        // Dacă există și un mesaj general, îl punem în 'submit'
+        setErrors({
+          ...error.eroriCampuri,
+          submit: error.message
+        });
+      } else {
+        setErrors({ submit: error.message });
+      }
     } finally {
       setIsSubmitting(false);
     }

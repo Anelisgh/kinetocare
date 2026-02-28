@@ -33,11 +33,11 @@ public class FisaPacientService {
      * Returneaza lista de pacienti (activi + arhivati) pentru un terapeut.
      */
     @Transactional(readOnly = true)
-    public ListaPacientiDTO getListaPacienti(Long terapeutId) {
+    public ListaPacientiDTO getListaPacienti(String terapeutKeycloakId) {
         List<FisaPacientDTO> activi = buildPatientList(
-                relatieRepository.findByTerapeutIdAndActivaTrue(terapeutId), true);
+                relatieRepository.findByTerapeutKeycloakIdAndActivaTrue(terapeutKeycloakId), true);
         List<FisaPacientDTO> arhivati = buildPatientList(
-                relatieRepository.findByTerapeutIdAndActivaFalse(terapeutId), false);
+                relatieRepository.findByTerapeutKeycloakIdAndActivaFalse(terapeutKeycloakId), false);
 
         return new ListaPacientiDTO(
                 activi,
@@ -54,14 +54,14 @@ public class FisaPacientService {
         for (RelatiePacientTerapeut rel : relatii) {
             try {
                 // detalii user (nume, prenume)
-                UserDisplayCalendarDTO userDetails = userClient.getUserById(rel.getPacientId());
+                UserDisplayCalendarDTO userDetails = userClient.getUserByKeycloakId(rel.getPacientKeycloakId());
                 if (userDetails == null) continue;
 
                 // situatie curenta (diagnostic + sedinte)
-                SituatiePacientDTO situatie = programareService.getSituatiePacient(rel.getPacientId());
+                SituatiePacientDTO situatie = programareService.getSituatiePacient(rel.getPacientKeycloakId());
 
                 rezultat.add(new FisaPacientDTO(
-                        rel.getPacientId(),
+                        rel.getPacientKeycloakId(),
                         userDetails.nume(),
                         userDetails.prenume(),
                         null, // varsta - assumed not provided previously or maybe added to DTO recently
@@ -70,7 +70,7 @@ public class FisaPacientService {
                         activ
                 ));
             } catch (Exception e) {
-                log.warn("Nu s-au putut încărca datele pentru pacientul {}: {}", rel.getPacientId(), e.getMessage());
+                log.warn("Nu s-au putut încărca datele pentru pacientul {}: {}", rel.getPacientKeycloakId(), e.getMessage());
             }
         }
         return rezultat;
@@ -80,32 +80,32 @@ public class FisaPacientService {
      * Returneaza fisa completa a unui pacient (detalii, evaluari, evolutii, programari, jurnale).
      */
     @Transactional(readOnly = true)
-    public FisaPacientDetaliiDTO getFisaPacient(Long pacientId, Long terapeutId) {
+    public FisaPacientDetaliiDTO getFisaPacient(String pacientKeycloakId, String terapeutKeycloakId) {
         // 1. Detalii user (nume, prenume, telefon, email, gen)
-        UserDisplayCalendarDTO userDetails = userClient.getUserById(pacientId);
+        UserDisplayCalendarDTO userDetails = userClient.getUserByKeycloakId(pacientKeycloakId);
 
         // 2. Situatia curenta
-        SituatiePacientDTO situatie = programareService.getSituatiePacient(pacientId);
+        SituatiePacientDTO situatie = programareService.getSituatiePacient(pacientKeycloakId);
 
         // 3. Evaluari (de la TOTI terapeutii)
-        List<EvaluareResponseDTO> evaluari = buildEvaluariList(pacientId);
+        List<EvaluareResponseDTO> evaluari = buildEvaluariList(pacientKeycloakId);
 
         // 4. Evolutii (doar ale TERAPEUTULUI CURENT)
-        List<EvolutieResponseDTO> evolutii = evolutieService.getIstoricEvolutii(pacientId, terapeutId);
+        List<EvolutieResponseDTO> evolutii = evolutieService.getIstoricEvolutii(pacientKeycloakId, terapeutKeycloakId);
 
         // 5. Programari (istoric complet) - reuse
-        List<IstoricProgramareDTO> programari = programareService.getIstoricPacient(pacientId);
+        List<IstoricProgramareDTO> programari = programareService.getIstoricPacient(pacientKeycloakId);
 
         // 6. Jurnale - reuse
         List<JurnalIstoricDTO> jurnale = new ArrayList<>();
         try {
-            jurnale = pacientiClient.getIstoricJurnal(pacientId);
+            jurnale = pacientiClient.getIstoricJurnal(pacientKeycloakId);
         } catch (Exception e) {
-            log.warn("Nu s-au putut obține jurnalele pentru pacientul {}: {}", pacientId, e.getMessage());
+            log.warn("Nu s-au putut obține jurnalele pentru pacientul {}: {}", pacientKeycloakId, e.getMessage());
         }
 
         return new FisaPacientDetaliiDTO(
-                pacientId,
+                pacientKeycloakId,
                 userDetails != null ? userDetails.nume() : null,
                 userDetails != null ? userDetails.prenume() : null,
                 null, // varsta missing in original mapping
@@ -123,19 +123,19 @@ public class FisaPacientService {
     /**
      * Construieste lista de evaluari cu informatii despre terapeut si serviciu.
      */
-    private List<EvaluareResponseDTO> buildEvaluariList(Long pacientId) {
-        List<Evaluare> evaluari = evaluareRepository.findAllByPacientIdOrderByDataDesc(pacientId);
+    private List<EvaluareResponseDTO> buildEvaluariList(String pacientKeycloakId) {
+        List<Evaluare> evaluari = evaluareRepository.findAllByPacientKeycloakIdOrderByDataDesc(pacientKeycloakId);
 
         return evaluari.stream().map(eval -> {
             // Numele terapeutului care a facut evaluarea
             String numeTerapeut = null;
             try {
-                UserDisplayCalendarDTO terapeutDetails = userClient.getUserById(eval.getTerapeutId());
+                UserDisplayCalendarDTO terapeutDetails = userClient.getUserByKeycloakId(eval.getTerapeutKeycloakId());
                 if (terapeutDetails != null) {
                     numeTerapeut = terapeutDetails.nume() + " " + terapeutDetails.prenume();
                 }
             } catch (Exception e) {
-                log.warn("Nu s-a putut obține numele terapeutului {}: {}", eval.getTerapeutId(), e.getMessage());
+                log.warn("Nu s-a putut obține numele terapeutului {}: {}", eval.getTerapeutKeycloakId(), e.getMessage());
             }
 
             // Numele serviciului recomandat
@@ -161,7 +161,7 @@ public class FisaPacientService {
                     eval.getSedinteRecomandate(),
                     eval.getObservatii(),
                     numeTerapeut,
-                    eval.getTerapeutId()
+                    eval.getTerapeutKeycloakId()
             );
         }).toList();
     }

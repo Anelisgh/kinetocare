@@ -3,7 +3,7 @@ package com.example.programari_service.dto;
 import java.util.List;
 
 public record FisaPacientDetaliiDTO(
-    Long pacientId,
+    String pacientKeycloakId,
     String nume,
     String prenume,
     Integer varsta,

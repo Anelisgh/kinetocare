@@ -5,6 +5,8 @@ import com.example.programari_service.dto.EvolutieResponseDTO;
 import com.example.programari_service.service.EvolutieService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,8 +21,20 @@ public class EvolutieController {
     // adauga evolutie
     // api-gateway -> adaugaEvolutie (EvolutieController)
     @PostMapping
-    public ResponseEntity<EvolutieResponseDTO> adaugaEvolutie(@RequestBody EvolutieRequestDTO request) {
-        return ResponseEntity.ok(evolutieService.adaugaEvolutie(request));
+    public ResponseEntity<EvolutieResponseDTO> adaugaEvolutie(
+            @RequestBody EvolutieRequestDTO request,
+            @AuthenticationPrincipal Jwt jwt) {
+
+        EvolutieRequestDTO requestFinal = request;
+        if (request.terapeutKeycloakId() == null) {
+            requestFinal = new EvolutieRequestDTO(
+                    request.pacientKeycloakId(),
+                    jwt.getSubject(),
+                    request.observatii()
+            );
+        }
+
+        return ResponseEntity.ok(evolutieService.adaugaEvolutie(requestFinal));
     }
 
     // editeaza evolutie
@@ -34,8 +48,11 @@ public class EvolutieController {
     // api-gateway -> getIstoric (EvolutieController)
     @GetMapping
     public ResponseEntity<List<EvolutieResponseDTO>> getIstoric(
-            @RequestParam Long pacientId,
-            @RequestParam Long terapeutId) {
-        return ResponseEntity.ok(evolutieService.getIstoricEvolutii(pacientId, terapeutId));
+            @RequestParam String pacientKeycloakId,
+            @RequestParam(required = false) String terapeutKeycloakId,
+            @AuthenticationPrincipal Jwt jwt) {
+
+        String tId = (terapeutKeycloakId != null) ? terapeutKeycloakId : jwt.getSubject();
+        return ResponseEntity.ok(evolutieService.getIstoricEvolutii(pacientKeycloakId, tId));
     }
 }

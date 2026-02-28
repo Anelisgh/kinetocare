@@ -2,7 +2,7 @@ package com.example.programari_service.dto;
 
 
 public record FisaPacientDTO(
-    Long pacientId,
+    String pacientKeycloakId,
     String nume,
     String prenume,
     Integer varsta,

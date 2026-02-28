@@ -1,6 +1,6 @@
 import React from 'react';
 
-const ActiveAppointmentCard = ({ programare, onCancel }) => {
+const ActiveAppointmentCard = ({ programare, onCancel, actionLoading }) => {
   if (!programare) return null;
 
   return (
@@ -24,8 +24,9 @@ const ActiveAppointmentCard = ({ programare, onCancel }) => {
         <button
           onClick={() => onCancel(programare.id)}
           className="homepage-cancel-btn"
+          disabled={actionLoading}
         >
-          Anulează
+          {actionLoading ? '...' : 'Anulează'}
         </button>
       </div>
     </div>

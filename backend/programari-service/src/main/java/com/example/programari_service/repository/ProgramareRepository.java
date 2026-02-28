@@ -14,52 +14,51 @@ import java.util.Optional;
 
 public interface ProgramareRepository extends JpaRepository<Programare, Long> {
         // prima programare viitoare activa
-        // prima programare viitoare activa
-        @Query("SELECT p FROM Programare p WHERE p.pacientId = :pacientId " +
+        @Query("SELECT p FROM Programare p WHERE p.pacientKeycloakId = :pacientKeycloakId " +
                         "AND p.status = 'PROGRAMATA' " +
                         "AND (p.data > :dataAzi OR (p.data = :dataAzi AND p.oraInceput > :oraCurenta)) " +
                         "ORDER BY p.data ASC, p.oraInceput ASC")
-        List<Programare> gasesteUrmatoareaProgramare(@Param("pacientId") Long pacientId, @Param("dataAzi") LocalDate dataAzi, @Param("oraCurenta") LocalTime oraCurenta, PageRequest pageRequest);
+        List<Programare> gasesteUrmatoareaProgramare(@Param("pacientKeycloakId") String pacientKeycloakId, @Param("dataAzi") LocalDate dataAzi, @Param("oraCurenta") LocalTime oraCurenta, PageRequest pageRequest);
 
         // numara programarile active pentru un pacient si terapeut
         // pentru primaIntalnire
-        long countByPacientIdAndTerapeutId(Long pacientId, Long terapeutId);
+        long countByPacientKeycloakIdAndTerapeutKeycloakId(String pacientKeycloakId, String terapeutKeycloakId);
 
         // verifica suprapunerea programarilor
         @Query("SELECT CASE WHEN COUNT(p) > 0 THEN true ELSE false END " +
                         "FROM Programare p " +
-                        "WHERE p.terapeutId = :terapeutId " +
+                        "WHERE p.terapeutKeycloakId = :terapeutKeycloakId " +
                         "AND p.data = :data " +
                         "AND p.status = 'PROGRAMATA' " + // ignoram programarile anulate
                         "AND p.oraInceput < :oraSfarsitNoua " +
                         "AND p.oraSfarsit > :oraInceputNoua")
         boolean existaSuprapunere(
-                        @Param("terapeutId") Long terapeutId,
+                        @Param("terapeutKeycloakId") String terapeutKeycloakId,
                         @Param("data") LocalDate data,
                         @Param("oraInceputNoua") LocalTime oraInceputNoua,
                         @Param("oraSfarsitNoua") LocalTime oraSfarsitNoua);
 
         // gaseste programarile unui terapeut intr-o zi specifica cu un anumit status
-        List<Programare> findByTerapeutIdAndDataAndStatus(Long terapeutId, LocalDate data,
+        List<Programare> findByTerapeutKeycloakIdAndDataAndStatus(String terapeutKeycloakId, LocalDate data,
                         StatusProgramare statusProgramare);
 
         // numara sedintele finalizate dupa o anumita data
-        @Query("SELECT COUNT(p) FROM Programare p WHERE p.pacientId = :pId AND p.terapeutId = :tId AND p.status = 'FINALIZATA' AND p.data > :dataRef")
-        long countSedinteDupaData(Long pId, Long tId, LocalDate dataRef);
+        @Query("SELECT COUNT(p) FROM Programare p WHERE p.pacientKeycloakId = :pId AND p.terapeutKeycloakId = :tId AND p.status = 'FINALIZATA' AND p.data > :dataRef")
+        long countSedinteDupaData(String pId, String tId, LocalDate dataRef);
 
         // numara programarile active sau finalizate
-        @Query("SELECT COUNT(p) FROM Programare p WHERE p.pacientId = :pId AND p.terapeutId = :tId AND p.status IN ('PROGRAMATA', 'FINALIZATA')")
-        long countProgramariActiveSauFinalizate(Long pId, Long tId);
+        @Query("SELECT COUNT(p) FROM Programare p WHERE p.pacientKeycloakId = :pId AND p.terapeutKeycloakId = :tId AND p.status IN ('PROGRAMATA', 'FINALIZATA')")
+        long countProgramariActiveSauFinalizate(String pId, String tId);
 
         // numara sedintele finalizate ale unui pacient dupa o anumita data
         @Query("SELECT COUNT(p) FROM Programare p " +
-                        "WHERE p.pacientId = :pId " +
+                        "WHERE p.pacientKeycloakId = :pId " +
                         "AND p.status = 'FINALIZATA' " +
                         "AND p.data > :dataRef")
-        long countSedintePacientDupaData(@Param("pId") Long pId, @Param("dataRef") LocalDate dataRef);
+        long countSedintePacientDupaData(@Param("pId") String pId, @Param("dataRef") LocalDate dataRef);
 
         // extrage toate programarile unui terapeut intr-un interval de timp
-        List<Programare> findAllByTerapeutIdAndDataBetween(Long terapeutId, LocalDate startDate, LocalDate endDate);
+        List<Programare> findAllByTerapeutKeycloakIdAndDataBetween(String terapeutKeycloakId, LocalDate startDate, LocalDate endDate);
 
         // pentru CRON JOB
         // gaseste programarile expirate care nu au fost inca finalizate
@@ -69,26 +68,26 @@ public interface ProgramareRepository extends JpaRepository<Programare, Long> {
                         @Param("currentTime") LocalTime currentTime);
 
         // pentru dropdown-ul din evaluari. gaseste toti pacientii cu care terapeutul are programari
-        @Query("SELECT DISTINCT p.pacientId FROM Programare p WHERE p.terapeutId = :terapeutId")
-        List<Long> findPacientiIdByTerapeutId(@Param("terapeutId") Long terapeutId);
+        @Query("SELECT DISTINCT p.pacientKeycloakId FROM Programare p WHERE p.terapeutKeycloakId = :terapeutKeycloakId")
+        List<String> findPacientiIdByTerapeutId(@Param("terapeutKeycloakId") String terapeutKeycloakId);
 
         // gaseste ultimele programari finalizate dintre un pacient si un terapeut
         @Query("SELECT p FROM Programare p " +
-                        "WHERE p.pacientId = :pacientId " +
-                        "AND p.terapeutId = :terapeutId " +
+                        "WHERE p.pacientKeycloakId = :pacientKeycloakId " +
+                        "AND p.terapeutKeycloakId = :terapeutKeycloakId " +
                         "AND p.status = 'FINALIZATA' " +
                         "ORDER BY p.data DESC, p.oraInceput DESC")
-        List<Programare> findLatestAppointments(@Param("pacientId") Long pacientId,
-                        @Param("terapeutId") Long terapeutId,
+        List<Programare> findLatestAppointments(@Param("pacientKeycloakId") String pacientKeycloakId,
+                        @Param("terapeutKeycloakId") String terapeutKeycloakId,
                         PageRequest pageable);
 
         // gaseste sedintele finalizate fara jurnal
-        @Query("SELECT p FROM Programare p WHERE p.pacientId = :pacientId AND p.status = :status AND p.areJurnal = false ORDER BY p.data DESC")
-        List<Programare> findByPacientIdAndStatusAndAreJurnalFalseOrderByDataDesc(@Param("pacientId") Long pacientId,
+        @Query("SELECT p FROM Programare p WHERE p.pacientKeycloakId = :pacientKeycloakId AND p.status = :status AND p.areJurnal = false ORDER BY p.data DESC")
+        List<Programare> findByPacientKeycloakIdAndStatusAndAreJurnalFalseOrderByDataDesc(@Param("pacientKeycloakId") String pacientKeycloakId,
                         @Param("status") StatusProgramare status);
 
         // gaseste toate programarile unui pacient, ordonate descrescator dupa data si ora
-        List<Programare> findAllByPacientIdOrderByDataDescOraInceputDesc(Long pacientId);
+        List<Programare> findAllByPacientKeycloakIdOrderByDataDescOraInceputDesc(String pacientKeycloakId);
 
         // pentru REMINDERE - gaseste programarile programate intr-o fereastra de timp
         @Query("SELECT p FROM Programare p WHERE p.status = 'PROGRAMATA' " +
@@ -98,26 +97,26 @@ public interface ProgramareRepository extends JpaRepository<Programare, Long> {
                         @Param("oraEnd") LocalTime oraEnd);
 
         // admin cancel - gaseste programarile viitoare programate ale unui terapeut
-        @Query("SELECT p FROM Programare p WHERE p.terapeutId = :terapeutId " +
+        @Query("SELECT p FROM Programare p WHERE p.terapeutKeycloakId = :terapeutKeycloakId " +
                         "AND p.status = :status " +
                         "AND (p.data > :data OR (p.data = :data AND p.oraInceput > :ora))")
-        List<Programare> findByTerapeutIdAndStatusAndDataGreaterThanEqual(
-                        @Param("terapeutId") Long terapeutId, @Param("status") StatusProgramare status, @Param("data") LocalDate data, @Param("ora") LocalTime ora);
+        List<Programare> findByTerapeutKeycloakIdAndStatusAndDataGreaterThanEqual(
+                        @Param("terapeutKeycloakId") String terapeutKeycloakId, @Param("status") StatusProgramare status, @Param("data") LocalDate data, @Param("ora") LocalTime ora);
 
         // admin cancel - gaseste programarile viitoare programate ale unui pacient
-        @Query("SELECT p FROM Programare p WHERE p.pacientId = :pacientId " +
+        @Query("SELECT p FROM Programare p WHERE p.pacientKeycloakId = :pacientKeycloakId " +
                         "AND p.status = :status " +
                         "AND (p.data > :data OR (p.data = :data AND p.oraInceput > :ora))")
-        List<Programare> findByPacientIdAndStatusAndDataGreaterThanEqual(
-                        @Param("pacientId") Long pacientId, @Param("status") StatusProgramare status, @Param("data") LocalDate data, @Param("ora") LocalTime ora);
+        List<Programare> findByPacientKeycloakIdAndStatusAndDataGreaterThanEqual(
+                        @Param("pacientKeycloakId") String pacientKeycloakId, @Param("status") StatusProgramare status, @Param("data") LocalDate data, @Param("ora") LocalTime ora);
 
         // schimbare terapeut - gaseste programarile viitoare dintre un pacient si un terapeut 
-        @Query("SELECT p FROM Programare p WHERE p.pacientId = :pacientId " +
-                        "AND p.terapeutId = :terapeutId " +
+        @Query("SELECT p FROM Programare p WHERE p.pacientKeycloakId = :pacientKeycloakId " +
+                        "AND p.terapeutKeycloakId = :terapeutKeycloakId " +
                         "AND p.status = :status " +
                         "AND (p.data > :data OR (p.data = :data AND p.oraInceput > :ora))")
-        List<Programare> findByPacientIdAndTerapeutIdAndStatusAndDataGreaterThanEqual(
-                        @Param("pacientId") Long pacientId, @Param("terapeutId") Long terapeutId, @Param("status") StatusProgramare status, @Param("data") LocalDate data, @Param("ora") LocalTime ora);
+        List<Programare> findByPacientKeycloakIdAndTerapeutKeycloakIdAndStatusAndDataGreaterThanEqual(
+                        @Param("pacientKeycloakId") String pacientKeycloakId, @Param("terapeutKeycloakId") String terapeutKeycloakId, @Param("status") StatusProgramare status, @Param("data") LocalDate data, @Param("ora") LocalTime ora);
 
         // ----------------- STATISTICI -----------------
 
@@ -161,9 +160,9 @@ public interface ProgramareRepository extends JpaRepository<Programare, Long> {
 
         // 5. Pacienti noi pe luna per locatie
         @Query("SELECT new com.example.programari_service.dto.statistici.StatisticiPacientiNoiDTO(" +
-                "p.locatieId, '', YEAR(p.data), MONTH(p.data), COUNT(DISTINCT p.pacientId)) " +
+                "p.locatieId, '', YEAR(p.data), MONTH(p.data), COUNT(DISTINCT p.pacientKeycloakId)) " +
                 "FROM Programare p " +
-                "WHERE p.data = (SELECT MIN(p2.data) FROM Programare p2 WHERE p2.pacientId = p.pacientId) " +
+                "WHERE p.data = (SELECT MIN(p2.data) FROM Programare p2 WHERE p2.pacientKeycloakId = p.pacientKeycloakId) " +
                 "AND p.data BETWEEN :startDate AND :endDate " +
                 "GROUP BY p.locatieId, YEAR(p.data), MONTH(p.data)")
         List<com.example.programari_service.dto.statistici.StatisticiPacientiNoiDTO> countNewPatientsByLocatieIdAndMonth(
@@ -171,11 +170,11 @@ public interface ProgramareRepository extends JpaRepository<Programare, Long> {
 
         // 6. Programari per terapeut
         @Query("SELECT new com.example.programari_service.dto.statistici.StatisticiTerapeutDTO(" +
-                "p.terapeutId, '', COUNT(p)) " +
+                "p.terapeutKeycloakId, '', COUNT(p)) " +
                 "FROM Programare p " +
                 "WHERE p.status <> :status " +
                 "AND p.data BETWEEN :startDate AND :endDate " +
-                "GROUP BY p.terapeutId")
-        List<com.example.programari_service.dto.statistici.StatisticiTerapeutDTO> countByTerapeutIdAndMonth(
+                "GROUP BY p.terapeutKeycloakId")
+        List<com.example.programari_service.dto.statistici.StatisticiTerapeutDTO> countByTerapeutKeycloakIdAndMonth(
                 @Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate, @Param("status") StatusProgramare status);
 }

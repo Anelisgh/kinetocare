@@ -17,9 +17,9 @@ public class RelatiiController {
 
     @GetMapping("/status")
     public ResponseEntity<Boolean> getRelatieStatus(
-            @RequestParam Long pacientId,
-            @RequestParam Long terapeutId) {
-        boolean isActiva = relatieService.isRelatieActiva(pacientId, terapeutId);
+            @RequestParam String pacientKeycloakId,
+            @RequestParam String terapeutKeycloakId) {
+        boolean isActiva = relatieService.isRelatieActivaByKeycloak(pacientKeycloakId, terapeutKeycloakId);
         return ResponseEntity.ok(isActiva);
     }
 
@@ -34,10 +34,10 @@ public class RelatiiController {
     }
 
     @GetMapping("/parteneri-activi")
-    public ResponseEntity<java.util.List<Long>> getParteneriActivi(
-            @RequestParam Long userId,
+    public ResponseEntity<java.util.List<String>> getParteneriActivi(
+            @RequestParam String userKeycloakId,
             @RequestParam String tipUser) {
-        return ResponseEntity.ok(relatieService.getParteneriActivi(userId, tipUser));
+        return ResponseEntity.ok(relatieService.getParteneriActiviKeycloak(userKeycloakId, tipUser));
     }
 
     // Endpoint destinat api-gateway (ChatGatewayService) — returneaza keycloakId-urile

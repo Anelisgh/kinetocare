@@ -57,10 +57,10 @@ public class ProgramareService {
 
     // ia prima programare viitoare a pacientului
     @Transactional(readOnly = true)
-    public Optional<UrmatoareaProgramareDTO> getUrmatoareaProgramare(Long pacientId) {
+    public Optional<UrmatoareaProgramareDTO> getUrmatoareaProgramare(String pacientKeycloakId) {
         // cerem pagina 0 cu 1 element (LIMIT 1)
         List<Programare> lista = programareRepository.gasesteUrmatoareaProgramare(
-                pacientId,
+                pacientKeycloakId,
                 LocalDate.now(),
                 LocalTime.now(),
                 PageRequest.of(0, 1));
@@ -76,19 +76,19 @@ public class ProgramareService {
     public Programare creeazaProgramare(CreeazaProgramareRequest request) {
         // Calculam daca e prima intalnire
         long istoric = programareRepository.countProgramariActiveSauFinalizate(
-                request.pacientId(),
-                request.terapeutId());
+                request.pacientKeycloakId(),
+                request.terapeutKeycloakId());
         boolean isPrimaIntalnire = (istoric == 0);
 
         // Determinam serviciul corect
         DetaliiServiciuDTO serviciuDeAplicat = determinaServiciulCorect(
-                request.pacientId());
+                request.pacientKeycloakId());
         // Calculam ora de sfarsit pe baza serviciului det automat
         LocalTime oraSfarsit = request.oraInceput().plusMinutes(serviciuDeAplicat.durataMinute());
 
         // Verificam suprapuneri
         boolean eOcupat = programareRepository.existaSuprapunere(
-                request.terapeutId(),
+                request.terapeutKeycloakId(),
                 request.data(),
                 request.oraInceput(),
                 oraSfarsit);
@@ -120,12 +120,12 @@ public class ProgramareService {
     }
 
     // anuleaza o programare de catre pacient
-    public void anuleazaProgramare(Long programareId, Long pacientId) {
+    public void anuleazaProgramare(Long programareId, String pacientKeycloakId) {
         Programare programare = programareRepository.findById(programareId)
                 .orElseThrow(() -> new ResourceNotFoundException("Programarea nu există"));
 
         // verifica ownership
-        if (!programare.getPacientId().equals(pacientId)) {
+        if (!programare.getPacientKeycloakId().equals(pacientKeycloakId)) {
             throw new ForbiddenOperationException("Nu aveți dreptul să anulați această programare");
         }
         // verifica daca programarea este programata
@@ -143,7 +143,7 @@ public class ProgramareService {
     }
 
     // marcheaza neprezentarea de catre terapeut
-    public void marcheazaNeprezentare(Long programareId, Long terapeutId, boolean isAdmin) {
+    public void marcheazaNeprezentare(Long programareId, String terapeutKeycloakId, boolean isAdmin) {
         Programare programare = programareRepository.findById(programareId)
                 .orElseThrow(() -> new ResourceNotFoundException("Programarea nu există"));
 
@@ -151,7 +151,7 @@ public class ProgramareService {
         if (!isAdmin) {
             // daca nu e admin, aplicam restrictia -> terapeutul trebuie sa fie cel din
             // programare
-            if (terapeutId == null || !programare.getTerapeutId().equals(terapeutId)) {
+            if (terapeutKeycloakId == null || !programare.getTerapeutKeycloakId().equals(terapeutKeycloakId)) {
                 throw new ForbiddenOperationException("Nu aveți dreptul să modificați această programare (nu vă aparține).");
             }
         }
@@ -170,9 +170,9 @@ public class ProgramareService {
     }
 
     // logica serviciului corect pentru programari
-    public DetaliiServiciuDTO determinaServiciulCorect(Long pacientId) {
+    public DetaliiServiciuDTO determinaServiciulCorect(String pacientKeycloakId) {
         // cautam ultima evaluare a pacientului
-        Optional<Evaluare> evaluareOpt = evaluareRepository.findFirstByPacientIdOrderByDataDesc(pacientId);
+        Optional<Evaluare> evaluareOpt = evaluareRepository.findFirstByPacientKeycloakIdOrderByDataDesc(pacientKeycloakId);
 
         // daca nu exista nici o evaluare -> EVALUARE INITIALA (Specific Name)
         if (evaluareOpt.isEmpty()) {
@@ -183,7 +183,7 @@ public class ProgramareService {
 
         // numaram toate sedintele finalizate de pacient de la data evalaurii
         long sedinteEfectuateTotal = programareRepository.countSedintePacientDupaData(
-                pacientId,
+                pacientKeycloakId,
                 evaluare.getData());
 
         // daca a efectuat toate sedintele recomandate in evaluare -> S-a terminat pachetul -> REEVALUARE
@@ -197,7 +197,11 @@ public class ProgramareService {
 
     // calculam sloturile orare libere
     @Transactional(readOnly = true)
-    public List<LocalTime> getSloturiDisponibile(Long terapeutId, Long locatieId, LocalDate data, Long serviciuId) {
+    public List<LocalTime> getSloturiDisponibile(String terapeutKeycloakId, Long locatieId, LocalDate data, Long serviciuId) {
+        // We need numeric terapeutId for terapeutiClient
+        Map<String, Object> terapeutMap = terapeutiClient.getTerapeutByKeycloakId(terapeutKeycloakId);
+        Long terapeutId = ((Number) terapeutMap.get("id")).longValue();
+
         // verificam concediul
         Boolean inConcediu = terapeutiClient.checkConcediu(terapeutId, data.toString());
         if (Boolean.TRUE.equals(inConcediu)) {
@@ -222,8 +226,8 @@ public class ProgramareService {
         int durataMinute = serviciu.durataMinute();
 
         // obtinem lista de programari existente (ocupate)
-        List<Programare> programariExistente = programareRepository.findByTerapeutIdAndDataAndStatus(
-                terapeutId, data, StatusProgramare.PROGRAMATA);
+        List<Programare> programariExistente = programareRepository.findByTerapeutKeycloakIdAndDataAndStatus(
+                terapeutKeycloakId, data, StatusProgramare.PROGRAMATA);
 
         // generam sloturile libere
         List<LocalTime> sloturiLibere = new ArrayList<>();
@@ -269,9 +273,9 @@ public class ProgramareService {
 
     // calendarul vizibil terapeutului
     @Transactional(readOnly = true)
-    public List<CalendarProgramareDTO> getCalendarAppointments(Long terapeutId, LocalDate start, LocalDate end, Long locatieId) {
+    public List<CalendarProgramareDTO> getCalendarAppointments(String terapeutKeycloakId, LocalDate start, LocalDate end, Long locatieId) {
         // luam programarile din baza de date
-        List<Programare> programari = programareRepository.findAllByTerapeutIdAndDataBetween(terapeutId, start, end);
+        List<Programare> programari = programareRepository.findAllByTerapeutKeycloakIdAndDataBetween(terapeutKeycloakId, start, end);
 
         // filtrarea logica
         // pastram programarea daca:
@@ -296,8 +300,8 @@ public class ProgramareService {
             String telefonPacient = "-";
 
             try {
-                // pacient_id = user.id, deci folosim user-service
-                UserDisplayCalendarDTO userDTO = userClient.getUserById(p.getPacientId());
+                // pacient_keycloak_id -> user-service
+                UserDisplayCalendarDTO userDTO = userClient.getUserByKeycloakId(p.getPacientKeycloakId());
                 if (userDTO != null) {
                     numePacient = userDTO.nume() + " " + userDTO.prenume();
                     telefonPacient = userDTO.telefon();
@@ -310,12 +314,12 @@ public class ProgramareService {
     }
 
     // anulare de terapeut
-    public void anuleazaProgramareTerapeut(Long programareId, Long terapeutId) {
+    public void anuleazaProgramareTerapeut(Long programareId, String terapeutKeycloakId) {
         Programare programare = programareRepository.findById(programareId)
                 .orElseThrow(() -> new ResourceNotFoundException("Programarea nu există"));
 
         // Terapeutul trebuie sa fie cel din programare
-        if (!programare.getTerapeutId().equals(terapeutId)) {
+        if (!programare.getTerapeutKeycloakId().equals(terapeutKeycloakId)) {
             throw new ForbiddenOperationException("Nu aveți dreptul să anulați această programare (nu vă aparține).");
         }
 
@@ -358,18 +362,18 @@ public class ProgramareService {
     // trimite REMINDER_JURNAL si verifica daca pacientul a terminat pachetul (REEVALUARE_RECOMANDATA)
     private void trimiteNotificariDupaFinalizare(Programare p) {
         // asiguram relatia pacient-terapeut la prima programare finalizata
-        relatieService.asiguraRelatieActiva(p.getPacientId(), p.getTerapeutId(), p.getData());
+        relatieService.asiguraRelatieActiva(p.getPacientKeycloakId(), p.getTerapeutKeycloakId(), p.getData());
 
         // reminder jurnal - pacientul trebuie sa completeze jurnalul
         notificarePublisher.reminderJurnal(p);
 
         // verificam daca pacientul a terminat toate sedintele din pachet
         // refolosim aceeasi logica din determinaServiciulCorect
-        evaluareRepository.findFirstByPacientIdOrderByDataDesc(p.getPacientId())
+        evaluareRepository.findFirstByPacientKeycloakIdOrderByDataDesc(p.getPacientKeycloakId())
                 .ifPresent(evaluare -> {
                     if (evaluare.getSedinteRecomandate() != null) {
                         long sedinteEfectuate = programareRepository.countSedintePacientDupaData(
-                                p.getPacientId(), evaluare.getData());
+                                p.getPacientKeycloakId(), evaluare.getData());
                         if (sedinteEfectuate == evaluare.getSedinteRecomandate()) {
                             notificarePublisher.reevaluareRecomandata(p);
                         }
@@ -379,13 +383,13 @@ public class ProgramareService {
 
     // sedinte finalizate fara jurnal
     @Transactional(readOnly = true)
-    public List<ProgramareJurnalDTO> getProgramariFaraJurnal(Long pacientId) {
-        List<Programare> programari = programareRepository.findByPacientIdAndStatusAndAreJurnalFalseOrderByDataDesc(
-                pacientId, StatusProgramare.FINALIZATA);
+    public List<ProgramareJurnalDTO> getProgramariFaraJurnal(String pacientKeycloakId) {
+        List<Programare> programari = programareRepository.findByPacientKeycloakIdAndStatusAndAreJurnalFalseOrderByDataDesc(
+                pacientKeycloakId, StatusProgramare.FINALIZATA);
 
         return programari.stream().map(p -> {
-            String numeTerapeut = getNumeTerapeut(p.getTerapeutId());
-            String terapeutKeycloakId = getKeycloakIdTerapeut(p.getTerapeutId());
+            String numeTerapeut = getNumeTerapeut(p.getTerapeutKeycloakId());
+            String terapeutKeycloakId = p.getTerapeutKeycloakId();
             String numeLocatie = getNumeLocatie(p.getLocatieId());
             return programareMapper.toProgramareJurnalDTO(p, numeTerapeut, terapeutKeycloakId, numeLocatie);
         }).toList();
@@ -396,6 +400,9 @@ public class ProgramareService {
         Programare p = programareRepository.findById(programareId).orElseThrow();
         p.setAreJurnal(true);
         programareRepository.save(p);
+
+        // Notificam terapeutul
+        notificarePublisher.jurnalCompletat(p.getTerapeutKeycloakId(), p.getPacientKeycloakId(), p.getId());
     }
 
     // detaliile complete
@@ -404,8 +411,8 @@ public class ProgramareService {
         Programare p = programareRepository.findById(programareId)
                 .orElseThrow(() -> new ResourceNotFoundException("Programarea nu a fost găsită"));
 
-        String numeTerapeut = getNumeTerapeut(p.getTerapeutId());
-        String terapeutKeycloakId = getKeycloakIdTerapeut(p.getTerapeutId());
+        String numeTerapeut = getNumeTerapeut(p.getTerapeutKeycloakId());
+        String terapeutKeycloakId = p.getTerapeutKeycloakId();
         String numeLocatie = getNumeLocatie(p.getLocatieId());
 
         return programareMapper.toProgramareJurnalDTO(p, numeTerapeut, terapeutKeycloakId, numeLocatie);
@@ -421,8 +428,8 @@ public class ProgramareService {
         List<Programare> programari = programareRepository.findAllById(programareIds);
 
         return programari.stream().map(p -> {
-            String numeTerapeut = getNumeTerapeut(p.getTerapeutId());
-            String terapeutKeycloakId = getKeycloakIdTerapeut(p.getTerapeutId());
+            String numeTerapeut = getNumeTerapeut(p.getTerapeutKeycloakId());
+            String terapeutKeycloakId = p.getTerapeutKeycloakId();
             String numeLocatie = getNumeLocatie(p.getLocatieId());
             return programareMapper.toProgramareJurnalDTO(p, numeTerapeut, terapeutKeycloakId, numeLocatie);
         }).toList();
@@ -430,15 +437,15 @@ public class ProgramareService {
 
     // returneaza istoricul complet al programarilor unui pacient
     @Transactional(readOnly = true)
-    public List<IstoricProgramareDTO> getIstoricPacient(Long pacientId) {
-        List<Programare> programari = programareRepository.findAllByPacientIdOrderByDataDescOraInceputDesc(pacientId);
+    public List<IstoricProgramareDTO> getIstoricPacient(String pacientKeycloakId) {
+        List<Programare> programari = programareRepository.findAllByPacientKeycloakIdOrderByDataDescOraInceputDesc(pacientKeycloakId);
 
         // Fetch journal history
         List<JurnalIstoricDTO> jurnale = new ArrayList<>();
         try {
-            jurnale = pacientiClient.getIstoricJurnal(pacientId);
+            jurnale = pacientiClient.getIstoricJurnal(pacientKeycloakId);
         } catch (Exception e) {
-            log.warn("Nu s-a putut prelua istoricul jurnalului pentru pacientul {}: {}", pacientId, e.getMessage());
+            log.warn("Nu s-a putut prelua istoricul jurnalului pentru pacientul {}: {}", pacientKeycloakId, e.getMessage());
         }
 
         // Map journals by programareId
@@ -447,7 +454,7 @@ public class ProgramareService {
                 .collect(Collectors.toMap(JurnalIstoricDTO::programareId, Function.identity(), (existing, replacement) -> existing));
 
         return programari.stream().map(p -> {
-            String numeTerapeut = getNumeTerapeut(p.getTerapeutId());
+            String numeTerapeut = getNumeTerapeut(p.getTerapeutKeycloakId());
             String numeLocatie = getNumeLocatie(p.getLocatieId());
 
             String serviciuRecomandat = null;
@@ -485,9 +492,8 @@ public class ProgramareService {
     }
 
     // HELPER: obtine numele complet al terapeutului dupa terapeutId
-    private String getNumeTerapeut(Long terapeutId) {
+    private String getNumeTerapeut(String terapeutKeycloakId) {
         try {
-            String terapeutKeycloakId = terapeutiClient.getKeycloakIdByTerapeutId(terapeutId);
             if (terapeutKeycloakId != null) {
                 UserDisplayCalendarDTO userTerapeut = userClient.getUserByKeycloakId(terapeutKeycloakId);
                 if (userTerapeut != null) {
@@ -495,7 +501,7 @@ public class ProgramareService {
                 }
             }
         } catch (Exception e) {
-            log.error("Nu s-a putut prelua numele terapeutului {}: {}", terapeutId, e.getMessage());
+            log.error("Nu s-a putut prelua numele terapeutului {}: {}", terapeutKeycloakId, e.getMessage());
         }
         return "Terapeut";
     }
@@ -514,9 +520,9 @@ public class ProgramareService {
     }
     // Calculeaza situatia curenta a pacientului (Diagnostic + Progres Sedinte)
     @Transactional(readOnly = true)
-    public SituatiePacientDTO getSituatiePacient(Long pacientId) {
+    public SituatiePacientDTO getSituatiePacient(String pacientKeycloakId) {
         // 1. Cautam ultima evaluare
-        Optional<Evaluare> evaluareOpt = evaluareRepository.findFirstByPacientIdOrderByDataDesc(pacientId);
+        Optional<Evaluare> evaluareOpt = evaluareRepository.findFirstByPacientKeycloakIdOrderByDataDesc(pacientKeycloakId);
 
         if (evaluareOpt.isEmpty()) {
             return evaluareMapper.toEmptySituatiePacientDTO();
@@ -526,7 +532,7 @@ public class ProgramareService {
 
         // 2. Numaram sedintele efectuate de la data evaluarii
         long sedinteEfectuate = programareRepository.countSedintePacientDupaData(
-                pacientId,
+                pacientKeycloakId,
                 evaluare.getData());
 
         return evaluareMapper.toSituatiePacientDTO(evaluare, sedinteEfectuate);
@@ -535,19 +541,11 @@ public class ProgramareService {
     // anulare masiva cand pacientul schimba terapeutul preferat
     @Transactional
     public void anuleazaProgramariVechi(String pacientKeycloakId, String terapeutKeycloakId) {
-        // resolve pacientKeycloakId -> pacientId (care este de fapt user id in db)
-        UserDisplayCalendarDTO user = userClient.getUserByKeycloakId(pacientKeycloakId);
-        Long pacientId = user.id();
-
-        // resolve keycloakId -> terapeutId
-        Map<String, Object> terapeut = terapeutiClient.getTerapeutByKeycloakId(terapeutKeycloakId);
-        Long terapeutId = ((Number) terapeut.get("id")).longValue();
-
         // DEZACTIVAM Relația activă curentă cu fostul terapeut, forțându-l să ajungă în "arhivă"
-        relatieService.dezactiveazaRelatiaActiva(pacientId);
+        relatieService.dezactiveazaRelatiaActiva(pacientKeycloakId);
 
-        List<Programare> programari = programareRepository.findByPacientIdAndTerapeutIdAndStatusAndDataGreaterThanEqual(
-                pacientId, terapeutId, StatusProgramare.PROGRAMATA, LocalDate.now(), LocalTime.now());
+        List<Programare> programari = programareRepository.findByPacientKeycloakIdAndTerapeutKeycloakIdAndStatusAndDataGreaterThanEqual(
+                pacientKeycloakId, terapeutKeycloakId, StatusProgramare.PROGRAMATA, LocalDate.now(), LocalTime.now());
 
         if(!programari.isEmpty()) {
             programari.forEach(p -> {
@@ -556,7 +554,7 @@ public class ProgramareService {
                 p.setMotivAnulare(MotivAnulare.ANULAT_DE_PACIENT);
             });
             programareRepository.saveAll(programari);
-            log.info("S-au anulat automat {} programari viitoare intre pacientul {} si fostul terapeut {}", programari.size(), pacientId, terapeutId);
+            log.info("S-au anulat automat {} programari viitoare intre pacientul {} si fostul terapeut {}", programari.size(), pacientKeycloakId, terapeutKeycloakId);
 
             // Optional: notificari
             programari.forEach(notificarePublisher::programareAnulataDePacient);
@@ -568,13 +566,9 @@ public class ProgramareService {
     // anuleaza toate programarile viitoare ale unui terapeut (keycloakId -> terapeutId -> cancel)
     @Transactional
     public AdminCancelResultDTO anuleazaProgramariAdminByTerapeut(String keycloakId) {
-        // resolve keycloakId -> terapeutId
-        Map<String, Object> terapeut = terapeutiClient.getTerapeutByKeycloakId(keycloakId);
-        Long terapeutId = ((Number) terapeut.get("id")).longValue();
-
         int count = anuleazaProgramariViitoare(
-                programareRepository.findByTerapeutIdAndStatusAndDataGreaterThanEqual(
-                        terapeutId, StatusProgramare.PROGRAMATA, LocalDate.now(), LocalTime.now()));
+                programareRepository.findByTerapeutKeycloakIdAndStatusAndDataGreaterThanEqual(
+                        keycloakId, StatusProgramare.PROGRAMATA, LocalDate.now(), LocalTime.now()));
         
         return new AdminCancelResultDTO(count, "Au fost anulate " + count + " programări viitoare pentru terapeut.");
     }
@@ -582,13 +576,9 @@ public class ProgramareService {
     // anuleaza toate programarile viitoare ale unui pacient (keycloakId -> pacientId -> cancel)
     @Transactional
     public AdminCancelResultDTO anuleazaProgramariAdminByPacient(String keycloakId) {
-        // resolve keycloakId -> pacientId
-        PacientKeycloakDTO pacient = pacientiClient.getByKeycloakId(keycloakId);
-        Long pacientId = pacient.id();
-
         int count = anuleazaProgramariViitoare(
-                programareRepository.findByPacientIdAndStatusAndDataGreaterThanEqual(
-                        pacientId, StatusProgramare.PROGRAMATA, LocalDate.now(), LocalTime.now()));
+                programareRepository.findByPacientKeycloakIdAndStatusAndDataGreaterThanEqual(
+                        keycloakId, StatusProgramare.PROGRAMATA, LocalDate.now(), LocalTime.now()));
 
         return new AdminCancelResultDTO(count, "Au fost anulate " + count + " programări viitoare pentru pacient.");
     }
@@ -602,15 +592,5 @@ public class ProgramareService {
         programareRepository.saveAll(programari);
         log.info("Admin: anulate {} programări viitoare", programari.size());
         return programari.size();
-    }
-
-    // helper: terapeutId (terapeuti-service) → keycloakId
-    private String getKeycloakIdTerapeut(Long terapeutId) {
-        try {
-            return terapeutiClient.getKeycloakIdByTerapeutId(terapeutId);
-        } catch (Exception e) {
-            log.warn("Nu s-a putut obtine keycloakId pentru terapeutId={}: {}", terapeutId, e.getMessage());
-            return null;
-        }
     }
 }

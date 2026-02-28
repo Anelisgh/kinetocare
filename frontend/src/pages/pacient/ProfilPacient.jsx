@@ -11,6 +11,7 @@ export default function ProfilPacient() {
     const [profile, setProfile] = useState(null);
     const [loading, setLoading] = useState(true);
     const [isEditing, setIsEditing] = useState(false);
+    const [saving, setSaving] = useState(false);
     const [locatii, setLocatii] = useState([]);
     const [formData, setFormData] = useState({
         nume: '',
@@ -25,7 +26,7 @@ export default function ProfilPacient() {
         orasPreferat: '',
         locatiePreferataId: '',
     });
-    const [error, setError] = useState(null);
+    const [errors, setErrors] = useState({});
     const [successMessage, setSuccessMessage] = useState('');
 
     useEffect(() => {
@@ -60,7 +61,7 @@ export default function ProfilPacient() {
             });
         } catch (error) {
             console.error('Eroare la încărcarea profilului:', error);
-            setError('Nu s-a putut încărca profilul. Încearcă din nou.');
+            setErrors({ submit: 'Nu s-a putut încărca profilul. Încearcă din nou.' });
         } finally {
             setLoading(false);
         }
@@ -68,6 +69,10 @@ export default function ProfilPacient() {
     // Handle form field changes
     const handleChange = (e) => {
         const { name, value } = e.target;
+
+        if (errors[name]) {
+            setErrors(prev => ({ ...prev, [name]: '' }));
+        }
 
         if (name === 'faceSport' && value === 'NU') {
             setFormData(prev => ({
@@ -85,12 +90,12 @@ export default function ProfilPacient() {
     // Handle form submission
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setError(null);
+        setErrors({});
         setSuccessMessage('');
 
-        // Validate CNP
+        // Validate CNP (front-end check)
         if (formData.cnp && !/^\d{13}$/.test(formData.cnp)) {
-            setError('CNP-ul trebuie să conțină exact 13 cifre.');
+            setErrors(prev => ({ ...prev, cnp: 'CNP-ul trebuie să conțină exact 13 cifre.' }));
             return;
         }
 
@@ -134,6 +139,7 @@ export default function ProfilPacient() {
 
         // Update profile
         try {
+            setSaving(true);
             const updatedProfile = await profileService.updateProfile(dataToSend);
             setProfile(updatedProfile);
 
@@ -151,7 +157,16 @@ export default function ProfilPacient() {
             setTimeout(() => setSuccessMessage(''), 3000);
         } catch (error) {
             console.error('Eroare la actualizare:', error);
-            setError('Nu s-a putut actualiza profilul. Verifică datele și încearcă din nou.');
+            if (error.eroriCampuri) {
+                setErrors({
+                    ...error.eroriCampuri,
+                    submit: error.message
+                });
+            } else {
+                setErrors({ submit: error.message || 'Nu s-a putut actualiza profilul. Verifică datele și încearcă din nou.' });
+            }
+        } finally {
+            setSaving(false);
         }
     };
 
@@ -175,7 +190,7 @@ export default function ProfilPacient() {
             locatiePreferataId: profile.locatiePreferataId ? String(profile.locatiePreferataId) : '',
         });
         setIsEditing(false);
-        setError(null);
+        setErrors({});
     };
 
     if (loading) {
@@ -214,8 +229,8 @@ export default function ProfilPacient() {
             )}
 
             {/* Error message */}
-            {error && (
-                <div className="error-message">{error}</div>
+            {errors.submit && (
+                <div className="error-message">{errors.submit}</div>
             )}
 
             {/* Edit mode */}
@@ -228,13 +243,14 @@ export default function ProfilPacient() {
                         onChange={handleChange}
                         locatii={locatii}
                         assignedTerapeut={profile.terapeutDetalii}
+                        errors={errors}
                     />
 
                     <div className="form-actions">
-                        <button type="submit" className="btn-save">
-                            Salvează
+                        <button type="submit" className="btn-save" disabled={saving}>
+                            {saving ? 'Se salvează...' : 'Salvează'}
                         </button>
-                        <button type="button" className="btn-cancel" onClick={handleCancel}>
+                        <button type="button" className="btn-cancel" onClick={handleCancel} disabled={saving}>
                             Anulează
                         </button>
                     </div>

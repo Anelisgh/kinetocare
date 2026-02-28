@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { profileService } from '../../services/profileService';
 import { programariService } from '../../services/programariService';
 import '../../styles/pacientiTerapeut.css';
 
@@ -9,7 +8,6 @@ const PacientiTerapeut = () => {
   const { userInfo } = useAuth();
   const navigate = useNavigate();
 
-  const [terapeutId, setTerapeutId] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -21,13 +19,8 @@ const PacientiTerapeut = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // 1. Profil terapeut
-        const profile = await profileService.getProfile();
-        const tid = profile.terapeutId || profile.id;
-        setTerapeutId(tid);
-
-        // 2. Lista pacienti
-        const lista = await programariService.getListaPacienti(tid);
+        // keycloakId-ul terapeutului e extras din JWT pe backend
+        const lista = await programariService.getListaPacienti();
         setPacientiActivi(lista.activi || []);
         setPacientiArhivati(lista.arhivati || []);
       } catch (err) {
