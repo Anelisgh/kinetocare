@@ -43,7 +43,9 @@ public interface ProgramareRepository extends JpaRepository<Programare, Long> {
                         StatusProgramare statusProgramare);
 
         // numara sedintele finalizate dupa o anumita data
-        @Query("SELECT COUNT(p) FROM Programare p WHERE p.pacientKeycloakId = :pId AND p.terapeutKeycloakId = :tId AND p.status = 'FINALIZATA' AND p.data > :dataRef")
+        @Query("SELECT COUNT(p) FROM Programare p " +
+               "WHERE p.pacientKeycloakId = :pId AND p.terapeutKeycloakId = :tId " +
+               "AND p.status = 'FINALIZATA' AND p.areEvaluare = false AND p.data >= :dataRef")
         long countSedinteDupaData(String pId, String tId, LocalDate dataRef);
 
         // numara programarile active sau finalizate
@@ -54,7 +56,8 @@ public interface ProgramareRepository extends JpaRepository<Programare, Long> {
         @Query("SELECT COUNT(p) FROM Programare p " +
                         "WHERE p.pacientKeycloakId = :pId " +
                         "AND p.status = 'FINALIZATA' " +
-                        "AND p.data > :dataRef")
+                        "AND p.areEvaluare = false " + // excludem evaluarea propriu-zisa
+                        "AND p.data >= :dataRef")
         long countSedintePacientDupaData(@Param("pId") String pId, @Param("dataRef") LocalDate dataRef);
 
         // extrage toate programarile unui terapeut intr-un interval de timp

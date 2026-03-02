@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { profileService } from '../../services/profileService';
 
@@ -9,7 +10,8 @@ import '../../styles/profil.css';
 
 // Pagina profilului terapeutului -> afiseaza profilul terapeutului cu date personale, disponibilitatea si concediile
 export default function ProfilTerapeut() {
-  const { userInfo } = useAuth();
+  const { userInfo, logout } = useAuth();
+  const navigate = useNavigate();
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
@@ -70,7 +72,7 @@ export default function ProfilTerapeut() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError(null);
+    setErrors({});
     setSuccessMessage('');
 
     try {
@@ -108,7 +110,12 @@ export default function ProfilTerapeut() {
       pozaProfil: profile.pozaProfil || '',
     });
     setIsEditing(false);
-    setError(null);
+    setErrors({});
+  };
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
   };
 
   if (loading) {
@@ -130,11 +137,16 @@ export default function ProfilTerapeut() {
   return (
     <div className="profil-container">
       <div className="profil-header">
-        <h1>Profil Terapeut</h1>
+        <h1>Profil</h1>
         {!isEditing && (
-          <button className="btn-edit" onClick={() => setIsEditing(true)}>
-            Editează Profilul
-          </button>
+          <div className="header-actions">
+            <button className="btn-edit" onClick={() => setIsEditing(true)}>
+              Editează Profilul
+            </button>
+            <button className="btn-logout-profile" onClick={handleLogout}>
+              Deconectare
+            </button>
+          </div>
         )}
       </div>
 

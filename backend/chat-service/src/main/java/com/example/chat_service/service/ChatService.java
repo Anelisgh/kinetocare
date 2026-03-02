@@ -7,7 +7,8 @@ import com.example.chat_service.dto.TrimitereMesajRequest;
 import com.example.chat_service.entity.Conversatie;
 import com.example.chat_service.entity.Mesaj;
 import com.example.chat_service.entity.TipExpeditor;
-import com.example.chat_service.exception.ResourceNotFoundException;
+import com.example.common.exception.ForbiddenOperationException;
+import com.example.common.exception.ResourceNotFoundException;
 import com.example.chat_service.mapper.ChatMapper;
 import com.example.chat_service.repository.ConversatieRepository;
 import com.example.chat_service.repository.MesajRepository;
@@ -101,7 +102,7 @@ public class ChatService {
         Boolean isActiva = programariClient.getRelatieStatusByKeycloak(pacientKeycloakId, terapeutKeycloakId);
         if (isActiva == null || !isActiva) {
             log.warn("BLOCARE: Relația pac={} ter={} este INACTIVĂ!", pacientKeycloakId, terapeutKeycloakId);
-            throw new com.example.chat_service.exception.ForbiddenOperationException(
+            throw new ForbiddenOperationException(
                     "Nu poți trimite mesaje într-o conversație arhivată.");
         }
 

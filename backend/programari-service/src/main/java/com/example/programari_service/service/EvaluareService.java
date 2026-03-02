@@ -2,7 +2,7 @@ package com.example.programari_service.service;
 
 import com.example.programari_service.client.UserClient;
 import com.example.programari_service.dto.*;
-import com.example.programari_service.exception.*;
+import com.example.common.exception.*;
 import com.example.programari_service.entity.Evaluare;
 import com.example.programari_service.entity.Programare;
 import com.example.programari_service.mapper.EvaluareMapper;

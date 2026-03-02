@@ -41,30 +41,36 @@ export default function Navbar() {
         {/* PACIENT */}
         {roles.includes('PACIENT') && (
           <>
-            <Link to="/pacient/programari">Programări</Link>
-            <Link to="/pacient/jurnal">Jurnal</Link>
-            <Link to="/pacient/profil">Profil</Link>
-            <Link to="/chat-pacient">Chat</Link>
+            <Link to="/pacient/homepage">🏠 Acasă</Link>
+            <Link to="/pacient/programari">📅 Programări</Link>
+            <Link to="/pacient/jurnal">📖 Jurnal</Link>
+            <Link to="/chat-pacient">💬 Mesaje</Link>
           </>
         )}
 
         {/* TERAPEUT */}
         {roles.includes('TERAPEUT') && (
           <>
-            <Link to="/terapeut/pacienti">Pacienți</Link>
-            <Link to="/terapeut/evaluari">Evaluari</Link>
-            <Link to="/terapeut/evolutii">Evolutii</Link>
-            <Link to="/terapeut/profil">Profil</Link>
-            <Link to="/chat-terapeut">Chat</Link>
+            <Link to="/terapeut/homepage">🏠 Acasă</Link>
+            <Link to="/terapeut/pacienti">👥 Pacienți</Link>
+            <Link to="/terapeut/evaluari">📝Evaluări</Link>
+            <Link to="/terapeut/evolutii">📈 Evoluții</Link>
+            <Link to="/chat-terapeut">💬 Mesaje</Link>
           </>
         )}
 
         {/* NOTIFICARI - vizibile pentru PACIENT si TERAPEUT */}
         {(roles.includes('PACIENT') || roles.includes('TERAPEUT')) && (
-          <NotificationBell />
+          <>
+            <NotificationBell />
+            {roles.includes('PACIENT') && <Link to="/pacient/profil">👤 Profil</Link>}
+            {roles.includes('TERAPEUT') && <Link to="/terapeut/profil">👤 Profil</Link>}
+          </>
         )}
 
-        <button className="nav-logout-btn" onClick={handleLogout}>Deconectare</button>
+        {roles.includes('ADMIN') && (
+          <button className="nav-logout-btn" onClick={handleLogout}>Deconectare</button>
+        )}
       </div>
     </nav>
   );

@@ -106,7 +106,7 @@ const FereastraChat = ({ conversatieActiva, userId, tipUser, stompClient, onMesa
   return (
     <div className="fereastra-chat">
       <div className="chat-header">
-        <h3>Conversație Activă</h3>
+        <h3>{conversatieActiva.numeDisplay || 'Conversație'}</h3>
       </div>
       
       <div className="chat-body">

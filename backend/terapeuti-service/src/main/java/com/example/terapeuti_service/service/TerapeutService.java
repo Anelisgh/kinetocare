@@ -2,8 +2,8 @@ package com.example.terapeuti_service.service;
 
 import com.example.terapeuti_service.dto.*;
 import com.example.terapeuti_service.entity.*;
-import com.example.terapeuti_service.exception.ResourceAlreadyExistsException;
-import com.example.terapeuti_service.exception.ResourceNotFoundException;
+import com.example.common.exception.ResourceAlreadyExistsException;
+import com.example.common.exception.ResourceNotFoundException;
 import com.example.terapeuti_service.mapper.*;
 import com.example.terapeuti_service.repository.*;
 import lombok.RequiredArgsConstructor;

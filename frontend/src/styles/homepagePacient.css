@@ -182,6 +182,26 @@
     position: relative;
 }
 
+.homepage-progress-message {
+    margin-top: 1rem;
+    padding: 0.75rem 1rem;
+    border-radius: var(--radius-md, 12px);
+    font-size: 0.875rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    border-left: 4px solid transparent;
+    animation: fadeIn 0.4s ease-out;
+}
+
+.homepage-progress-message.completed {
+    background: #f0fdf4;
+    color: #166534;
+    border: 1px solid #bbf7d0;
+    border-left-color: #22c55e;
+}
+
 /* Therapist Section - Styled for new layout */
 .homepage-therapist-content {
     width: 100%;

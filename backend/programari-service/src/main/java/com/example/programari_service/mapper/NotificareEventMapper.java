@@ -70,7 +70,7 @@ public interface NotificareEventMapper {
     @Mapping(target = "mesaj", constant = "Un pacient a completat jurnalul pentru o ședință.")
     @Mapping(target = "entitateLegataId", source = "programareId")
     @Mapping(target = "tipEntitateLegata", constant = "PROGRAMARE")
-    @Mapping(target = "urlActiune", expression = "java(\"/fisa-pacient/\" + pacientKeycloakId)")
+    @Mapping(target = "urlActiune", expression = "java(\"/terapeut/pacienti/\" + pacientKeycloakId)")
     NotificareEvent toJurnalCompletat(String pacientKeycloakId, Long programareId, String keycloakId);
 
     @Mapping(target = "tipNotificare", constant = "PROGRAMARE_ANULATA_DE_TERAPEUT")

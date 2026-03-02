@@ -12,7 +12,7 @@ import java.util.List;
 import com.example.servicii_service.dto.ServiciuAdminDTO;
 import com.example.servicii_service.entity.TipServiciu;
 import com.example.servicii_service.repository.TipServiciuRepository;
-import com.example.servicii_service.exception.ResourceNotFoundException;
+import com.example.common.exception.ResourceNotFoundException;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service

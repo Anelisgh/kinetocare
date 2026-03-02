@@ -5,7 +5,7 @@ import com.example.terapeuti_service.entity.Locatie;
 import com.example.terapeuti_service.mapper.LocatieMapper;
 import com.example.terapeuti_service.repository.LocatieRepository;
 import org.springframework.transaction.annotation.Transactional;
-import com.example.terapeuti_service.exception.ResourceNotFoundException;
+import com.example.common.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

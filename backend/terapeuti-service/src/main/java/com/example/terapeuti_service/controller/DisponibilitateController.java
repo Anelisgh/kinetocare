@@ -64,7 +64,7 @@ public class DisponibilitateController {
             @PathVariable Long locatieId,
             @PathVariable Integer zi) {
 
-        return disponibilitateRepository.findByTerapeutIdAndLocatieIdAndZiSaptamana(terapeutId, locatieId, zi)
+        return disponibilitateRepository.findByTerapeutIdAndLocatieIdAndZiSaptamanaAndActiveTrue(terapeutId, locatieId, zi)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }

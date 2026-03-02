@@ -6,7 +6,7 @@ import com.example.servicii_service.mapper.TipServiciuMapper;
 import com.example.servicii_service.repository.TipServiciuRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import com.example.servicii_service.exception.ResourceNotFoundException;
+import com.example.common.exception.ResourceNotFoundException;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;

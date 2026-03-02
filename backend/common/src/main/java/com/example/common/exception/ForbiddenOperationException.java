@@ -1,4 +1,4 @@
-package com.example.servicii_service.exception;
+package com.example.common.exception;
 
 public class ForbiddenOperationException extends RuntimeException {
     public ForbiddenOperationException(String message) {

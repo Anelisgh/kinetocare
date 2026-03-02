@@ -25,7 +25,7 @@ public class JurnalController {
     public ResponseEntity<Void> adaugaJurnal(@AuthenticationPrincipal Jwt jwt, @RequestBody JurnalRequestDTO request) {
         String keycloakId = jwt.getSubject();
         Long pacientId = pacientService.getPacientByKeycloakId(keycloakId).id();
-        jurnalService.adaugaJurnal(pacientId, request);
+        jurnalService.adaugaJurnal(pacientId, keycloakId, request);
         return ResponseEntity.ok().build();
     }
 
@@ -33,7 +33,7 @@ public class JurnalController {
     @PostMapping("/by-keycloak/{keycloakId}")
     public ResponseEntity<Void> adaugaJurnal(@PathVariable String keycloakId, @RequestBody JurnalRequestDTO request) {
         Long pacientId = pacientService.getPacientByKeycloakId(keycloakId).id();
-        jurnalService.adaugaJurnal(pacientId, request);
+        jurnalService.adaugaJurnal(pacientId, keycloakId, request);
         return ResponseEntity.ok().build();
     }
 

@@ -6,7 +6,7 @@ import com.example.notificari_service.mapper.NotificareMapper;
 import com.example.notificari_service.entity.Notificare;
 import com.example.notificari_service.entity.TipNotificare;
 import com.example.notificari_service.entity.TipUser;
-import com.example.notificari_service.exception.ResourceNotFoundException;
+import com.example.common.exception.ResourceNotFoundException;
 import com.example.notificari_service.repository.NotificareRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

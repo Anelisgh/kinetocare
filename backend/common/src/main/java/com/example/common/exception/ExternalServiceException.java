@@ -1,10 +1,9 @@
-package com.example.programari_service.exception;
+package com.example.common.exception;
 
 public class ExternalServiceException extends RuntimeException {
     public ExternalServiceException(String message) {
         super(message);
     }
-    
     public ExternalServiceException(String message, Throwable cause) {
         super(message, cause);
     }

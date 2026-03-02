@@ -16,7 +16,7 @@ public class NotificarePublisher {
 
     // cand pacientul completeaza jurnalul, notificam terapeutul
     // terapeutKeycloakId vine acum direct din ProgramareJurnalDTO (populat de programari-service)
-    public void jurnalCompletat(String terapeutKeycloakId, Long pacientId, Long programareId) {
+    public void jurnalCompletat(String terapeutKeycloakId, String pacientKeycloakId, Long programareId) {
         if (terapeutKeycloakId == null) {
             log.warn("Nu s-a putut trimite notificarea JURNAL_COMPLETAT: terapeutKeycloakId este null pt programareId={}", programareId);
             return;
@@ -29,7 +29,7 @@ public class NotificarePublisher {
                 .mesaj("Un pacient a completat jurnalul pentru o ședință.")
                 .entitateLegataId(programareId)
                 .tipEntitateLegata("PROGRAMARE")
-                .urlActiune("/fisa-pacient/" + pacientId)
+                .urlActiune("/terapeut/pacienti/" + pacientKeycloakId)
                 .build();
 
         try {

@@ -98,9 +98,9 @@ const PacientiTerapeut = () => {
           <div className="pacienti-grid">
             {filteredActivi.map(pacient => (
               <div
-                key={pacient.pacientId}
+                key={pacient.pacientKeycloakId}
                 className="pacient-card"
-                onClick={() => handlePatientClick(pacient.pacientId)}
+                onClick={() => handlePatientClick(pacient.pacientKeycloakId)}
               >
                 <div className="pacient-card-header">
                   <div className="pacient-avatar">
@@ -148,9 +148,9 @@ const PacientiTerapeut = () => {
             <div className="pacienti-grid arhivati">
               {filteredArhivati.map(pacient => (
                 <div
-                  key={pacient.pacientId}
+                  key={pacient.pacientKeycloakId}
                   className="pacient-card archived"
-                  onClick={() => handlePatientClick(pacient.pacientId)}
+                  onClick={() => handlePatientClick(pacient.pacientKeycloakId)}
                 >
                   <div className="pacient-card-header">
                     <div className="pacient-avatar archived">

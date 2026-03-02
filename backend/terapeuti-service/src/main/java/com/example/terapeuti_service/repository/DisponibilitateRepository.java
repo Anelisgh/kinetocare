@@ -35,8 +35,9 @@ public interface DisponibilitateRepository extends JpaRepository<Disponibilitate
     // returneaza disponibilitatile active ale terapeutilor dintr-o lista de id-uri
     List<DisponibilitateTerapeut> findByTerapeutIdInAndActiveTrue(List<Long> terapeutIds);
     // returneaza disponibilitatea pentru un terapeut cu o anumita locatie si o anumita zi a saptamanii
-    Optional<DisponibilitateTerapeut> findByTerapeutIdAndLocatieIdAndZiSaptamana(
+    Optional<DisponibilitateTerapeut> findByTerapeutIdAndLocatieIdAndZiSaptamanaAndActiveTrue(
             Long terapeutId, Long locatieId, Integer ziSaptamana);
+
 
 
     // [STATISTICI] Numara terapeuti activi (care au disponibilitate setata) per locatie

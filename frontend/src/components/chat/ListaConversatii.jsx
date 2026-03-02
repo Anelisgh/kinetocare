@@ -4,11 +4,13 @@ import '../../styles/chat.css'; // O să creăm niște stiluri simple
 const ListaConversatii = ({ conversatii, conversatieActivaId, peSelectieConversatie, userId, tipUser, numeMap = {}, arhivatiIds = [] }) => {
 
   const obtineNumePartener = (conversatie) => {
-      const partenerId = tipUser === 'PACIENT' ? conversatie.terapeutId : conversatie.pacientId;
-      if (numeMap[partenerId]) {
+      if (conversatie.numeDisplay) return conversatie.numeDisplay;
+      
+      const partenerId = tipUser === 'PACIENT' ? conversatie.terapeutKeycloakId : conversatie.pacientKeycloakId;
+      if (partenerId && numeMap[partenerId]) {
           return numeMap[partenerId];
       }
-      return tipUser === 'PACIENT' ? `Terapeut #${partenerId}` : `Pacient #${partenerId}`; 
+      return tipUser === 'PACIENT' ? `Terapeut #${partenerId || '?'}` : `Pacient #${partenerId || '?'}`; 
   };
 
   const formateazaData = (dataIso) => {
@@ -17,10 +19,9 @@ const ListaConversatii = ({ conversatii, conversatieActivaId, peSelectieConversa
     return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   };
 
-  const initialaPartener = String(obtineNumePartener({})).charAt(0).toUpperCase(); // Helper placeholder until we fetch names
 
   const isArhivat = (conversatie) => {
-      const partenerId = tipUser === 'PACIENT' ? conversatie.terapeutId : conversatie.pacientId;
+      const partenerId = tipUser === 'PACIENT' ? conversatie.terapeutKeycloakId : conversatie.pacientKeycloakId;
       return arhivatiIds.includes(partenerId);
   };
 
@@ -46,7 +47,7 @@ const ListaConversatii = ({ conversatii, conversatieActivaId, peSelectieConversa
             const isActive = conv.id === conversatieActivaId;
             const ultimulMesaj = conv.ultimulMesaj;
             // Presupunem că e necitit dacă expeditorul nu e user-ul curent și esteCitit e false
-            const isNecitit = ultimulMesaj && !ultimulMesaj.esteCitit && ultimulMesaj.expeditorId !== userId;
+            const isNecitit = ultimulMesaj && !ultimulMesaj.esteCitit && ultimulMesaj.expeditorKeycloakId !== userId;
 
             return (
               <div 

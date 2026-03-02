@@ -1,7 +1,7 @@
 package com.example.user_service.client;
 
-import com.example.user_service.exception.ExternalServiceException;
-import com.example.user_service.exception.ResourceNotFoundException;
+import com.example.common.exception.ExternalServiceException;
+import com.example.common.exception.ResourceNotFoundException;
 import feign.Response;
 import feign.codec.ErrorDecoder;
 import org.springframework.stereotype.Component;

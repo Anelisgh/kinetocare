@@ -9,7 +9,7 @@ import com.example.programari_service.entity.Evaluare;
 import com.example.programari_service.entity.MotivAnulare;
 import com.example.programari_service.entity.Programare;
 import com.example.programari_service.entity.StatusProgramare;
-import com.example.programari_service.exception.*;
+import com.example.common.exception.*;
 import com.example.programari_service.mapper.EvaluareMapper;
 import com.example.programari_service.mapper.IstoricProgramareMapper;
 import com.example.programari_service.mapper.ProgramareMapper;
@@ -107,12 +107,13 @@ public class ProgramareService {
 
         // notificari catre terapeut
         notificarePublisher.programareNoua(salvata);
+
         // notificam DOAR daca serviciul determinat este chiar "Evaluare Inițială"
-        if (numeEvaluareInitiala.equalsIgnoreCase(serviciuDeAplicat.nume())) {
+        if (esteServiciu(serviciuDeAplicat.nume(), numeEvaluareInitiala)) {
             notificarePublisher.evaluareInitialaNoua(salvata);
         }
         // daca serviciul ales automat e "Reevaluare", notificam terapeutul
-        if (numeReevaluare.equalsIgnoreCase(serviciuDeAplicat.nume())) {
+        if (esteServiciu(serviciuDeAplicat.nume(), numeReevaluare)) {
             notificarePublisher.reevaluareNecesara(salvata);
         }
 
@@ -374,7 +375,7 @@ public class ProgramareService {
                     if (evaluare.getSedinteRecomandate() != null) {
                         long sedinteEfectuate = programareRepository.countSedintePacientDupaData(
                                 p.getPacientKeycloakId(), evaluare.getData());
-                        if (sedinteEfectuate == evaluare.getSedinteRecomandate()) {
+                        if (sedinteEfectuate >= evaluare.getSedinteRecomandate()) {
                             notificarePublisher.reevaluareRecomandata(p);
                         }
                     }
@@ -592,5 +593,10 @@ public class ProgramareService {
         programareRepository.saveAll(programari);
         log.info("Admin: anulate {} programări viitoare", programari.size());
         return programari.size();
+    }
+
+    private boolean esteServiciu(String numeComplet, String numeCautat) {
+        if (numeComplet == null || numeCautat == null) return false;
+        return numeComplet.toLowerCase().contains(numeCautat.toLowerCase());
     }
 }

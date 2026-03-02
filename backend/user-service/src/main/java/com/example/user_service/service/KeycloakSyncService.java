@@ -7,8 +7,8 @@ import org.keycloak.admin.client.resource.UserResource;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import com.example.user_service.exception.ResourceAlreadyExistsException;
-import com.example.user_service.exception.ExternalServiceException;
+import com.example.common.exception.ResourceAlreadyExistsException;
+import com.example.common.exception.ExternalServiceException;
 
 @Service
 @RequiredArgsConstructor

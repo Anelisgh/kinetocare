@@ -75,14 +75,19 @@ const HomepagePacient = () => {
                       <span>Progres Tratament</span>
                       <strong>{data.situatie.sedinteEfectuate} / {data.situatie.sedinteRecomandate} ședințe</strong>
                   </div>
-                  <div className="homepage-progress-bar-container">
-                      <div 
-                        className="homepage-progress-bar-fill" 
-                        style={{ width: `${Math.min((data.situatie.sedinteEfectuate / (data.situatie.sedinteRecomandate || 1)) * 100, 100)}%` }}
-                      ></div>
-                  </div>
-               </div>
-            </div>
+                   <div className="homepage-progress-bar-container">
+                       <div 
+                         className="homepage-progress-bar-fill" 
+                         style={{ width: `${Math.min((data.situatie.sedinteEfectuate / (data.situatie.sedinteRecomandate || 1)) * 100, 100)}%` }}
+                       ></div>
+                   </div>
+                   {data.situatie.sedinteEfectuate >= data.situatie.sedinteRecomandate && (
+                      <div className="homepage-progress-message completed">
+                        <span>✨ Felicitări! Ai finalizat planul curent. Urmează reevaluarea.</span>
+                      </div>
+                   )}
+                </div>
+             </div>
           )}
         </div>
 

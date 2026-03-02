@@ -5,9 +5,9 @@ import com.example.pacienti_service.dto.JurnalIstoricDTO;
 import com.example.pacienti_service.dto.JurnalRequestDTO;
 import com.example.pacienti_service.dto.ProgramareJurnalDTO;
 import com.example.pacienti_service.entity.JurnalPacient;
-import com.example.pacienti_service.exception.ExternalServiceException;
-import com.example.pacienti_service.exception.ForbiddenOperationException;
-import com.example.pacienti_service.exception.ResourceNotFoundException;
+import com.example.common.exception.ExternalServiceException;
+import com.example.common.exception.ForbiddenOperationException;
+import com.example.common.exception.ResourceNotFoundException;
 import com.example.pacienti_service.mapper.JurnalMapper;
 import com.example.pacienti_service.repository.JurnalRepository;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,7 +31,7 @@ public class JurnalService {
 
     // adaugarea jurnalului
     @Transactional
-    public void adaugaJurnal(Long pacientId, JurnalRequestDTO request) {
+    public void adaugaJurnal(Long pacientId, String pacientKeycloakId, JurnalRequestDTO request) {
         ProgramareJurnalDTO detaliiProgramare;
         try {
             // obtinem data programarii din programari-service
@@ -64,7 +64,7 @@ public class JurnalService {
 
         // notificam terapeutul ca jurnalul a fost completat
         if (detaliiProgramare.terapeutKeycloakId() != null) {
-            notificarePublisher.jurnalCompletat(detaliiProgramare.terapeutKeycloakId(), pacientId, request.programareId());
+            notificarePublisher.jurnalCompletat(detaliiProgramare.terapeutKeycloakId(), pacientKeycloakId, request.programareId());
         }
     }
 

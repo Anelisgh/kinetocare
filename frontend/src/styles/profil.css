@@ -184,6 +184,34 @@ html {
     box-shadow: 0 2px 4px rgba(3, 105, 161, 0.25);
 }
 
+.header-actions {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.btn-logout-profile {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.6rem 1.25rem;
+    font-weight: 700;
+    font-size: 1.1rem;
+    background: white;
+    color: var(--color-error);
+    border: 2px solid var(--color-error);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all var(--transition-base);
+}
+
+.btn-logout-profile:hover {
+    background: var(--color-error);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.25);
+}
+
 .btn-submit {
     background: var(--color-secondary);
     color: white;

@@ -8,12 +8,12 @@ import com.example.terapeuti_service.mapper.ConcediuMapper;
 import com.example.terapeuti_service.repository.ConcediuRepository;
 import com.example.terapeuti_service.repository.TerapeutRepository;
 import lombok.RequiredArgsConstructor;
-import com.example.terapeuti_service.exception.ResourceAlreadyExistsException;
-import com.example.terapeuti_service.exception.ForbiddenOperationException;
+import com.example.common.exception.ResourceAlreadyExistsException;
+import com.example.common.exception.ForbiddenOperationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import com.example.terapeuti_service.exception.ResourceNotFoundException;
+import com.example.common.exception.ResourceNotFoundException;
 
 import java.time.LocalDate;
 import java.util.List;

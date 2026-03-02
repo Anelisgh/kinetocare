@@ -1,0 +1,5 @@
+com\example\common\exception\ResourceAlreadyExistsException.class
+com\example\common\exception\ForbiddenOperationException.class
+com\example\common\exception\BaseGlobalExceptionHandler.class
+com\example\common\exception\ExternalServiceException.class
+com\example\common\exception\ResourceNotFoundException.class

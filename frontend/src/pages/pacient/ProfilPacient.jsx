@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { profileService } from '../../services/profileService';
 import PersonalInfo from '../../components/pacient/profil/PersonalInfo';
@@ -7,7 +8,8 @@ import TerapeutSection from '../../components/pacient/profil/TerapeutSection';
 import '../../styles/profil.css';
 
 export default function ProfilPacient() {
-    const { userInfo } = useAuth();
+    const { userInfo, logout } = useAuth();
+    const navigate = useNavigate();
     const [profile, setProfile] = useState(null);
     const [loading, setLoading] = useState(true);
     const [isEditing, setIsEditing] = useState(false);
@@ -193,6 +195,11 @@ export default function ProfilPacient() {
         setErrors({});
     };
 
+    const handleLogout = () => {
+        logout();
+        navigate('/login');
+    };
+
     if (loading) {
         return (
             <div className="profil-container">
@@ -214,12 +221,20 @@ export default function ProfilPacient() {
             <div className="profil-header">
                 <h1>Profil</h1>
                 {!isEditing && (
-                    <button
-                        className="btn-edit"
-                        onClick={() => setIsEditing(true)}
-                    >
-                        Editează
-                    </button>
+                    <div className="header-actions">
+                        <button
+                            className="btn-edit"
+                            onClick={() => setIsEditing(true)}
+                        >
+                            Editează
+                        </button>
+                        <button
+                            className="btn-logout-profile"
+                            onClick={handleLogout}
+                        >
+                            Deconectare
+                        </button>
+                    </div>
                 )}
             </div>
 

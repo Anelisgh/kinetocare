@@ -3,7 +3,7 @@ package com.example.programari_service.service;
 import com.example.programari_service.dto.EvolutieRequestDTO;
 import com.example.programari_service.dto.EvolutieResponseDTO;
 import com.example.programari_service.entity.Evolutie;
-import com.example.programari_service.exception.ResourceNotFoundException;
+import com.example.common.exception.ResourceNotFoundException;
 import com.example.programari_service.mapper.EvolutieMapper;
 import com.example.programari_service.repository.EvolutieRepository;
 import lombok.RequiredArgsConstructor;

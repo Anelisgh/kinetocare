@@ -120,6 +120,11 @@ const FisaPacient = () => {
                   style={{ width: `${progressPercent}%` }}
                 ></div>
               </div>
+              {sedinteEfectuate >= sedinteRecomandate && (
+                <div className="fisa-progress-message completed">
+                  <span>✨ Plan de tratament finalizat. Se recomandă reevaluarea.</span>
+                </div>
+              )}
             </div>
           </div>
         )}
