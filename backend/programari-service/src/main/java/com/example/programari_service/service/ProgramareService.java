@@ -27,8 +27,8 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import java.util.Map;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -406,6 +406,53 @@ public class ProgramareService {
 
         // Notificam terapeutul
         notificarePublisher.jurnalCompletat(p.getTerapeutKeycloakId(), p.getPacientKeycloakId(), p.getId());
+    }
+
+    // Trend jurnale pentru grafic (ultimele 10 sedinte)
+    @Transactional(readOnly = true)
+    public List<JurnalTrendDTO> getJurnalTrend(String pacientKeycloakId) {
+        // 1. Luam ultimele 10 programari finalizate cu jurnal
+        List<Programare> programari = programareRepository.findTop10WithJurnal(pacientKeycloakId, PageRequest.of(0, 10));
+
+        if (programari.isEmpty()) {
+            return List.of();
+        }
+
+        // 2. Luam jurnalele de la pacienti-service
+        List<JurnalIstoricDTO> jurnale = new ArrayList<>();
+        try {
+            jurnale = pacientiClient.getIstoricJurnal(pacientKeycloakId);
+        } catch (Exception e) {
+            log.warn("Nu s-au putut prelua jurnalele pentru trend: {}", e.getMessage());
+        }
+
+        // 3. Mapam jurnalele dupa programareId
+        Map<Long, JurnalIstoricDTO> jurnalMap = jurnale.stream()
+                .filter(j -> j.programareId() != null)
+                .collect(Collectors.toMap(JurnalIstoricDTO::programareId, Function.identity(), (existing, replacement) -> existing));
+
+        // 4. Formatter pentru data (ex: "15 Oct")
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMM", new Locale("ro", "RO"));
+
+        // 5. Mapam si sortam cronologic (ascendent pentru grafic)
+        return programari.stream()
+                .filter(p -> jurnalMap.containsKey(p.getId()))
+                .map(p -> {
+                    JurnalIstoricDTO j = jurnalMap.get(p.getId());
+                    return new JurnalTrendDTO(
+                            p.getData().format(formatter),
+                            j.nivelDurere(),
+                            j.dificultateExercitii(),
+                            j.nivelOboseala()
+                    );
+                })
+                .sorted(Comparator.comparing(dto -> {
+                    // Re-parsarea datei pentru sortare ar fi complicata fara contextul anului,
+                    // dar programarile sunt deja din aceeasi lista sortata desc.
+                    // Totusi, vrem crescator. O sa sortam folosind indexul original sau data programarii.
+                    return programari.stream().filter(orig -> orig.getData().format(formatter).equals(dto.data())).findFirst().get().getData();
+                }))
+                .toList();
     }
 
     // detaliile complete

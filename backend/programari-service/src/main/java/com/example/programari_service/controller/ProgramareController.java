@@ -193,4 +193,9 @@ public class ProgramareController {
         log.info("Admin: {}", result.message());
         return ResponseEntity.ok(result);
     }
+    // Trend jurnale pentru grafic
+    @GetMapping("/pacient/{pacientId}/jurnale-trend")
+    public ResponseEntity<List<JurnalTrendDTO>> getJurnalTrend(@PathVariable String pacientId) {
+        return ResponseEntity.ok(programareService.getJurnalTrend(pacientId));
+    }
 }

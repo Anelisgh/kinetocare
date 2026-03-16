@@ -112,6 +112,16 @@ export const programariService = {
     } catch (error) {
       handleApiError(error, 'Eroare la preluarea fișei pacientului');
     }
+  },
+
+  // FISA PACIENT - trend jurnale pentru grafic
+  getJurnalTrend: async (pacientId) => {
+    try {
+      const response = await api.get(`/api/programari/pacient/${pacientId}/jurnale-trend`);
+      return response.data;
+    } catch (error) {
+      handleApiError(error, 'Eroare la preluarea statisticii jurnal');
+    }
   }
 
 };

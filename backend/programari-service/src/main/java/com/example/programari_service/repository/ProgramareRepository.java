@@ -3,6 +3,7 @@ package com.example.programari_service.repository;
 import com.example.programari_service.entity.Programare;
 import com.example.programari_service.entity.StatusProgramare;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -89,6 +90,12 @@ public interface ProgramareRepository extends JpaRepository<Programare, Long> {
         @Query("SELECT p FROM Programare p WHERE p.pacientKeycloakId = :pacientKeycloakId AND p.status = :status AND p.areJurnal = false ORDER BY p.data DESC")
         List<Programare> findByPacientKeycloakIdAndStatusAndAreJurnalFalseOrderByDataDesc(@Param("pacientKeycloakId") String pacientKeycloakId,
                         @Param("status") StatusProgramare status);
+
+        // ultimele 10 programari finalizate cu jurnal pentru trend
+        @Query("SELECT p FROM Programare p WHERE p.pacientKeycloakId = :pId " +
+               "AND p.status = 'FINALIZATA' AND p.areJurnal = true " +
+               "ORDER BY p.data DESC, p.oraInceput DESC")
+        List<Programare> findTop10WithJurnal(@Param("pId") String pId, Pageable pageable);
 
         // gaseste toate programarile unui pacient, ordonate descrescator dupa data si ora
         List<Programare> findAllByPacientKeycloakIdOrderByDataDescOraInceputDesc(String pacientKeycloakId);

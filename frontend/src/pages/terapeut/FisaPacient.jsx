@@ -5,6 +5,7 @@ import { profileService } from '../../services/profileService';
 import { programariService } from '../../services/programariService';
 import { evolutiiService } from '../../services/evolutiiService';
 import { evaluariService } from '../../services/evaluariService';
+import JurnalEvolutieChart from '../../components/terapeut/JurnalEvolutieChart';
 import '../../styles/fisaPacient.css';
 
 const FisaPacient = () => {
@@ -16,6 +17,7 @@ const FisaPacient = () => {
   const [error, setError] = useState(null);
   const [fisa, setFisa] = useState(null);
   const [activeTab, setActiveTab] = useState('evaluari');
+  const [trendData, setTrendData] = useState([]);
 
   const terapeutKeycloakId = userInfo?.keycloakId;
 
@@ -29,10 +31,19 @@ const FisaPacient = () => {
     }
   };
 
+  const fetchTrend = async () => {
+    try {
+      const data = await programariService.getJurnalTrend(pacientId);
+      setTrendData(data || []);
+    } catch (err) {
+      console.error('Eroare la încărcarea trendului:', err);
+    }
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       try {
-        await fetchFisa();
+        await Promise.all([fetchFisa(), fetchTrend()]);
       } catch (err) {
         console.error('Eroare la încărcarea fișei:', err);
         setError(err.message);
@@ -129,6 +140,9 @@ const FisaPacient = () => {
           </div>
         )}
       </div>
+
+      {/* Jurnal Evolution Chart */}
+      <JurnalEvolutieChart data={trendData} />
 
       {/* Tabs */}
       <div className="fisa-tabs">
