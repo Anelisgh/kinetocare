@@ -238,10 +238,15 @@ const JurnalPacient = () => {
                         </button>
                     </form>
                 </div>
-            ) : (
+            ) : istoric.length > 0 ? (
                 <div className="empty-state-card">
                     <h3>🎉 La zi!</h3>
                     <p>Ai completat jurnalul pentru toate ședințele finalizate.</p>
+                </div>
+            ) : (
+                <div className="empty-state-card neutral">
+                    <h3>Nicio activitate încă</h3>
+                    <p>Momentan nu ai ședințe finalizate pentru care să poți completa jurnalul.</p>
                 </div>
             )}
 

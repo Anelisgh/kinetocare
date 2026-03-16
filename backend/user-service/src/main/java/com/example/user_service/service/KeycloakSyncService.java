@@ -42,7 +42,7 @@ public class KeycloakSyncService {
                 user.setUsername(email);
                 user.setEmailVerified(true);
                 hasChanges = true;
-                log.debug("Email will be updated in Keycloak for keycloakId: {}", keycloakId);
+                log.debug("Emailul va fi actualizat in Keycloak pentru keycloakId: {}", keycloakId);
             }
 
             if (firstName != null && !firstName.equals(user.getFirstName())) {
@@ -57,13 +57,13 @@ public class KeycloakSyncService {
 
             if (hasChanges) {
                 userResource.update(user);
-                log.info("User data synchronized with Keycloak for keycloakId: {}", keycloakId);
+                log.info("Datele utilizatorului sincronizate cu Keycloak pentru keycloakId: {}", keycloakId);
             } else {
-                log.debug("No changes to sync with Keycloak for keycloakId: {}", keycloakId);
+                log.debug("Nu sunt modificari de sincronizat in Keycloak pentru keycloakId: {}", keycloakId);
             }
 
         } catch (Exception e) {
-            log.error("Failed to sync user data with Keycloak for user {}: {}", keycloakId, e.getMessage());
+            log.error("Eroare la sincronizarea datelor cu Keycloak pentru utilizatorul {}: {}", keycloakId, e.getMessage());
             throw new ExternalServiceException("Failed to sync user data with Keycloak", e);
         }
     }
@@ -77,7 +77,7 @@ public class KeycloakSyncService {
                     .anyMatch(user -> !user.getId().equals(excludeUserId));
 
         } catch (Exception e) {
-            log.error("Error checking email existence in Keycloak for email: {}", email, e);
+            log.error("Eroare la verificarea existentei emailului in Keycloak pentru: {}", email, e);
             return false;
         }
     }
@@ -89,9 +89,9 @@ public class KeycloakSyncService {
             UserRepresentation user = userResource.toRepresentation();
             user.setEnabled(enabled);
             userResource.update(user);
-            log.info("Keycloak user {} {} successfully", keycloakId, enabled ? "enabled" : "disabled");
+            log.info("Status utilizator Keycloak {} setat cu succes ({})", keycloakId, enabled ? "activat" : "dezactivat");
         } catch (Exception e) {
-            log.error("Error updating keycloak status for user {}: {}", keycloakId, e.getMessage());
+            log.error("Eroare la actualizarea statusului in Keycloak pentru utilizatorul {}: {}", keycloakId, e.getMessage());
             throw new ExternalServiceException("Eroare la sincronizarea cu Keycloak: " + e.getMessage(), e);
         }
     }

@@ -56,11 +56,11 @@ public class AdminInitializer implements CommandLineRunner {
     public void run(String... args) {
         // verificam in db-ul local
         if (userRepository.existsByEmail(adminEmail)) {
-            log.info("ADMIN user deja există în baza de date locală.");
+            log.info("Utilizatorul ADMIN exista deja in baza de date locala.");
             return;
         }
 
-        log.info("ADMIN user nu există local.");
+        log.info("Utilizatorul ADMIN nu exista in baza de date locala.");
         createAdmin();
     }
 
@@ -77,7 +77,7 @@ public class AdminInitializer implements CommandLineRunner {
             List<UserRepresentation> existing = usersResource.search(adminEmail, true);
             // daca exista deja in keycloak -> il refolosim
             if (!existing.isEmpty()) {
-                log.info("Userul admin există deja în Keycloak. Îl refolosim.");
+                log.info("Utilizatorul ADMIN exista deja in Keycloak. Il refolosim.");
                 keycloakId = existing.get(0).getId();
             } else {
                 // daca nu exista deja -> il cream
@@ -101,9 +101,9 @@ public class AdminInitializer implements CommandLineRunner {
                 if (response.getStatus() == 201) {
                     String location = response.getHeaderString("Location");
                     keycloakId = location.substring(location.lastIndexOf('/') + 1);
-                    log.info("Creat admin în Keycloak cu ID: " + keycloakId);
+                    log.info("Utilizator ADMIN creat in Keycloak cu ID: " + keycloakId);
                 } else {
-                    log.error("Eroare creare admin Keycloak: " + response.getStatus());
+                    log.error("Eroare la crearea utilizatorului ADMIN in Keycloak: " + response.getStatus());
                     return;
                 }
             }
@@ -126,10 +126,10 @@ public class AdminInitializer implements CommandLineRunner {
             dbUser.setGen(Gen.MASCULIN);
 
             userRepository.save(dbUser);
-            log.info("ADMIN salvat cu succes în baza de date locală!");
+            log.info("Utilizatorul ADMIN a fost salvat cu succes in baza de date locala!");
 
         } catch (Exception e) {
-            log.error("Eroare critică la inițializarea adminului", e);
+            log.error("Eroare critica la initializarea utilizatorului ADMIN", e);
         }
     }
 

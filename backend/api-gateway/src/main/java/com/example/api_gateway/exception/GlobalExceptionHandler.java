@@ -28,6 +28,7 @@ public class GlobalExceptionHandler extends BaseGlobalExceptionHandler {
                 return ResponseEntity.status(ex.getStatusCode()).body(downstreamProblem);
             }
         } catch (Exception e) {
+            log.debug("Nu s-a putut deserializa răspunsul ca ProblemDetail, se folosește răspunsul brut.", e);
         }
         
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(ex.getStatusCode(), ex.getResponseBodyAsString());

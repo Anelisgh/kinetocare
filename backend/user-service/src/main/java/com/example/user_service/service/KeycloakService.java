@@ -5,6 +5,7 @@ import com.example.user_service.dto.RegisterResponseDTO;
 import com.example.user_service.entity.User;
 import com.example.user_service.entity.UserRole;
 import com.example.common.exception.ExternalServiceException;
+import com.example.common.exception.ResourceNotFoundException;
 import com.example.common.exception.ForbiddenOperationException;
 import com.example.common.exception.ResourceAlreadyExistsException;
 import com.example.user_service.mapper.UserRegisterMapper;
@@ -25,6 +26,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -69,7 +71,7 @@ public class KeycloakService {
             User user = userRegisterMapper.toEntity(request, keycloakId);
             user.setActive(true);
             userRepository.save(user);
-            log.info("User registered successfully: {} with role: {}", request.email(), request.role());
+            log.info("Utilizator inregistrat cu succes: {} cu rolul: {}", request.email(), request.role());
 
             // cream profilul gol in serviciul corespunzator
             initializeRoleSpecificProfile(keycloakId, request.role());
@@ -78,9 +80,9 @@ public class KeycloakService {
         } catch (Exception e) {
             // Dacă pică DB-ul local, dar am creat în Keycloak, AR TREBUI SA STERGEM DIN KEYCLOAK AICI
             // logica de rollback (ideal cu eventual consistency dar pt acum, catch si arunca)
-            log.error("Error during user registration, rolling back Keycloak if necessary", e);
+            log.error("Eroare inregistrare utilizator, se revine la starea initiala in Keycloak (rollback) la nevoie", e);
             if (keycloakId != null) {
-                log.warn("Attempting to delete Keycloak user {} due to registration failure.", keycloakId);
+                log.warn("Se incearca stergerea utilizatorului Keycloak {} din cauza erorii de inregistrare.", keycloakId);
                 deleteUserInKeycloak(keycloakId);
             }
             throw new ExternalServiceException("Eroare la înregistrare: " + e.getMessage(), e);
@@ -135,9 +137,9 @@ public class KeycloakService {
         try {
             RealmResource realmResource = keycloak.realm(realm);
             realmResource.users().get(keycloakId).remove();
-            log.info("Successfully deleted Keycloak user with id {}", keycloakId);
+            log.info("Utilizator Keycloak sters cu succes pentru ID: {}", keycloakId);
         } catch (Exception e) {
-            log.error("Failed to delete Keycloak user with id {}. Manual cleanup might be required.", keycloakId, e);
+            log.error("Esuare stergere utilizator Keycloak cu id {}. S-ar putea sa fie nevoie de eliminare manuala.", keycloakId, e);
         }
     }
 
@@ -174,7 +176,7 @@ public class KeycloakService {
                     response.getStatus(), response.getStatusInfo());
 
             String error = response.readEntity(String.class);
-            log.error("Keycloak response body: {}", error);
+            log.error("Corp raspuns interogare Keycloak in eroare: {}", error);
             throw new ExternalServiceException("Eroare la crearea contului în Keycloak: " + error);
         }
 
@@ -183,7 +185,7 @@ public class KeycloakService {
         String keycloakId = locationHeader.substring(locationHeader.lastIndexOf('/') + 1);
 
         response.close();
-        log.info("User created in Keycloak with ID: {}", keycloakId);
+        log.info("Utilizator creat in Keycloak cu ID: {}", keycloakId);
         return keycloakId;
     }
 
@@ -202,6 +204,47 @@ public class KeycloakService {
                 .realmLevel()
                 .add(Collections.singletonList(keycloakRole));
 
-        log.info("Assigned role {} to user {}", roleName, keycloakId);
+        log.info("S-a atribuit rolul {} utilizatorului cu ID {}", roleName, keycloakId);
+    }
+
+    // schimba parola unui user autentificat folosind keycloakId-ul sau
+    public void updatePassword(String keycloakId, String newPassword) {
+        try {
+            RealmResource realmResource = keycloak.realm(realm);
+
+            CredentialRepresentation credential = new CredentialRepresentation();
+            credential.setType(CredentialRepresentation.PASSWORD);
+            credential.setValue(newPassword);
+            credential.setTemporary(false);
+
+            realmResource.users().get(keycloakId).resetPassword(credential);
+            log.info("Parola a fost actualizată cu succes pentru userId: {}", keycloakId);
+        } catch (Exception e) {
+            log.error("Eroare la actualizarea parolei în Keycloak pentru userId: {}", keycloakId, e);
+            throw new ExternalServiceException("Eroare la actualizarea parolei: " + e.getMessage(), e);
+        }
+    }
+
+    // trimite email de resetare parolă pentru un utilizator neautentificat
+    public void sendForgotPasswordEmail(String email) {
+        try {
+            RealmResource realmResource = keycloak.realm(realm);
+            UsersResource usersResource = realmResource.users();
+
+            List<UserRepresentation> users = usersResource.search(email, true);
+            if (users == null || users.isEmpty()) {
+                log.warn("Nu există niciun utilizator cu email-ul: {} pentru resetare parolă", email);
+                throw new ResourceNotFoundException("Nu există niciun cont asociat acestui email.");
+            }
+
+            String userId = users.get(0).getId();
+            usersResource.get(userId).executeActionsEmail(List.of("UPDATE_PASSWORD"));
+            log.info("Email de resetare parolă trimis pentru userId: {}", userId);
+        } catch (ResourceNotFoundException e) {
+            throw e;
+        } catch (Exception e) {
+            log.error("Eroare la trimiterea email-ului de resetare parolă pentru email: {}", email, e);
+            throw new ExternalServiceException("Eroare la trimiterea email-ului de resetare: " + e.getMessage(), e);
+        }
     }
 }

@@ -6,10 +6,15 @@ import com.example.chat_service.service.ChatService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.messaging.handler.annotation.MessageExceptionHandler;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.stereotype.Controller;
+
+import java.security.Principal;
+import java.util.Map;
 
 @Controller
 @RequiredArgsConstructor
@@ -37,5 +42,15 @@ public class WebSocketChatController {
 
         messagingTemplate.convertAndSend("/queue/conversatii/" + request.conversatieId(), mesajSalvat);
         log.info("Mesaj rutat pe broker la destinatia /queue/conversatii/{}", request.conversatieId());
+    }
+
+    // handler pentru excepțiile aruncate în @MessageMapping
+    // Anterior, excepțiile erau înghițite silențios — clientul nu primea niciun feedback
+    @MessageExceptionHandler
+    @SendToUser("/queue/errors")
+    public Map<String, String> handleWebSocketException(Exception ex, Principal principal) {
+        log.error("Eroare WebSocket la trimitere mesaj (user={}): {}",
+                principal != null ? principal.getName() : "necunoscut", ex.getMessage(), ex);
+        return Map.of("error", "Nu s-a putut trimite mesajul: " + ex.getMessage());
     }
 }

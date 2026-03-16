@@ -27,7 +27,26 @@ export const authService = {
     
     return response.json();
   },
-  
+
+  // Forgot Password -> trimite email de resetare parola catre Keycloak
+  // folosit in ForgotPasswordModal.jsx
+  forgotPassword: async (email) => {
+    const response = await fetch(`${USER_API_URL}/auth/forgot-password`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      const msg = errorData?.detail || errorData?.message || 'Eroare la trimiterea email-ului';
+      throw new AppError(msg, response.status);
+    }
+    // 204 No Content -> succes, fara body de returnat
+  },
+
   // Metode noi pentru managementul in-memory al token-ului
   setToken: (token) => {
     inMemoryToken = token;
@@ -57,7 +76,10 @@ export const authService = {
     
     if (!response.ok) {
       const errorData = await response.json();
-      throw new Error(errorData.error_description || 'Email sau parolă incorectă!');
+      throw new AppError(
+        errorData.error_description || 'Email sau parolă incorectă!',
+        response.status
+      );
     }
     
     const tokenData = await response.json();

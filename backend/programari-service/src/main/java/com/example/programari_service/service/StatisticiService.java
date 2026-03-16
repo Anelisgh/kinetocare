@@ -58,26 +58,23 @@ public class StatisticiService {
 
     @Transactional(readOnly = true)
     public List<StatisticiRataAnulareDTO> getRataAnulare(LocalDate startDate, LocalDate endDate) {
-        // Raw data: [locatieId, count]
-        List<Object[]> totalStatsRaw = programareRepository.countTotalByLocatieId(startDate, endDate);
-        List<Object[]> anulateStatsRaw = programareRepository.countAnulateByLocatieId(
+        List<RataAnulareProjection> totalStatsRaw = programareRepository.countTotalByLocatieId(startDate, endDate);
+        List<RataAnulareProjection> anulateStatsRaw = programareRepository.countAnulateByLocatieId(
                 startDate, endDate, StatusProgramare.ANULATA);
         
         Map<Long, String> locatiiMap = statisticiCacheService.getLocatiiMap();
 
         // Map locatieId -> count ANULATE
         Map<Long, Long> anulateMap = new HashMap<>();
-        for (Object[] row : anulateStatsRaw) {
-            Long locId = (Long) row[0];
-            Long count = (Long) row[1];
-            anulateMap.put(locId, count);
+        for (RataAnulareProjection row : anulateStatsRaw) {
+            anulateMap.put(row.getLocatieId(), row.getCount());
         }
 
         List<StatisticiRataAnulareDTO> result = new ArrayList<>();
 
-        for (Object[] row : totalStatsRaw) {
-            Long locId = (Long) row[0];
-            Long totalCount = (Long) row[1];
+        for (RataAnulareProjection row : totalStatsRaw) {
+            Long locId = row.getLocatieId();
+            Long totalCount = row.getCount();
             Long anulateCount = anulateMap.getOrDefault(locId, 0L);
 
             String numeLocatie = locatiiMap.getOrDefault(locId, "Necunoscut");

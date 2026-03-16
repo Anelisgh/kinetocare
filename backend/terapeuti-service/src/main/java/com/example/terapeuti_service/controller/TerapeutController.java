@@ -21,7 +21,7 @@ public class TerapeutController {
     // api-gateway -> getProfile (ProfileController)
     @GetMapping("/by-keycloak/{keycloakId}")
     public ResponseEntity<TerapeutDTO> getTerapeutByKeycloakId(@PathVariable String keycloakId) {
-        log.info("Getting terapeut by keycloakId: {}", keycloakId);
+        log.info("Obtinere terapeut dupa keycloakId: {}", keycloakId);
         return ResponseEntity.ok(terapeutService.getTerapeutByKeycloakId(keycloakId));
     }
 

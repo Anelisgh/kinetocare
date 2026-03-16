@@ -60,8 +60,7 @@ const HomepagePacient = () => {
           </div>
           
           {/* Diagnostic & Progres */}
-          {/* Diagnostic & Progres */}
-          {data.situatie && (
+          {data.situatie && data.situatie.sedinteRecomandate > 0 && (
             <div className="homepage-situatie-container">
                <div className="homepage-diagnostic-section">
                   <p className="homepage-diagnostic-label">Diagnostic</p>

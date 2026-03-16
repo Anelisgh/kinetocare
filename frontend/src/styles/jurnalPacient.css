@@ -96,6 +96,20 @@
     margin: 0;
 }
 
+/* Neutral empty state */
+.empty-state-card.neutral {
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    border-color: #e2e8f0;
+}
+
+.empty-state-card.neutral h3 {
+    color: #475569;
+}
+
+.empty-state-card.neutral p {
+    color: #64748b;
+}
+
 /* Titluri Card */
 .card-title {
     font-size: 1.25rem;

@@ -34,7 +34,12 @@ const HomepageTerapeut = () => {
           profileService.getDisponibilitati()
         ]);
 
-        setLocatii(locs);
+        // Extract unique location IDs from the therapist's availability
+        const uniqueLocatieIds = [...new Set(disp.map(d => d.locatieId || d.locatie?.id))];
+        
+        // Filter the fetched locations to only include those present in availabilities
+        const activeLocatii = locs.filter(loc => uniqueLocatieIds.includes(loc.id));
+        setLocatii(activeLocatii);
         
         // Verificam daca profilul e incomplet
         setProfileIncomplete({

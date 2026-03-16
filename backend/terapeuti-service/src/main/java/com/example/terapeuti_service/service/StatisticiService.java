@@ -11,14 +11,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class StatisticiService {
 
     private final DisponibilitateRepository disponibilitateRepository;
     private final LocatieRepository locatieRepository;
 
     public List<StatisticiTerapeutiActiviDTO> getTerapeutiActiviPerLocatie() {
+        log.info("Obtinere statistici: terapeuti activi per locatie");
         List<StatisticiTerapeutiActiviDTO> stats = disponibilitateRepository.countActiveTherapistsPerLocation();
 
         // Get map of location names

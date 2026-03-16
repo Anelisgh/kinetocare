@@ -4,6 +4,7 @@ import { useAuth } from '../../context/AuthContext';
 import { profileService } from '../../services/profileService';
 import PersonalInfo from '../../components/pacient/profil/PersonalInfo';
 import TerapeutSection from '../../components/pacient/profil/TerapeutSection';
+import SchimbareParola from '../../components/shared/SchimbareParola';
 
 import '../../styles/profil.css';
 
@@ -250,26 +251,31 @@ export default function ProfilPacient() {
 
             {/* Edit mode */}
             {isEditing ? (
-                <form onSubmit={handleSubmit} className="profil-form">
-                    <PersonalInfo
-                        profile={profile}
-                        formData={formData}
-                        isEditing={true}
-                        onChange={handleChange}
-                        locatii={locatii}
-                        assignedTerapeut={profile.terapeutDetalii}
-                        errors={errors}
-                    />
+                <>
+                    <form onSubmit={handleSubmit} className="profil-form">
+                        <PersonalInfo
+                            profile={profile}
+                            formData={formData}
+                            isEditing={true}
+                            onChange={handleChange}
+                            locatii={locatii}
+                            assignedTerapeut={profile.terapeutDetalii}
+                            errors={errors}
+                        />
 
-                    <div className="form-actions">
-                        <button type="submit" className="btn-save" disabled={saving}>
-                            {saving ? 'Se salvează...' : 'Salvează'}
-                        </button>
-                        <button type="button" className="btn-cancel" onClick={handleCancel} disabled={saving}>
-                            Anulează
-                        </button>
-                    </div>
-                </form>
+                        <div className="form-actions">
+                            <button type="submit" className="btn-save" disabled={saving}>
+                                {saving ? 'Se salvează...' : 'Salvează'}
+                            </button>
+                            <button type="button" className="btn-cancel" onClick={handleCancel} disabled={saving}>
+                                Anulează
+                            </button>
+                        </div>
+                    </form>
+                    
+                    <hr className="section-divider" style={{ margin: '2rem 0', borderTop: '2px solid var(--color-primary-subtle, #e0f2fe)' }} />
+                    <SchimbareParola />
+                </>
             ) : (
                 // View mode
                 <div className="profil-info">

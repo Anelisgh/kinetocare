@@ -10,8 +10,9 @@ import java.time.OffsetDateTime;
 @Entity
 @Table(name = "conversatii",
         indexes = {
-                @Index(name = "idx_conv_pacient_kc", columnList = "pacient_keycloak_id"),
-                @Index(name = "idx_conv_terapeut_kc", columnList = "terapeut_keycloak_id"),
+                @Index(name = "idx_conv_pacient", columnList = "pacient_keycloak_id"),
+                @Index(name = "idx_conv_terapeut", columnList = "terapeut_keycloak_id"),
+                @Index(name = "idx_conv_participants", columnList = "pacient_keycloak_id, terapeut_keycloak_id"),
                 @Index(name = "idx_conv_ultim_mesaj", columnList = "ultimul_mesaj_la")
         })
 @Getter

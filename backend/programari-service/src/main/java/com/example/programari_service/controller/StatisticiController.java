@@ -24,6 +24,9 @@ public class StatisticiController {
     public ResponseEntity<List<StatisticiProgramariLunareDTO>> getProgramariLunare(
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
+        if (startDate.isAfter(endDate)) {
+            return ResponseEntity.badRequest().build();
+        }
         return ResponseEntity.ok(statisticiService.getProgramariLunare(startDate, endDate));
     }
 
@@ -31,6 +34,9 @@ public class StatisticiController {
     public ResponseEntity<List<StatisticiVenituriLocatieDTO>> getVenituriLocatie(
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
+        if (startDate.isAfter(endDate)) {
+            return ResponseEntity.badRequest().build();
+        }
         return ResponseEntity.ok(statisticiService.getVenituriLocatie(startDate, endDate));
     }
 
@@ -38,6 +44,9 @@ public class StatisticiController {
     public ResponseEntity<List<StatisticiRataAnulareDTO>> getRataAnulare(
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
+        if (startDate.isAfter(endDate)) {
+            return ResponseEntity.badRequest().build();
+        }
         return ResponseEntity.ok(statisticiService.getRataAnulare(startDate, endDate));
     }
 
@@ -45,6 +54,9 @@ public class StatisticiController {
     public ResponseEntity<List<StatisticiPacientiNoiDTO>> getPacientiNoi(
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
+        if (startDate.isAfter(endDate)) {
+            return ResponseEntity.badRequest().build();
+        }
         return ResponseEntity.ok(statisticiService.getPacientiNoi(startDate, endDate));
     }
 
@@ -52,6 +64,9 @@ public class StatisticiController {
     public ResponseEntity<List<StatisticiTerapeutDTO>> getProgramariTerapeut(
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
+        if (startDate.isAfter(endDate)) {
+            return ResponseEntity.badRequest().build();
+        }
         return ResponseEntity.ok(statisticiService.getProgramariTerapeut(startDate, endDate));
     }
 }

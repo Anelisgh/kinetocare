@@ -20,6 +20,16 @@ export const profileService = {
     }
   },
 
+  // schimba parola utilizatorului autentificat
+  // folosit in SchimbareParola.jsx
+  changePassword: async (newPassword) => {
+    try {
+      await api.put('/api/users/my-password', { newPassword });
+    } catch (error) {
+      handleApiError(error, 'Eroare la schimbarea parolei');
+    }
+  },
+
   //  TERAPEUT - CAUTARE 
   searchTerapeuti: async (filters) => {
     try {

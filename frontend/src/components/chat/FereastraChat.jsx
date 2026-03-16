@@ -6,6 +6,7 @@ import '../../styles/chat.css';
 const FereastraChat = ({ conversatieActiva, userId, tipUser, stompClient, onMesajNouDupaCitire, arhivatiIds = [] }) => {
   const [istoric, setIstoric] = useState([]);
   const [mesajInput, setMesajInput] = useState('');
+  const [eroareWs, setEroareWs] = useState(null); // eroare primită de la backend via WebSocket
   const mesajeEndRef = useRef(null);
 
   // Funcție de scroll bottom
@@ -17,7 +18,8 @@ const FereastraChat = ({ conversatieActiva, userId, tipUser, stompClient, onMesa
 
   useEffect(() => {
     let sub = null;
-    
+    let subErori = null;
+
     if (conversatieId && stompClient && stompClient.connected) {
       // 1. Încarcă istoricul de mesaje REST
       chatService.obtineMesajeDinConversatie(conversatieId)
@@ -46,12 +48,21 @@ const FereastraChat = ({ conversatieActiva, userId, tipUser, stompClient, onMesa
                .then(() => { if (onMesajNouDupaCitire) onMesajNouDupaCitire(); });
          }
       });
+
+      // 4. Subscrie-te la /user/queue/errors pentru a primi erorile de la @MessageExceptionHandler
+      // (ex: validare eșuată, eroare DB la salvarea mesajului)
+      subErori = stompClient.subscribe('/user/queue/errors', (frame) => {
+        const eroare = JSON.parse(frame.body);
+        const mesajEroare = eroare?.error || 'Mesajul nu a putut fi trimis.';
+        setEroareWs(mesajEroare);
+        // auto-dismiss după 5 secunde
+        setTimeout(() => setEroareWs(null), 5000);
+      });
     }
 
     return () => {
-       if (sub) {
-          sub.unsubscribe();
-       }
+       if (sub) sub.unsubscribe();
+       if (subErori) subErori.unsubscribe();
     };
   }, [conversatieId, stompClient, userId, tipUser]);
 
@@ -108,7 +119,28 @@ const FereastraChat = ({ conversatieActiva, userId, tipUser, stompClient, onMesa
       <div className="chat-header">
         <h3>{conversatieActiva.numeDisplay || 'Conversație'}</h3>
       </div>
-      
+
+      {/* Banner eroare WebSocket — apare când backend-ul trimite o eroare via @MessageExceptionHandler */}
+      {eroareWs && (
+        <div style={{
+          backgroundColor: '#fff5f5',
+          borderLeft: '4px solid #e53e3e',
+          color: '#c53030',
+          padding: '0.6rem 1rem',
+          fontSize: '0.875rem',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          gap: '0.5rem',
+        }}>
+          <span>⚠️ {eroareWs}</span>
+          <button
+            onClick={() => setEroareWs(null)}
+            style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#c53030', fontWeight: 'bold', fontSize: '1rem' }}
+            aria-label="Închide eroarea"
+          >✕</button>
+        </div>
+      )}
       <div className="chat-body">
         {istoric.map(mesaj => {
           const isMine = mesaj.expeditorKeycloakId === userId;

@@ -1,13 +1,17 @@
 package com.example.user_service.controller;
 
 import com.example.user_service.dto.AdminUserDTO;
+import com.example.user_service.dto.ChangePasswordRequestDTO;
 import com.example.user_service.dto.UpdateUserDTO;
 import com.example.user_service.dto.UserDTO;
 import com.example.user_service.entity.UserRole;
+import com.example.user_service.service.KeycloakService;
 import com.example.user_service.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,6 +22,7 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
+    private final KeycloakService keycloakService;
 
     // cauta un user dupa keycloakId
     // folosit in:
@@ -58,6 +63,17 @@ public class UserController {
             @PathVariable String keycloakId,
             @Valid @RequestBody UpdateUserDTO updateDTO) {
         return ResponseEntity.ok(userService.updateUser(keycloakId, updateDTO));
+    }
+
+    // schimba parola utilizatorului autentificat
+    // keycloakId este extras direct din token-ul JWT (nu din path)
+    @PutMapping("/my-password")
+    public ResponseEntity<Void> changeMyPassword(
+            @AuthenticationPrincipal Jwt jwt,
+            @Valid @RequestBody ChangePasswordRequestDTO request) {
+        String keycloakId = jwt.getSubject();
+        keycloakService.updatePassword(keycloakId, request.newPassword());
+        return ResponseEntity.noContent().build();
     }
 
     // --------------- ADMIN ---------------

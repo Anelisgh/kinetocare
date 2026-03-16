@@ -10,7 +10,8 @@ import java.time.OffsetDateTime;
 @Entity
 @Table(name = "locatii",
         indexes = {
-                @Index(name = "idx_locatii_oras", columnList = "oras")
+                @Index(name = "idx_locatii_oras", columnList = "oras"),
+                @Index(name = "idx_locatii_active", columnList = "active")
         })
 @Getter
 @Setter

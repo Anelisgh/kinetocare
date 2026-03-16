@@ -21,7 +21,7 @@ public class LocatieController {
     // api-gateway -> getLocatii (LocatieController)
     @GetMapping
     public ResponseEntity<List<LocatieDTO>> getAllActiveLocatii() {
-        log.info("Getting all active locatii");
+        log.info("Obtinere toate locatiile active");
         return ResponseEntity.ok(locatieService.getAllActiveLocatii());
     }
 
@@ -30,7 +30,7 @@ public class LocatieController {
     // programari-service -> getLocatieById (TerapeutClient)
     @GetMapping("/{id}")
     public ResponseEntity<LocatieDTO> getLocatieById(@PathVariable Long id) {
-        log.info("Getting locatie by id: {}", id);
+        log.info("Obtinere locatie dupa id: {}", id);
         return ResponseEntity.ok(locatieService.getLocatieById(id));
     }
 

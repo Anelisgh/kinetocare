@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import RoleBasedRedirect from './components/RoleBasedRedirect';
-import ProfileGuard from './components/ProfileGuard';
+import RoleBasedRedirect from './components/shared/RoleBasedRedirect';
+import ProfileGuard from './components/shared/ProfileGuard';
 
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
@@ -23,7 +23,7 @@ import CompleteProfile from './pages/pacient/CompleteProfile';
 import JurnalPacient from './pages/pacient/JurnalPacient';
 import ProgramariPacient from './pages/pacient/ProgramariPacient';
 import ChatPacient from './pages/pacient/ChatPacient';
-import ProtectedRoute from './components/ProtectedRoute';
+import ProtectedRoute from './components/shared/ProtectedRoute';
 
 import AdminLayout from './layouts/AdminLayout';
 import AdminLocatii from './pages/admin/AdminLocatii';

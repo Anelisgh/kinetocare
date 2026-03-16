@@ -16,13 +16,12 @@ public class NotificareConsumer {
 
     private final NotificareService notificareService;
 
+    // Dacă procesarea eșuează, Spring AMQP face NACK automat și mesajul
+    // este rutat la Dead Letter Queue (notificari.queue.dead) pentru inspecție/replay.
     @RabbitListener(queues = RabbitMQConfig.QUEUE_NAME)
     public void primesteMesaj(NotificareEvent event) {
         log.info("Mesaj primit din RabbitMQ: {} → userKeycloakId={}", event.tipNotificare(), event.userKeycloakId());
-        try {
-            notificareService.proceseazaEveniment(event);
-        } catch (Exception e) {
-            log.error("Eroare la procesarea notificării: {}", e.getMessage(), e);
-        }
+        notificareService.proceseazaEveniment(event);
+        log.info("Notificare procesată cu succes: {} → userKeycloakId={}", event.tipNotificare(), event.userKeycloakId());
     }
 }

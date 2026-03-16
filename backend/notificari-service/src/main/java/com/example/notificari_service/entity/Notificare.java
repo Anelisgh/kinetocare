@@ -9,9 +9,7 @@ import java.time.OffsetDateTime;
 @Entity
 @Table(name = "notificari",
         indexes = {
-                @Index(name = "idx_notif_user_kc", columnList = "user_keycloak_id"),
-                @Index(name = "idx_notif_citita", columnList = "este_citita"),
-                @Index(name = "idx_notif_creata", columnList = "created_at")
+                @Index(name = "idx_notif_user_query", columnList = "user_keycloak_id, tip_user, este_citita, created_at")
         })
 @Getter
 @Setter

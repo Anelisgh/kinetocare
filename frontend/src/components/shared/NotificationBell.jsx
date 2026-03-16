@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { useAuth } from '../context/AuthContext';
-import { profileService } from '../services/profileService';
-import { notificariService } from '../services/notificariService';
+import { useAuth } from '../../context/AuthContext';
+import { profileService } from '../../services/profileService';
+import { notificariService } from '../../services/notificariService';
 import NotificationDropdown from './NotificationDropdown';
-import '../styles/notificari.css';
+import '../../styles/notificari.css';
 
 const POLL_INTERVAL = 30000; // 30 secunde
 

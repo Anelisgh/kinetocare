@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { notificariService } from '../services/notificariService';
-import '../styles/notificari.css';
+import { notificariService } from '../../services/notificariService';
+import '../../styles/notificari.css';
 
 // maparea urlActiune din backend -> rute frontend
 const mapUrlActiune = (urlActiune, tipUser) => {

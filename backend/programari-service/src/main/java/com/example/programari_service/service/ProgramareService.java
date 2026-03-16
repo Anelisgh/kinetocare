@@ -73,6 +73,7 @@ public class ProgramareService {
     }
 
     // creaza o noua programare
+    @Transactional
     public Programare creeazaProgramare(CreeazaProgramareRequest request) {
         // Calculam daca e prima intalnire
         long istoric = programareRepository.countProgramariActiveSauFinalizate(
@@ -398,7 +399,8 @@ public class ProgramareService {
 
     // seteaza areJurnal=true
     public void marcheazaProgramareCuJurnal(Long programareId) {
-        Programare p = programareRepository.findById(programareId).orElseThrow();
+        Programare p = programareRepository.findById(programareId)
+                .orElseThrow(() -> new ResourceNotFoundException("Programarea cu id " + programareId + " nu a fost găsită"));
         p.setAreJurnal(true);
         programareRepository.save(p);
 

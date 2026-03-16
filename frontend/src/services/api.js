@@ -38,6 +38,22 @@ api.interceptors.response.use(
                 return Promise.reject(refreshError);
             }
         }
+
+        // 403 Forbidden — redirecționare centralizată la pagina dedicată
+        if (error.response?.status === 403) {
+            window.location.href = '/unauthorized';
+            return Promise.reject(error);
+        }
+
+        // Network error (serverul down, fără internet, timeout de rețea)
+        if (!error.response) {
+            return Promise.reject(new AppError(
+                'Nu se poate comunica cu serverul. Verificați conexiunea la internet.',
+                0,
+                null
+            ));
+        }
+
         return Promise.reject(error);
     }
 );

@@ -6,6 +6,7 @@ import { profileService } from '../../services/profileService';
 import PozaProfil from '../../components/terapeut/profil/PozaProfil';
 import ManagementDisponibilitate from '../../components/terapeut/profil/ManagementDisponibilitate';
 import ManagementConcedii from '../../components/terapeut/profil/ManagementConcedii';
+import SchimbareParola from '../../components/shared/SchimbareParola';
 import '../../styles/profil.css';
 
 // Pagina profilului terapeutului -> afiseaza profilul terapeutului cu date personale, disponibilitatea si concediile
@@ -235,6 +236,9 @@ export default function ProfilTerapeut() {
           </div>
         )}
       </div>
+
+      {/* --- SCHIMBARE PAROLA --- */}
+      {isEditing && <SchimbareParola />}
 
       <hr className="section-divider" />
 

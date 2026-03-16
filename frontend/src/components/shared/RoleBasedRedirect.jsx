@@ -1,5 +1,5 @@
 import { Navigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../../context/AuthContext';
 
 // Componenta care redirijeaza utilizatorul in functie de rolul sau (dupa login)
 export default function RoleBasedRedirect() {

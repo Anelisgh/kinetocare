@@ -70,7 +70,7 @@ public class UserService {
         userMapper.updateEntity(user, updateDTO);
 
         User updated = userRepository.save(user);
-        log.info("Updated user with id {} ", updated.getKeycloakId());
+        log.info("Utilizator actualizat cu id {} ", updated.getKeycloakId());
 
         // Sincronizăm cu Keycloak
         try {
@@ -93,7 +93,7 @@ public class UserService {
     @Transactional
     public AdminUserDTO toggleUserActive(String keycloakId) {
         User user = userRepository.findByKeycloakId(keycloakId)
-                .orElseThrow(() -> new RuntimeException("Utilizator nu a fost găsit"));
+                .orElseThrow(() -> new ResourceNotFoundException("Utilizator nu a fost găsit cu keycloakId: " + keycloakId));
 
         if (user.getRole() == UserRole.ADMIN) {
             throw new ForbiddenOperationException("Nu se poate dezactiva un cont de admin");
@@ -102,14 +102,14 @@ public class UserService {
         boolean newActive = !user.getActive();
         user.setActive(newActive);
         User saved = userRepository.save(user);
-        log.info("User {} (keycloakId={}) {} in DB", user.getEmail(), keycloakId, newActive ? "reactivat" : "dezactivat");
+        log.info("Utilizatorul {} (keycloakId={}) {} in DB", user.getEmail(), keycloakId, newActive ? "reactivat" : "dezactivat");
 
         // 1. sincronizare Keycloak (enabled/disabled)
         try {
             keycloakSyncService.setUserEnabled(user.getKeycloakId(), newActive);
         } catch (Exception e) {
-            log.warn("ATTENTION: User {} modificat in DB dar Keycloak sync a esuat. " +
-                     "Userul poate inca loga. Eroare: {}", keycloakId, e.getMessage());
+            log.error("CRITIC: Keycloak sync eșuat pentru {}. Se revine tranzacția DB pentru consistență.", keycloakId, e);
+            throw new ExternalServiceException("Eroare de sincronizare cu Keycloak: " + e.getMessage(), e);
         }
 
         // 2. propagare catre serviciul de profil

@@ -6,6 +6,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import com.example.programari_service.dto.statistici.RataAnulareProjection;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -148,7 +149,7 @@ public interface ProgramareRepository extends JpaRepository<Programare, Long> {
                 "FROM Programare p " +
                 "WHERE p.data BETWEEN :startDate AND :endDate " +
                 "GROUP BY p.locatieId")
-        List<Object[]> countTotalByLocatieId(
+        List<RataAnulareProjection> countTotalByLocatieId(
                 @Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
 
         // 4. Rata de anulari per locatie - Count Anulate
@@ -157,7 +158,7 @@ public interface ProgramareRepository extends JpaRepository<Programare, Long> {
                 "WHERE p.status = :status " +
                 "AND p.data BETWEEN :startDate AND :endDate " +
                 "GROUP BY p.locatieId")
-        List<Object[]> countAnulateByLocatieId(
+        List<RataAnulareProjection> countAnulateByLocatieId(
                 @Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate, @Param("status") StatusProgramare status);
 
 

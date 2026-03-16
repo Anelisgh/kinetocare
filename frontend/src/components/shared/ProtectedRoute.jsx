@@ -1,5 +1,5 @@
 import { Navigate, Outlet } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../../context/AuthContext';
 
 // Componenta care protejeaza rutele in functie de roluri (daca nu e logat, il trimite la login, daca nu are rolul necesar, il trimite la unauthorized)
 export default function ProtectedRoute({ allowedRoles }) {

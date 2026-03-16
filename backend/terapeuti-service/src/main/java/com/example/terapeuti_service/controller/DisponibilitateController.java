@@ -29,7 +29,7 @@ public class DisponibilitateController {
     @GetMapping
     public ResponseEntity<List<DisponibilitateDTO>> getDisponibilitati(@AuthenticationPrincipal Jwt jwt) {
         String keycloakId = jwt.getSubject();
-        log.info("Getting disponibilitati for terapeut: {}", keycloakId);
+        log.info("Obtinere disponibilitati pentru terapeut: {}", keycloakId);
         return ResponseEntity.ok(disponibilitateService.getDisponibilitatiByKeycloakId(keycloakId));
     }
 
@@ -40,7 +40,7 @@ public class DisponibilitateController {
             @AuthenticationPrincipal Jwt jwt,
             @Valid @RequestBody CreateDisponibilitateDTO dto) {
         String keycloakId = jwt.getSubject();
-        log.info("Adding disponibilitate for terapeut: {}", keycloakId);
+        log.info("Adaugare disponibilitate pentru terapeut: {}", keycloakId);
         return ResponseEntity.ok(disponibilitateService.addDisponibilitate(keycloakId, dto));
     }
 
@@ -51,7 +51,7 @@ public class DisponibilitateController {
             @AuthenticationPrincipal Jwt jwt,
             @PathVariable Long disponibilitateId) {
         String keycloakId = jwt.getSubject();
-        log.info("Deleting disponibilitate {} for terapeut: {}", disponibilitateId, keycloakId);
+        log.info("Stergere disponibilitate {} pentru terapeut: {}", disponibilitateId, keycloakId);
         disponibilitateService.deleteDisponibilitate(keycloakId, disponibilitateId);
         return ResponseEntity.noContent().build();
     }

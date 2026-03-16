@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
-import { profileService } from '../services/profileService';
+import { profileService } from '../../services/profileService';
 
 export default function ProfileGuard() {
   const [loading, setLoading] = useState(true);

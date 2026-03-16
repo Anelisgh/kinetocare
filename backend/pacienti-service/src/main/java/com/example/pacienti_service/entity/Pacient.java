@@ -13,6 +13,9 @@ import java.time.OffsetDateTime;
         uniqueConstraints = {
                 @UniqueConstraint(name = "uk_pacienti_keycloak_id", columnNames = {"keycloak_id"}),
                 @UniqueConstraint(name = "uk_pacienti_cnp", columnNames = {"cnp"})
+        },
+        indexes = {
+                @Index(name = "idx_pacienti_terapeut", columnList = "terapeut_keycloak_id")
         })
 @Getter
 @Setter

@@ -14,8 +14,9 @@ import java.time.OffsetDateTime;
 @Table(name = "programari",
         indexes = {
                 @Index(name = "idx_prog_terapeut_data_status", columnList = "terapeut_keycloak_id, data, status"),
-                @Index(name = "idx_prog_pacient_data", columnList = "pacient_keycloak_id, data"),
-                @Index(name = "idx_prog_status_data", columnList = "status, data")
+                @Index(name = "idx_prog_pacient_status_data", columnList = "pacient_keycloak_id, status, data, ora_inceput"),
+                @Index(name = "idx_prog_stats", columnList = "locatie_id, data"),
+                @Index(name = "idx_prog_overlap", columnList = "terapeut_keycloak_id, data, ora_inceput, ora_sfarsit")
         })
 @Getter
 @Setter

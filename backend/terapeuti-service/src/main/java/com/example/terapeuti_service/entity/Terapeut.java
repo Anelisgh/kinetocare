@@ -13,7 +13,7 @@ import java.time.OffsetDateTime;
                 @UniqueConstraint(name = "uk_terapeuti_keycloak_id", columnNames = {"keycloak_id"})
         },
         indexes = {
-                @Index(name = "idx_terapeuti_specializare", columnList = "specializare")
+                @Index(name = "idx_terapeuti_specializare_active", columnList = "specializare, active")
         })
 @Getter
 @Setter

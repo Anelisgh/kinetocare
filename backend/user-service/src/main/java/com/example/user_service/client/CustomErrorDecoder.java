@@ -1,6 +1,7 @@
 package com.example.user_service.client;
 
 import com.example.common.exception.ExternalServiceException;
+import com.example.common.exception.ForbiddenOperationException;
 import com.example.common.exception.ResourceNotFoundException;
 import feign.Response;
 import feign.codec.ErrorDecoder;
@@ -14,7 +15,10 @@ public class CustomErrorDecoder implements ErrorDecoder {
     public Exception decode(String methodKey, Response response) {
         return switch (response.status()) {
             case 400 -> new ExternalServiceException("Eroare de validare a datelor în serviciul extern.");
+            case 401 -> new ExternalServiceException("Serviciul extern a refuzat autentificarea (401). Verificați configurarea token-ului inter-servicii.");
+            case 403 -> new ForbiddenOperationException("Acces interzis de serviciul extern (403).");
             case 404 -> new ResourceNotFoundException("Resursa cerută din serviciul extern nu a fost găsită.");
+            case 408 -> new ExternalServiceException("Timeout la apelul serviciului extern.");
             case 500 -> new ExternalServiceException("Serviciul extern a întâmpinat o eroare internă.");
             case 503 -> new ExternalServiceException("Serviciul extern este indisponibil.");
             default -> defaultErrorDecoder.decode(methodKey, response);

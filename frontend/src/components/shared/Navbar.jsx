@@ -1,7 +1,7 @@
 import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../../context/AuthContext';
 import NotificationBell from './NotificationBell';
-import '../styles/navbar.css';
+import '../../styles/navbar.css';
 
 export default function Navbar() {
   const { userInfo, logout } = useAuth();
@@ -23,7 +23,6 @@ export default function Navbar() {
       <div className="logo">
         <Link to={homepageLink}>
           <img src="/images/Logo.png" alt="Logo Kinetocare" />
-          <h1>Kinetocare</h1>
         </Link>
       </div>
 

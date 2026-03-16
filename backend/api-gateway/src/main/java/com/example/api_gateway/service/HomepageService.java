@@ -31,7 +31,6 @@ public class HomepageService {
         return profileService.getProfile(keycloakId, role)
                 .flatMap(profileData -> {
                     // daca nu e pacient, returnam doar profilul (fara programare)
-                    // TODO adaugam altceva pentru terapeuti/admini
                     if (!"PACIENT".equals(role)) {
                         return Mono.just(profileData);
                     }
