@@ -78,6 +78,13 @@ public class PacientService {
         Pacient pacient = pacientRepository.findByKeycloakId(keycloakId)
                 .orElseThrow(() -> new ResourceNotFoundException("Pacient nu a fost găsit"));
 
+        // Verificăm unicitatea CNP-ului dacă este furnizat
+        if (request.cnp() != null && !request.cnp().equals(pacient.getCnp())) {
+            if (pacientRepository.existsByCnp(request.cnp())) {
+                throw new ResourceAlreadyExistsException("CNP-ul este deja înregistrat de un alt pacient");
+            }
+        }
+
         pacientMapper.updateEntity(pacient, request);
         Pacient updated = pacientRepository.save(pacient);
         log.info("Patient profile updated for keycloakId: {}", keycloakId);

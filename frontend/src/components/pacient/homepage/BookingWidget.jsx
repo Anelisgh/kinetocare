@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { programariService } from '../../../services/programariService';
 import '../../../styles/HomepagePacient.css';
 
@@ -12,6 +12,7 @@ const BookingWidget = ({ pacientKeycloakId, terapeutKeycloakId, locatieId, onSuc
   const [serviciuRecomandat, setServiciuRecomandat] = useState(null);
   const [loadingService, setLoadingService] = useState(true);
   const [isBooking, setIsBooking] = useState(false);
+  const isInitializedRef = useRef(false);
 
   // generam datele si aflam serviciul recomandat
   useEffect(() => {
@@ -38,7 +39,10 @@ const BookingWidget = ({ pacientKeycloakId, terapeutKeycloakId, locatieId, onSuc
       }
     };
 
-    initWidget();
+    if (!isInitializedRef.current) {
+      isInitializedRef.current = true;
+      initWidget();
+    }
   }, []);
 
   // cand se schimba data SAU serviciul a fost incarcat adaucem sloturile

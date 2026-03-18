@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { profileService } from '../../services/profileService';
 import { programariService } from '../../services/programariService';
 import { evolutiiService } from '../../services/evolutiiService';
 import { evaluariService } from '../../services/evaluariService';
-import JurnalEvolutieChart from '../../components/terapeut/JurnalEvolutieChart';
+import JurnalEvolutieChart from '../../components/terapeut/fisa-pacient/JurnalEvolutieChart';
 import '../../styles/fisaPacient.css';
 
 const FisaPacient = () => {
@@ -18,10 +18,11 @@ const FisaPacient = () => {
   const [fisa, setFisa] = useState(null);
   const [activeTab, setActiveTab] = useState('evaluari');
   const [trendData, setTrendData] = useState([]);
+  const isInitializedRef = useRef(false);
 
   const terapeutKeycloakId = userInfo?.keycloakId;
 
-  const fetchFisa = async () => {
+  const fetchFisa = useCallback(async () => {
     try {
       const data = await programariService.getFisaPacient(pacientId, terapeutKeycloakId);
       setFisa(data);
@@ -29,18 +30,21 @@ const FisaPacient = () => {
       console.error('Eroare la încărcarea fișei:', err);
       setError(err.message);
     }
-  };
+  }, [pacientId, terapeutKeycloakId]);
 
-  const fetchTrend = async () => {
+  const fetchTrend = useCallback(async () => {
     try {
       const data = await programariService.getJurnalTrend(pacientId);
       setTrendData(data || []);
     } catch (err) {
       console.error('Eroare la încărcarea trendului:', err);
     }
-  };
+  }, [pacientId]);
 
   useEffect(() => {
+    // Așteaptă ca sistemul de auth să furnizeze ID-ul înainte de a face orice altceva
+    if (!terapeutKeycloakId) return;
+
     const fetchData = async () => {
       try {
         await Promise.all([fetchFisa(), fetchTrend()]);
@@ -51,9 +55,12 @@ const FisaPacient = () => {
         setLoading(false);
       }
     };
-    if (terapeutKeycloakId) fetchData();
-    else setLoading(false);
-  }, [pacientId, terapeutKeycloakId]);
+    
+    if (!isInitializedRef.current) {
+      isInitializedRef.current = true;
+      fetchData();
+    }
+  }, [fetchFisa, fetchTrend, terapeutKeycloakId]);
 
   // Refresh fisa dupa o editare
   const refreshFisa = () => {

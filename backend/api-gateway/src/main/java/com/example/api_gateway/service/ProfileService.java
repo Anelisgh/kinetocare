@@ -220,8 +220,8 @@ public class ProfileService {
                         .bodyToMono(Void.class)
                         .doOnSuccess(v -> log.info("User updated successfully for keycloakId: {}", keycloakId))
                         .onErrorResume(e -> {
-                            log.error("Failed to update user for keycloakId: {}", keycloakId, e);
-                            return Mono.error(new RuntimeException("Failed to update user: " + e.getMessage()));
+                            log.error("Failed to update user for keycloakId: {}", keycloakId, e.getMessage());
+                            return Mono.error(e);
                         });
                 updates.add(userUpdateMono);
             }
@@ -237,8 +237,8 @@ public class ProfileService {
                         .bodyToMono(Void.class)
                         .doOnSuccess(v -> log.info("Patient profile updated successfully for keycloakId: {}", keycloakId))
                         .onErrorResume(e -> {
-                            log.error("Patient profile not found for keycloakId: {}", keycloakId, e);
-                            return Mono.error(new RuntimeException("Profilul de pacient nu există"));
+                            log.error("Patient profile update error for keycloakId: {}", keycloakId, e.getMessage());
+                            return Mono.error(e);
                         });
                 updates.add(pacientUpdateMono);
             }
@@ -254,8 +254,8 @@ public class ProfileService {
                         .bodyToMono(Void.class)
                         .doOnSuccess(v -> log.info("Terapeut profile updated successfully for keycloakId: {}", keycloakId))
                         .onErrorResume(e -> {
-                            log.error("Terapeut profile not found for keycloakId: {}", keycloakId, e);
-                            return Mono.error(new RuntimeException("Profilul de terapeut nu există"));
+                            log.error("Terapeut profile update error for keycloakId: {}", keycloakId, e.getMessage());
+                            return Mono.error(e);
                         });
                 updates.add(terapeutUpdateMono);
             }
@@ -271,8 +271,8 @@ public class ProfileService {
                     .then(getProfile(keycloakId, role))
                     .doOnSuccess(profile -> log.info("Profile update completed for keycloakId: {}", keycloakId))
                     .onErrorResume(e -> {
-                        log.error("Error in update process for keycloakId: {}", keycloakId, e);
-                        return Mono.error(new RuntimeException("Failed to complete update: " + e.getMessage()));
+                        log.error("Error in update process for keycloakId: {}", keycloakId, e.getMessage());
+                        return Mono.error(e);
                     });
         });
     }

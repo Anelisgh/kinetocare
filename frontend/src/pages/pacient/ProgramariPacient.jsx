@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { homepageService } from '../../services/homepageService';
 import { programariService } from '../../services/programariService';
 import BookingWidget from '../../components/pacient/homepage/BookingWidget';
@@ -14,9 +14,10 @@ const ProgramariPacient = () => {
     const [actionLoading, setActionLoading] = useState(false);
     const [error, setError] = useState(null);
     const [istoric, setIstoric] = useState([]);
+    const isInitializedRef = useRef(false);
 
     // reincarcare, dupa crearea/anularea unei programari
-    const refreshDashboard = async () => {
+    const refreshDashboard = useCallback(async () => {
         try {
             setLoading(true);
             const result = await homepageService.getDashboardData();
@@ -31,11 +32,14 @@ const ProgramariPacient = () => {
         } finally {
             setLoading(false);
         }
-    };
+    }, []);
 
     useEffect(() => {
-        refreshDashboard();
-    }, []);
+        if (!isInitializedRef.current) {
+            isInitializedRef.current = true;
+            refreshDashboard();
+        }
+    }, [refreshDashboard]);
 
     const handleCancel = async (programareId) => {
         if (!window.confirm('Sigur dorești să anulezi programarea?')) return;

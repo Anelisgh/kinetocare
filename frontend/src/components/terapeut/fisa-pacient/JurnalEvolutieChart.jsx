@@ -12,11 +12,7 @@ import {
 
 const JurnalEvolutieChart = ({ data }) => {
   if (!data || data.length === 0) {
-    return (
-      <div className="trend-empty-container">
-        <p className="trend-empty-text">Nu există jurnale suficiente pentru afișarea statisticii.</p>
-      </div>
-    );
+    return null;
   }
 
   return (
@@ -110,19 +106,6 @@ const JurnalEvolutieChart = ({ data }) => {
         }
         .trend-chart-wrapper {
           width: 100%;
-        }
-        .trend-empty-container {
-          background: #f9f9f9;
-          border: 1px dashed #d9d9d9;
-          border-radius: 12px;
-          padding: 40px 20px;
-          text-align: center;
-          margin-bottom: 24px;
-        }
-        .trend-empty-text {
-          color: #8c8c8c;
-          font-size: 0.95rem;
-          margin: 0;
         }
       `}</style>
     </div>

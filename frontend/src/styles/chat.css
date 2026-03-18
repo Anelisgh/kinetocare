@@ -346,6 +346,58 @@
     color: var(--color-text-muted, #94a3b8);
 }
 
+/* Separator Data */
+.separator-data {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 1.5rem 0;
+    position: relative;
+    user-select: none;
+}
+
+.separator-data span {
+    background: #f1f5f9;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #64748b;
+    text-transform: capitalize;
+    z-index: 1;
+}
+
+/* Indicator Citit */
+.indicator-citit {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: -8px;
+    margin-bottom: 12px;
+    padding-right: 4px;
+    animation: fadeIn 0.3s ease-out;
+}
+
+.indicator-citit span {
+    font-size: 0.7rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.indicator-citit .trimis {
+    color: #94a3b8;
+}
+
+.indicator-citit .vazut {
+    color: var(--color-primary, #0369a1);
+}
+
+.indicator-citit svg {
+    width: 14px;
+    height: 14px;
+}
+
 /* Footer & Input */
 .chat-footer {
     padding: var(--space-md, 1rem) var(--space-xl, 1.75rem);

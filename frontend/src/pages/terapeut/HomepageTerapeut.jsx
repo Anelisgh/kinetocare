@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { profileService } from '../../services/profileService';
@@ -23,6 +23,7 @@ const HomepageTerapeut = () => {
     specializare: false,
     disponibilitati: false
   });
+  const isInitializedRef = useRef(false);
 
   useEffect(() => {
     // Functie care incarca datele necesare pentru verificare si dropdown
@@ -53,7 +54,11 @@ const HomepageTerapeut = () => {
         setLoading(false);
       }
     };
-    fetchData();
+
+    if (!isInitializedRef.current) {
+      isInitializedRef.current = true;
+      fetchData();
+    }
   }, []);
 
   // Functie care selecteaza programarea

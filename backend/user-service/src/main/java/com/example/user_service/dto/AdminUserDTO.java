@@ -4,6 +4,7 @@ import java.time.OffsetDateTime;
 
 public record AdminUserDTO(
     Long id,
+    String keycloakId,
     String nume,
     String prenume,
     String email,

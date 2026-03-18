@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { jurnalService } from '../../services/jurnalService';
 import { useAuth } from '../../context/AuthContext';
 import '../../styles/jurnalPacient.css';
@@ -48,8 +48,15 @@ const JurnalPacient = () => {
         }
     };
 
+    const [successMessage, setSuccessMessage] = useState('');
+    const [successMessageType, setSuccessMessageType] = useState(''); // success or error
+    const isInitializedRef = useRef(false);
+
     useEffect(() => {
-        fetchData();
+        if (!isInitializedRef.current) {
+            isInitializedRef.current = true;
+            fetchData();
+        }
     }, []);
 
     // Handler Submit

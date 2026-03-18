@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { profileService } from '../../services/profileService';
@@ -31,9 +31,13 @@ export default function ProfilPacient() {
     });
     const [errors, setErrors] = useState({});
     const [successMessage, setSuccessMessage] = useState('');
+    const isInitializedRef = useRef(false);
 
     useEffect(() => {
-        fetchData();
+        if (!isInitializedRef.current) {
+            isInitializedRef.current = true;
+            fetchData();
+        }
     }, []);
     // Fetch profile and locatii data
     const fetchData = async () => {

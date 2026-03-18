@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Client } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
 import ListaConversatii from '../../components/chat/ListaConversatii';
@@ -16,11 +16,16 @@ const ChatPacient = () => {
     const [userId, setUserId] = useState(null);
     const [numeMap, setNumeMap] = useState({});
     const [arhivatiIds, setArhivatiIds] = useState([]);
+    const isInitializedRef = useRef(false);
+    const stompClientRef = useRef(null);
+    const isFetchingRef = useRef(false);
     const tipUser = 'PACIENT';
 
-    const incarcaConversatii = async (resolvedUserId) => {
+    const incarcaConversatii = useCallback(async (resolvedUserId) => {
         const idToUse = typeof resolvedUserId === 'number' || typeof resolvedUserId === 'string' ? resolvedUserId : userId;
-        if (!idToUse) return;
+        if (!idToUse || isFetchingRef.current) return;
+
+        isFetchingRef.current = true;
         try {
             const conversatiiAgregate = await chatService.getConversatiiAgregate(idToUse, tipUser);
             
@@ -52,8 +57,10 @@ const ChatPacient = () => {
 
         } catch (err) {
             console.error("Eroare fetching conversatii agregate", err);
+        } finally {
+            isFetchingRef.current = false;
         }
-    };
+    }, [userId, tipUser]);
 
     useEffect(() => {
         const initializeChat = async () => {
@@ -84,6 +91,7 @@ const ChatPacient = () => {
                 });
 
                 client.activate();
+                stompClientRef.current = client;
                 setStompClient(client);
 
             } catch (err) {
@@ -91,14 +99,18 @@ const ChatPacient = () => {
             }
         };
 
-        if (!userId) {
+        if (!isInitializedRef.current) {
+            isInitializedRef.current = true;
             initializeChat();
         }
 
         return () => {
-            if (stompClient) stompClient.deactivate();
+            if (stompClientRef.current) {
+                stompClientRef.current.deactivate();
+                stompClientRef.current = null;
+            }
         };
-    }, []);
+    }, [incarcaConversatii]);
 
     const handleSelectConversatie = (conv) => {
         setConversatieActivaId(conv.id);
@@ -118,6 +130,7 @@ const ChatPacient = () => {
                 arhivatiIds={arhivatiIds}
             />
             <FereastraChat 
+                key={conversatieActivaId || 'none'}
                 conversatieActiva={conversatieActiva}
                 userId={userId}
                 tipUser={tipUser}

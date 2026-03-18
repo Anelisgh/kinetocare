@@ -129,9 +129,9 @@ export const adminService = {
     }
   },
 
-  toggleUserActive: async (userId) => {
+  toggleUserActive: async (keycloakId) => {
     try {
-      const response = await api.patch(`/api/users/${userId}/toggle-active`);
+      const response = await api.patch(`/api/users/by-keycloak/${keycloakId}/toggle-active`);
       return response.data;
     } catch (error) {
       handleApiError(error, 'Eroare la schimbarea statusului utilizatorului');

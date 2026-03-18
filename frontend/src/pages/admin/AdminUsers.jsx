@@ -111,7 +111,7 @@ export default function AdminUsers() {
 
     try {
       setSubmitting(true);
-      const updatedUser = await adminService.toggleUserActive(userToToggle.id);
+      const updatedUser = await adminService.toggleUserActive(userToToggle.keycloakId);
       
       // Actualizam lista local
       setUsers(prevUsers => prevUsers.map(u => 

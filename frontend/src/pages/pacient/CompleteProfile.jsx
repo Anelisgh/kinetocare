@@ -56,11 +56,18 @@ export default function CompleteProfile() {
       navigate('/pacient/homepage', { replace: true });
     } catch (err) {
       console.error('Eroare la completarea profilului:', err);
-      setError(err.response?.data?.message || 'Nu s-a putut salva profilul. Încearcă din nou.');
+      // Preluăm mesajul de eroare (fie cel din detail, fie cel generic)
+      const errorMsg = err.response?.data?.detail || err.response?.data?.message || 'Nu s-a putut salva profilul. Încearcă din nou.';
+      setError(errorMsg);
     } finally {
       setIsSubmitting(false);
     }
   };
+
+  // Verificăm dacă eroarea curentă este legată de CNP pentru a o afișa sub câmp
+  const cnpError = error && (error.toLowerCase().includes('cnp') || error.toLowerCase().includes('cod numeric')) ? error : null;
+  // Eroarea generală (dacă nu e de CNP)
+  const generalError = error && !cnpError ? error : null;
 
   return (
     <div className="complete-profile-container">
@@ -72,8 +79,8 @@ export default function CompleteProfile() {
           Aceste date ne ajută să îți oferim cele mai bune servicii de kinetoterapie. ☺️
         </p>
 
-        {error && (
-          <div className="error-message">{error}</div>
+        {generalError && (
+          <div className="error-message">{generalError}</div>
         )}
 
         <form onSubmit={handleSubmit} className="complete-profile-form">
@@ -101,8 +108,13 @@ export default function CompleteProfile() {
               maxLength={13}
               required
               placeholder="1234567890123"
+              className={cnpError ? 'input-error' : ''}
             />
-            <small>Introdu cele 13 cifre ale CNP-ului tău</small>
+            {cnpError ? (
+              <span className="field-error">{cnpError}</span>
+            ) : (
+              <small className="field-hint">Introdu cele 13 cifre ale CNP-ului tău</small>
+            )}
           </div>
 
           <div className="form-group">

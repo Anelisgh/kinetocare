@@ -25,6 +25,7 @@ public class UserMapper {
     public AdminUserDTO toAdminDTO(User user) {
         return new AdminUserDTO(
             user.getId(),
+            user.getKeycloakId(),
             user.getNume(),
             user.getPrenume(),
             user.getEmail(),

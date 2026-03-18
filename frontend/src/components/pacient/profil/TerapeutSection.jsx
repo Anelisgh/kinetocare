@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { profileService } from '../../../services/profileService';
 import TerapeutSearchForm from './TerapeutSearchForm';
 import TerapeutCard from './TerapeutCard';
@@ -16,6 +16,7 @@ export default function TerapeutSection({ dataNasterii, onProfileUpdate }) {
     const [error, setError] = useState(null);
     const [successMessage, setSuccessMessage] = useState('');
     const [currentFilters, setCurrentFilters] = useState({});
+    const isInitializedRef = useRef(false);
 
     // calculare specializare in functie de varsta
     const getSpecializare = () => {
@@ -35,12 +36,8 @@ export default function TerapeutSection({ dataNasterii, onProfileUpdate }) {
 
     const specializare = getSpecializare();
 
-    useEffect(() => {
-        fetchMyTerapeut();
-    }, []);
-
     // functie pentru preluarea terapeutului curent
-    const fetchMyTerapeut = async () => {
+    const fetchMyTerapeut = useCallback(async () => {
         try {
             setLoading(true);
             const data = await profileService.getMyTerapeut();
@@ -76,7 +73,14 @@ export default function TerapeutSection({ dataNasterii, onProfileUpdate }) {
         } finally {
             setLoading(false);
         }
-    };
+    }, []);
+
+    useEffect(() => {
+        if (!isInitializedRef.current) {
+            isInitializedRef.current = true;
+            fetchMyTerapeut();
+        }
+    }, [fetchMyTerapeut]);
 
     // functie pentru cautarea terapeutilor
     const handleSearch = async (filters) => {

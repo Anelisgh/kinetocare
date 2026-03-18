@@ -38,11 +38,14 @@ public class ChatService {
     @Transactional(readOnly = true)
     public List<ConversatieDTO> obtineConversatii(String userKeycloakId, TipExpeditor tipUser) {
         log.info("Aducere conversatii pentru {} cu keycloakId: {}", tipUser, userKeycloakId);
-        return conversatieRepository.findByUserKeycloakIdOrderByUltimulMesajLaDesc(userKeycloakId)
-                .stream()
-                .map(conversatie -> {
-                    Mesaj ultimulMesaj = mesajRepository.findTopByConversatieIdOrderByTrimisLaDesc(conversatie.getId()).orElse(null);
-                    return chatMapper.toConversatieDTOWithMesaj(conversatie, ultimulMesaj);
+        
+        List<Object[]> rezultate = conversatieRepository.findByUserKeycloakIdWithLastMesaj(userKeycloakId);
+        
+        return rezultate.stream()
+                .map(row -> {
+                    Conversatie conv = (Conversatie) row[0];
+                    Mesaj mesaj = (Mesaj) row[1];
+                    return chatMapper.toConversatieDTOWithMesaj(conv, mesaj);
                 })
                 .collect(Collectors.toList());
     }

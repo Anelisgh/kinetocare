@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { profileService } from '../../services/profileService';
@@ -30,9 +30,13 @@ export default function ProfilTerapeut() {
 
   const [errors, setErrors] = useState({});
   const [successMessage, setSuccessMessage] = useState('');
+  const isInitializedRef = useRef(false);
 
   useEffect(() => {
-    fetchProfile();
+    if (!isInitializedRef.current) {
+      isInitializedRef.current = true;
+      fetchProfile();
+    }
   }, []);
 
   const fetchProfile = async () => {

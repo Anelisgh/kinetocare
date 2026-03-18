@@ -8,6 +8,7 @@ const FereastraChat = ({ conversatieActiva, userId, tipUser, stompClient, onMesa
   const [mesajInput, setMesajInput] = useState('');
   const [eroareWs, setEroareWs] = useState(null); // eroare primită de la backend via WebSocket
   const mesajeEndRef = useRef(null);
+  const ultimaConversatieMarcataRef = useRef(null);
 
   // Funcție de scroll bottom
   const executaScrollJos = () => {
@@ -17,11 +18,11 @@ const FereastraChat = ({ conversatieActiva, userId, tipUser, stompClient, onMesa
   const conversatieId = conversatieActiva?.id;
 
   useEffect(() => {
-    let sub = null;
-    let subErori = null;
+    // 1. Resetăm istoricul
+    setIstoric([]);
 
-    if (conversatieId && stompClient && stompClient.connected) {
-      // 1. Încarcă istoricul de mesaje REST
+    // 2. Încarcă istoricul de mesaje REST doar dacă avem ID
+    if (conversatieId) {
       chatService.obtineMesajeDinConversatie(conversatieId)
         .then(mesaje => {
           setIstoric(mesaje);
@@ -29,33 +30,39 @@ const FereastraChat = ({ conversatieActiva, userId, tipUser, stompClient, onMesa
         })
         .catch(err => console.error("Eroare la încărcarea istoricului de mesaje", err));
       
-      // 2. Marchează mesajele curente ca fiind citite
-      chatService.marcheazaMesajeleCaCitite(conversatieId, userId, tipUser)
-         .then(() => {
-             if (onMesajNouDupaCitire) onMesajNouDupaCitire();
-         });
+      // 3. Marchează mesajele curente ca fiind citite (DOAR O DATĂ per focus pe această conversație)
+      if (ultimaConversatieMarcataRef.current !== conversatieId) {
+        ultimaConversatieMarcataRef.current = conversatieId;
+        chatService.marcheazaMesajeleCaCitite(conversatieId, userId, tipUser)
+           .then(() => {
+               if (onMesajNouDupaCitire) onMesajNouDupaCitire();
+           });
+      }
+    }
 
-      // 3. Subscrie-te la topicul specific conversației pentru STOMP
-      const subscriptionPath = `/queue/conversatii/${conversatieId}`;
+    let sub = null;
+    let subErori = null;
+
+    if (stompClient && stompClient.connected) {
+      // 4. Subscrie-te la topicul specific conversației (sau topicul null pentru inițializare)
+      const subscriptionPath = `/queue/conversatii/${conversatieId || 'null'}`;
       sub = stompClient.subscribe(subscriptionPath, (message) => {
          const mesajPrimit = JSON.parse(message.body);
          setIstoric(prev => [...prev, mesajPrimit]);
          executaScrollJos();
          
-         // Dacă primesc un mesaj pe conv activă, îl marchez ca citit direct în fundal
-         if (mesajPrimit.expeditorKeycloakId !== userId) {
-             chatService.marcheazaMesajeleCaCitite(conversatieId, userId, tipUser)
-               .then(() => { if (onMesajNouDupaCitire) onMesajNouDupaCitire(); });
+         // Trigger refresh în părinte la orice mesaj (mai ales important pentru primul mesaj care dă ID)
+         if (onMesajNouDupaCitire) onMesajNouDupaCitire();
+
+         if (mesajPrimit.expeditorKeycloakId !== userId && conversatieId) {
+             chatService.marcheazaMesajeleCaCitite(conversatieId, userId, tipUser);
          }
       });
 
-      // 4. Subscrie-te la /user/queue/errors pentru a primi erorile de la @MessageExceptionHandler
-      // (ex: validare eșuată, eroare DB la salvarea mesajului)
       subErori = stompClient.subscribe('/user/queue/errors', (frame) => {
         const eroare = JSON.parse(frame.body);
         const mesajEroare = eroare?.error || 'Mesajul nu a putut fi trimis.';
         setEroareWs(mesajEroare);
-        // auto-dismiss după 5 secunde
         setTimeout(() => setEroareWs(null), 5000);
       });
     }
@@ -64,7 +71,7 @@ const FereastraChat = ({ conversatieActiva, userId, tipUser, stompClient, onMesa
        if (sub) sub.unsubscribe();
        if (subErori) subErori.unsubscribe();
     };
-  }, [conversatieId, stompClient, userId, tipUser]);
+  }, [conversatieId, stompClient, stompClient?.connected, userId, tipUser]);
 
   
   useEffect(() => {
@@ -142,15 +149,68 @@ const FereastraChat = ({ conversatieActiva, userId, tipUser, stompClient, onMesa
         </div>
       )}
       <div className="chat-body">
-        {istoric.map(mesaj => {
+        {istoric.map((mesaj, index) => {
           const isMine = mesaj.expeditorKeycloakId === userId;
+          
+          // Logică pentru separator de dată
+          let showDateSeparator = false;
+          let dateStr = '';
+          
+          const currentMsgDate = new Date(mesaj.trimisLa);
+          if (index === 0) {
+            showDateSeparator = true;
+          } else {
+            const prevMsgDate = new Date(istoric[index - 1].trimisLa);
+            if (currentMsgDate.toDateString() !== prevMsgDate.toDateString()) {
+              showDateSeparator = true;
+            }
+          }
+          
+          if (showDateSeparator) {
+            const azi = new Date();
+            const ieri = new Date();
+            ieri.setDate(azi.getDate() - 1);
+            
+            if (currentMsgDate.toDateString() === azi.toDateString()) {
+              dateStr = 'Astăzi';
+            } else if (currentMsgDate.toDateString() === ieri.toDateString()) {
+              dateStr = 'Ieri';
+            } else {
+              dateStr = currentMsgDate.toLocaleDateString('ro-RO', { day: 'numeric', month: 'long' });
+            }
+          }
+
+          // Logică pentru indicator citit (doar pentru ultimul mesaj trimis de mine)
+          const isLastMessage = index === istoric.length - 1;
+          const showReadStatus = isMine && isLastMessage;
+
           return (
-            <div key={mesaj.id} className={`mesaj-wrapper ${isMine ? 'mine' : 'theirs'}`}>
-               <div className="mesaj-bula">
-                 <p>{mesaj.continut}</p>
-                 <span className="mesaj-timp">{formateazaData(mesaj.trimisLa)}</span>
-               </div>
-            </div>
+            <React.Fragment key={mesaj.id}>
+              {showDateSeparator && (
+                <div className="separator-data">
+                  <span>{dateStr}</span>
+                </div>
+              )}
+              <div className={`mesaj-wrapper ${isMine ? 'mine' : 'theirs'}`}>
+                 <div className="mesaj-bula">
+                   <p>{mesaj.continut}</p>
+                   <span className="mesaj-timp">{formateazaData(mesaj.trimisLa)}</span>
+                 </div>
+              </div>
+              {showReadStatus && (
+                <div className="indicator-citit">
+                  {mesaj.esteCitit ? (
+                    <span className="vazut">
+                      ✓ Văzut
+                    </span>
+                  ) : (
+                    <span className="trimis">
+                      ✓ Trimis
+                    </span>
+                  )}
+                </div>
+              )}
+            </React.Fragment>
           );
         })}
         <div ref={mesajeEndRef} />

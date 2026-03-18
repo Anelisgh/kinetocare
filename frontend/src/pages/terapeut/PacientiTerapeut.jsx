@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { programariService } from '../../services/programariService';
@@ -15,6 +15,7 @@ const PacientiTerapeut = () => {
   const [pacientiArhivati, setPacientiArhivati] = useState([]);
   const [showArhiva, setShowArhiva] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
+  const isInitializedRef = useRef(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -30,7 +31,11 @@ const PacientiTerapeut = () => {
         setLoading(false);
       }
     };
-    fetchData();
+
+    if (!isInitializedRef.current) {
+      isInitializedRef.current = true;
+      fetchData();
+    }
   }, []);
 
   const handlePatientClick = (pacientId) => {

@@ -200,7 +200,7 @@ public class ProgramareService {
     // calculam sloturile orare libere
     @Transactional(readOnly = true)
     public List<LocalTime> getSloturiDisponibile(String terapeutKeycloakId, Long locatieId, LocalDate data, Long serviciuId) {
-        // We need numeric terapeutId for terapeutiClient
+        // terapeutId din terapeutiClient
         Map<String, Object> terapeutMap = terapeutiClient.getTerapeutByKeycloakId(terapeutKeycloakId);
         Long terapeutId = ((Number) terapeutMap.get("id")).longValue();
 
@@ -606,13 +606,12 @@ public class ProgramareService {
             programareRepository.saveAll(programari);
             log.info("S-au anulat automat {} programari viitoare intre pacientul {} si fostul terapeut {}", programari.size(), pacientKeycloakId, terapeutKeycloakId);
 
-            // Optional: notificari
+            // notificarea
             programari.forEach(notificarePublisher::programareAnulataDePacient);
         }
     }
 
     // ADMIN: anulare programari la dezactivare cont
-
     // anuleaza toate programarile viitoare ale unui terapeut (keycloakId -> terapeutId -> cancel)
     @Transactional
     public AdminCancelResultDTO anuleazaProgramariAdminByTerapeut(String keycloakId) {

@@ -1,6 +1,7 @@
 package com.example.chat_service.repository;
 
 import com.example.chat_service.entity.Conversatie;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -11,6 +12,12 @@ import java.util.Optional;
 
 @Repository
 public interface ConversatieRepository extends JpaRepository<Conversatie, Long> {
+
+    @Query("SELECT c, m FROM Conversatie c " +
+           "LEFT JOIN Mesaj m ON m.id = (SELECT MAX(m2.id) FROM Mesaj m2 WHERE m2.conversatieId = c.id) " +
+           "WHERE c.pacientKeycloakId = :keycloakId OR c.terapeutKeycloakId = :keycloakId " +
+           "ORDER BY c.ultimulMesajLa DESC")
+    List<Object[]> findByUserKeycloakIdWithLastMesaj(@Param("keycloakId") String keycloakId);
 
     @Query("SELECT c FROM Conversatie c WHERE c.pacientKeycloakId = :keycloakId OR c.terapeutKeycloakId = :keycloakId ORDER BY c.ultimulMesajLa DESC")
     List<Conversatie> findByUserKeycloakIdOrderByUltimulMesajLaDesc(@Param("keycloakId") String keycloakId);

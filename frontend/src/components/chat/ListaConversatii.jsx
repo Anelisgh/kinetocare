@@ -28,10 +28,16 @@ const ListaConversatii = ({ conversatii, conversatieActivaId, peSelectieConversa
   const conversatiiSortate = [...conversatii].sort((a, b) => {
       const aArhivat = isArhivat(a);
       const bArhivat = isArhivat(b);
+      
+      // 1. Sortare după status Arhivat (cele active primele)
       if (aArhivat && !bArhivat) return 1;
       if (!aArhivat && bArhivat) return -1;
-      // Daca au acelasi status, raman sortate default (de la backend) de ex. dupa data ultimului mesaj
-      return 0;
+      
+      // 2. Sortare după data ultimului mesaj (cele mai recente primele)
+      const dataA = a.ultimulMesaj ? new Date(a.ultimulMesaj.trimisLa).getTime() : 0;
+      const dataB = b.ultimulMesaj ? new Date(b.ultimulMesaj.trimisLa).getTime() : 0;
+      
+      return dataB - dataA;
   });
 
   return (
