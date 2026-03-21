@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kinetocare-config
+data:
+  MYSQL_USER: "root"
+  MYSQL_HOST: "mysql"
+  KEYCLOAK_URL: "http://keycloak:8080"
+  MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE: "*"
+  MANAGEMENT_ENDPOINT_HEALTH_SHOW_DETAILS: "ALWAYS"
+  MANAGEMENT_HEALTH_DEFAULTS_ENABLED: "true"
+  MANAGEMENT_HEALTH_RABBIT_ENABLED: "false"
+  RABBITMQ_HOST: "localhost"
+  USER_SERVICE_URL: "http://user-service:8082"
+  PACIENTI_SERVICE_URL: "http://pacienti-service:8083"
+  PACIENT_SERVICE_URL: "http://pacienti-service:8083"
+  TERAPEUTI_SERVICE_URL: "http://terapeuti-service:8084"
+  API_GATEWAY_URL: "http://api-gateway:8081"
+  KEYCLOAK_ADMIN: "admin"
+  KEYCLOAK_REALM: "kinetocare"
+  KEYCLOAK_CLIENT_ID: "react-client"

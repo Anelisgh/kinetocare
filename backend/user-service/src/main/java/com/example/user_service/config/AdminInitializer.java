@@ -60,88 +60,107 @@ public class AdminInitializer implements CommandLineRunner {
             return;
         }
 
-        log.info("Utilizatorul ADMIN nu exista in baza de date locala.");
-        createAdmin();
+        log.info("Utilizatorul ADMIN nu exista in baza de date locala. Incepem initializarea...");
+        
+        // --- RETRY LOGIC PENTRU DOCKER ---
+        int maxRetries = 20;
+        int waitTimeSeconds = 5;
+        boolean success = false;
+
+        for (int i = 1; i <= maxRetries; i++) {
+            try {
+                log.info("Incercare initializare ADMIN {}/{}", i, maxRetries);
+                createAdmin();
+                success = true;
+                break; // Daca nu a aruncat exceptie, am reusit
+            } catch (Exception e) {
+                log.warn("Keycloak nu este inca gata (Incercarea {}/{}). Mai asteptam {} secunde...", i, maxRetries, waitTimeSeconds);
+                try {
+                    Thread.sleep(waitTimeSeconds * 1000);
+                } catch (InterruptedException ie) {
+                    Thread.currentThread().interrupt();
+                }
+            }
+        }
+
+        if (!success) {
+            log.error("Nu s-a putut initializa administratorul dupa {} incercari. Keycloak este probabil offline.", maxRetries);
+        }
     }
 
     // daca nu exista deja:
     private void createAdmin() {
         String keycloakId = null;
+        // ne conectam la keycloak
+        RealmResource realmResource = keycloak.realm(realm);
+        UsersResource usersResource = realmResource.users();
+
+        // Operatie de test pentru a forta conectarea si a prinde exceptie daca e offline
+        usersResource.search(adminEmail, true);
+
         // verificam daca exista deja in keycloak
-        try {
-            // ne conectam la keycloak
-            RealmResource realmResource = keycloak.realm(realm);
-            UsersResource usersResource = realmResource.users();
+        List<UserRepresentation> existing = usersResource.search(adminEmail, true);
+        // daca exista deja in keycloak -> il refolosim
+        if (!existing.isEmpty()) {
+            log.info("Utilizatorul ADMIN exista deja in Keycloak. Il refolosim.");
+            keycloakId = existing.get(0).getId();
+        } else {
+            // daca nu exista deja -> il cream
+            UserRepresentation admin = new UserRepresentation();
+            admin.setUsername(adminEmail);
+            admin.setEmail(adminEmail);
+            admin.setFirstName(adminFirstName);
+            admin.setLastName(adminLastName);
+            admin.setEnabled(true);
+            admin.setEmailVerified(true);
 
-            // verificam in keycloak
-            List<UserRepresentation> existing = usersResource.search(adminEmail, true);
-            // daca exista deja in keycloak -> il refolosim
-            if (!existing.isEmpty()) {
-                log.info("Utilizatorul ADMIN exista deja in Keycloak. Il refolosim.");
-                keycloakId = existing.get(0).getId();
+            // setam parola
+            CredentialRepresentation cred = new CredentialRepresentation();
+            cred.setType(CredentialRepresentation.PASSWORD);
+            cred.setValue(adminPassword);
+            cred.setTemporary(false);
+            admin.setCredentials(Collections.singletonList(cred));
+
+            Response response = usersResource.create(admin);
+            // daca s-a creat cu succes extragem id-ul din headerul location
+            if (response.getStatus() == 201) {
+                String location = response.getHeaderString("Location");
+                keycloakId = location.substring(location.lastIndexOf('/') + 1);
+                log.info("Utilizator ADMIN creat in Keycloak cu ID: " + keycloakId);
             } else {
-                // daca nu exista deja -> il cream
-                UserRepresentation admin = new UserRepresentation();
-                admin.setUsername(adminEmail);
-                admin.setEmail(adminEmail);
-                admin.setFirstName(adminFirstName);
-                admin.setLastName(adminLastName);
-                admin.setEnabled(true);
-                admin.setEmailVerified(true);
-
-                // setam parola
-                CredentialRepresentation cred = new CredentialRepresentation();
-                cred.setType(CredentialRepresentation.PASSWORD);
-                cred.setValue(adminPassword);
-                cred.setTemporary(false);
-                admin.setCredentials(Collections.singletonList(cred));
-
-                Response response = usersResource.create(admin);
-                // daca s-a creat cu succes extragem id-ul din headerul location
-                if (response.getStatus() == 201) {
-                    String location = response.getHeaderString("Location");
-                    keycloakId = location.substring(location.lastIndexOf('/') + 1);
-                    log.info("Utilizator ADMIN creat in Keycloak cu ID: " + keycloakId);
-                } else {
-                    log.error("Eroare la crearea utilizatorului ADMIN in Keycloak: " + response.getStatus());
-                    return;
-                }
+                log.error("Eroare la crearea utilizatorului ADMIN in Keycloak: " + response.getStatus());
+                return;
             }
-
-            // ii asignam rolul admin in keycloak
-            assignAdminRole(realmResource, usersResource, keycloakId);
-
-            // salvam in db
-            User dbUser = new User();
-            dbUser.setKeycloakId(keycloakId);
-            dbUser.setEmail(adminEmail);
-            dbUser.setNume(adminLastName);
-            dbUser.setPrenume(adminFirstName);
-            dbUser.setActive(true);
-
-            // setam valori valide pt db, pentru a nu crapa din cauza costrangerilor not
-            // null
-            dbUser.setRole(UserRole.ADMIN);
-            dbUser.setTelefon(adminPhone);
-            dbUser.setGen(Gen.MASCULIN);
-
-            userRepository.save(dbUser);
-            log.info("Utilizatorul ADMIN a fost salvat cu succes in baza de date locala!");
-
-        } catch (Exception e) {
-            log.error("Eroare critica la initializarea utilizatorului ADMIN", e);
         }
+
+        // ii asignam rolul admin in keycloak
+        assignAdminRole(realmResource, usersResource, keycloakId);
+
+        // salvam in db
+        User dbUser = new User();
+        dbUser.setKeycloakId(keycloakId);
+        dbUser.setEmail(adminEmail);
+        dbUser.setNume(adminLastName);
+        dbUser.setPrenume(adminFirstName);
+        dbUser.setActive(true);
+
+        // setam valori valide pt db, pentru a nu crapa din cauza costrangerilor not null
+        dbUser.setRole(UserRole.ADMIN);
+        dbUser.setTelefon(adminPhone);
+        dbUser.setGen(Gen.MASCULIN);
+
+        userRepository.save(dbUser);
+        log.info("Utilizatorul ADMIN a fost salvat cu succes in baza de date locala!");
     }
 
     // metoda care ii asigna rolul admin in keycloak
     private void assignAdminRole(RealmResource realmResource, UsersResource usersResource, String userId) {
         try {
             RoleRepresentation role = realmResource.roles().get(adminRole).toRepresentation();
-
             usersResource.get(userId).roles().realmLevel().add(Collections.singletonList(role));
             log.info("Rolul 'admin' a fost asignat.");
         } catch (Exception e) {
             log.warn("ATENȚIE: Nu s-a putut asigna rolul 'admin'. Verifică dacă rolul există în Keycloak!", e);
-        }
-    }
+}
+ }
 }

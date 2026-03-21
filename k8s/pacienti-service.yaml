@@ -1,0 +1,61 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: pacienti-service
+spec:
+  ports:
+    - port: 8083
+      targetPort: 8083
+  selector:
+    app: pacienti-service
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pacienti-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pacienti-service
+  template:
+    metadata:
+      labels:
+        app: pacienti-service
+    spec:
+      containers:
+        - name: pacienti-service
+          image: kinetocare/pacienti-service:latest
+          imagePullPolicy: IfNotPresent
+          envFrom:
+            - configMapRef:
+                name: kinetocare-config
+          env:
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: kinetocare-secrets
+                  key: MYSQL_PASSWORD
+            - name: RABBITMQ_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: kinetocare-secrets
+                  key: RABBITMQ_PASS
+            - name: JAVA_TOOL_OPTIONS
+              value: "-Xms128m -Xmx256m"
+          ports:
+            - containerPort: 8083
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8083
+            initialDelaySeconds: 60
+            timeoutSeconds: 5
+            periodSeconds: 10
+            failureThreshold: 5
+          resources:
+            requests:
+              memory: "128Mi"
+            limits:
+              memory: "384Mi"

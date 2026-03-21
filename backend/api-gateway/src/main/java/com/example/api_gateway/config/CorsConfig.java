@@ -14,10 +14,11 @@ public class CorsConfig {
     @Bean
     public CorsWebFilter corsWebFilter() {
         CorsConfiguration corsConfig = new CorsConfiguration();
-        corsConfig.setAllowedOrigins(Arrays.asList("http://localhost:3000")); // React dev server
+        // Permitem orice origine pentru a rezolva problemele de porturi diferite în K8s (30000 vs 30081)
+        corsConfig.setAllowedOriginPatterns(Arrays.asList("*")); 
         corsConfig.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         corsConfig.setAllowedHeaders(Arrays.asList("*"));
-        corsConfig.setAllowCredentials(true); // permite trimiterea si primirea de cookies
+        corsConfig.setAllowCredentials(true); 
         corsConfig.setMaxAge(3600L);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();

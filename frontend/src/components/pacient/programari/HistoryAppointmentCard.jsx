@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import '../../../styles/ProgramariPacient.css';
+import '../../../styles/programariPacient.css';
 
 const HistoryAppointmentCard = ({ programare }) => {
     const [expanded, setExpanded] = useState(false);

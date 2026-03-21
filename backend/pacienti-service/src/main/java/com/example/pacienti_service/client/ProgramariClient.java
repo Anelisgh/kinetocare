@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import java.util.List;
 
-@FeignClient(name = "programari-service", url = "http://localhost:8085", configuration = CustomErrorDecoder.class)
+@FeignClient(name = "programari-service", url = "${application.urls.programari-service:http://localhost:8085}", configuration = CustomErrorDecoder.class)
 public interface ProgramariClient {
     // marcheaza programarea ca are jurnal completat
     @PostMapping("/programari/{id}/mark-jurnal")

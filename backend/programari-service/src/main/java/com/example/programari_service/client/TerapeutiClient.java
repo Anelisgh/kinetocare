@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.Map;
 
-@FeignClient(name = "terapeuti-service", url = "http://localhost:8084", configuration = CustomErrorDecoder.class)
+@FeignClient(name = "terapeuti-service", url = "${application.urls.terapeuti-service:http://localhost:8084}", configuration = CustomErrorDecoder.class)
 public interface TerapeutiClient {
 
     // ia orarul specific al terapeutului. folosit la calculul sloturilor disponibile

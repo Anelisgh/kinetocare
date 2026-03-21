@@ -1,0 +1,36 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mysql-init-config
+data:
+  init-db.sql: |
+    CREATE DATABASE IF NOT EXISTS user_service;
+    CREATE DATABASE IF NOT EXISTS pacienti_service;
+    CREATE DATABASE IF NOT EXISTS terapeuti_service;
+    CREATE DATABASE IF NOT EXISTS programari_service;
+    CREATE DATABASE IF NOT EXISTS servicii_service;
+    CREATE DATABASE IF NOT EXISTS chat_service;
+    CREATE DATABASE IF NOT EXISTS notificari_service;
+
+    USE servicii_service;
+
+    INSERT INTO tip_serviciu (active, descriere, nume)
+    SELECT 1, 'Punctul de plecare pentru orice program de recuperare.', 'Evaluare'
+    FROM dual
+    WHERE NOT EXISTS (
+        SELECT 1 FROM tip_serviciu WHERE nume = 'Evaluare'
+    );
+
+    INSERT INTO servicii (active, durata_minute, nume, pret, tip_serviciu_id)
+    SELECT 1, 30, 'Evaluare Initiala', 150.00, 1
+    FROM dual
+    WHERE NOT EXISTS (
+        SELECT 1 FROM servicii WHERE nume = 'Evaluare Initiala'
+    );
+
+    INSERT INTO servicii (active, durata_minute, nume, pret, tip_serviciu_id)
+    SELECT 1, 30, 'Reevaluare', 100.00, 1
+    FROM dual
+    WHERE NOT EXISTS (
+        SELECT 1 FROM servicii WHERE nume = 'Reevaluare'
+    );

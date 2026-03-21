@@ -5,7 +5,7 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
-@FeignClient(name = "user-service", url = "http://localhost:8082", configuration = CustomErrorDecoder.class)
+@FeignClient(name = "user-service", url = "${application.urls.user-service:http://localhost:8082}", configuration = CustomErrorDecoder.class)
 public interface UserClient {
     // folosim endpoint-ul existent, dar mapam doar campurile care ne intereseaza in DTO
     // afiseaza nume, prenume, telefon dupa keycloakId in jurnalul pacientului

@@ -5,7 +5,7 @@ import { profileService } from '../../services/profileService';
 import { programariService } from '../../services/programariService';
 import TerapeutCalendar from '../../components/terapeut/homepage/TerapeutCalendar';
 import AppointmentSidePanel from '../../components/terapeut/homepage/AppointmentSidePanel';
-import '../../styles/HomepageTerapeut.css';
+import '../../styles/homepageTerapeut.css';
 
 // Pagina principală a terapeutului -> afiseaza calendarul si panelul de programare
 const HomepageTerapeut = () => {

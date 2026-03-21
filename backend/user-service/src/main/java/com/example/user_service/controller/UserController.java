@@ -93,5 +93,11 @@ public class UserController {
             @RequestParam(required = false) Boolean active) {
         return ResponseEntity.ok(userService.getUsers(role, active));
     }
+
+    @GetMapping("/auth/me")
+    public ResponseEntity<UserDTO> getMe(@org.springframework.security.core.annotation.AuthenticationPrincipal org.springframework.security.oauth2.jwt.Jwt jwt) {
+        String keycloakId = jwt.getSubject();
+        return ResponseEntity.ok(userService.getUserByKeycloakId(keycloakId));
+    }
 }
 

@@ -1,2 +1,25 @@
+# Build artifacts
+target/
+build/
+out/
+
+# IDE-specific
+.idea/
+*.iml
+*.iws
+.vscode/
+.settings/
+.classpath
+.project
+
+# Log-uri și mediu
 *.log
 logs/
+.env
+
+# OS specific
+.DS_Store
+Thumbs.db
+
+# K8s
+secrets.yaml

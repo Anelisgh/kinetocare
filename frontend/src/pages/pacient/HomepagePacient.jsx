@@ -5,7 +5,7 @@ import { programariService } from '../../services/programariService';
 import BookingWidget from '../../components/pacient/homepage/BookingWidget';
 import ActiveAppointmentCard from '../../components/pacient/homepage/ActiveAppointmentCard';
 import TerapeutSection from '../../components/pacient/profil/TerapeutSection';
-import '../../styles/HomepagePacient.css';
+import '../../styles/homepagePacient.css';
 
 const HomepagePacient = () => {
   const [data, setData] = useState(null);

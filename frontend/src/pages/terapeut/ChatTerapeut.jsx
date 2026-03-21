@@ -6,7 +6,7 @@ import FereastraChat from '../../components/chat/FereastraChat';
 import chatService from '../../services/chatService';
 import { authService } from '../../services/authService';
 import { profileService } from '../../services/profileService';
-import '../../styles/Chat.css';
+import '../../styles/chat.css';
 
 import { programariService } from '../../services/programariService';
 

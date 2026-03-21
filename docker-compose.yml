@@ -1,11 +1,295 @@
-# comanda de run: docker compose up -d
-version: "3.9"
-
 services:
+  mysql:
+    image: mysql:8.0
+    container_name: mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    ports:
+      - "3307:3306"
+    volumes:
+      - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
+      - mysql_data:/var/lib/mysql
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+    networks:
+      - kineto-network
+
   rabbitmq:
     image: rabbitmq:3-management
     container_name: rabbitmq
+    restart: unless-stopped
     ports:
       - "5672:5672"
       - "15672:15672"
-    restart: unless-stopped
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASS}
+    deploy:
+      resources:
+        limits:
+          memory: 384M
+    networks:
+      - kineto-network
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.0.7
+    container_name: keycloak
+    command: start-dev --import-realm
+    environment:
+      - KC_BOOTSTRAP_ADMIN_USERNAME=${KEYCLOAK_ADMIN}
+      - KC_BOOTSTRAP_ADMIN_PASSWORD=${KEYCLOAK_ADMIN_PASSWORD}
+      - KC_HTTP_ENABLED=true
+      - KC_HOSTNAME_STRICT=false
+      - JAVA_OPTS=-Xms256m -Xmx512m
+    deploy:
+      resources:
+        limits:
+          memory: 768M
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./kinetocare-realm.json:/opt/keycloak/data/import/kinetocare-realm.json
+      - keycloak_data:/opt/keycloak/data
+    networks:
+      - kineto-network
+
+  api-gateway:
+    build:
+      context: ./backend/api-gateway
+    container_name: api-gateway
+    restart: on-failure
+    ports:
+      - "8081:8081"
+    environment:
+      - MYSQL_HOST=mysql
+      - KEYCLOAK_URL=http://keycloak:8080
+      - USER_SERVICE_URL=http://user-service:8082
+      - PACIENT_SERVICE_URL=http://pacienti-service:8083
+      - TERAPEUTI_SERVICE_URL=http://terapeuti-service:8084
+      - PROGRAMARI_SERVICE_URL=http://programari-service:8085
+      - SERVICII_SERVICE_URL=http://servicii-service:8086
+      - CHAT_SERVICE_URL=http://chat-service:8087
+      - NOTIFICARI_SERVICE_URL=http://notificari-service:8088
+      - JAVA_TOOL_OPTIONS=-Xms128m -Xmx256m
+    deploy:
+      resources:
+        limits:
+          memory: 384M
+    depends_on:
+      - mysql
+      - keycloak
+    networks:
+      - kineto-network
+
+  user-service:
+    build:
+      context: ./backend/user-service
+    container_name: user-service
+    restart: on-failure
+    ports:
+      - "8082:8082"
+    environment:
+      - MYSQL_HOST=mysql
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - KEYCLOAK_URL=http://keycloak:8080
+      - PACIENTI_SERVICE_URL=http://pacienti-service:8083
+      - TERAPEUTI_SERVICE_URL=http://terapeuti-service:8084
+      - PROGRAMARI_SERVICE_URL=http://programari-service:8085
+      - JAVA_TOOL_OPTIONS=-Xms128m -Xmx256m
+    deploy:
+      resources:
+        limits:
+          memory: 384M
+    depends_on:
+      - mysql
+      - keycloak
+    networks:
+      - kineto-network
+
+  pacienti-service:
+    build:
+      context: ./backend/pacienti-service
+    container_name: pacienti-service
+    restart: on-failure
+    ports:
+      - "8083:8083"
+    environment:
+      - MYSQL_HOST=mysql
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_USER=${RABBITMQ_USER}
+      - RABBITMQ_PASS=${RABBITMQ_PASS}
+      - KEYCLOAK_URL=http://keycloak:8080
+      - PROGRAMARI_SERVICE_URL=http://programari-service:8085
+      - JAVA_TOOL_OPTIONS=-Xms128m -Xmx256m
+    deploy:
+      resources:
+        limits:
+          memory: 384M
+    depends_on:
+      - mysql
+      - rabbitmq
+      - keycloak
+    networks:
+      - kineto-network
+
+  terapeuti-service:
+    build:
+      context: ./backend/terapeuti-service
+    container_name: terapeuti-service
+    restart: on-failure
+    ports:
+      - "8084:8084"
+    environment:
+      - MYSQL_HOST=mysql
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - KEYCLOAK_URL=http://keycloak:8080
+      - JAVA_TOOL_OPTIONS=-Xms128m -Xmx256m
+    deploy:
+      resources:
+        limits:
+          memory: 384M
+    depends_on:
+      - mysql
+      - keycloak
+    networks:
+      - kineto-network
+
+  programari-service:
+    build:
+      context: ./backend/programari-service
+    container_name: programari-service
+    restart: on-failure
+    ports:
+      - "8085:8085"
+    environment:
+      - MYSQL_HOST=mysql
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_USER=${RABBITMQ_USER}
+      - RABBITMQ_PASS=${RABBITMQ_PASS}
+      - KEYCLOAK_URL=http://keycloak:8080
+      - USER_SERVICE_URL=http://user-service:8082
+      - PACIENTI_SERVICE_URL=http://pacienti-service:8083
+      - TERAPEUTI_SERVICE_URL=http://terapeuti-service:8084
+      - SERVICII_SERVICE_URL=http://servicii-service:8086
+      - JAVA_TOOL_OPTIONS=-Xms128m -Xmx256m
+    deploy:
+      resources:
+        limits:
+          memory: 384M
+    depends_on:
+      - mysql
+      - rabbitmq
+      - keycloak
+    networks:
+      - kineto-network
+
+  servicii-service:
+    build:
+      context: ./backend/servicii-service
+    container_name: servicii-service
+    restart: on-failure
+    ports:
+      - "8086:8086"
+    environment:
+      - MYSQL_HOST=mysql
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - KEYCLOAK_URL=http://keycloak:8080
+      - JAVA_TOOL_OPTIONS=-Xms128m -Xmx256m
+    deploy:
+      resources:
+        limits:
+          memory: 384M
+    depends_on:
+      - mysql
+      - keycloak
+    networks:
+      - kineto-network
+
+  chat-service:
+    build:
+      context: ./backend/chat-service
+    container_name: chat-service
+    restart: on-failure
+    ports:
+      - "8087:8087"
+    environment:
+      - MYSQL_HOST=mysql
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_USER=${RABBITMQ_USER}
+      - RABBITMQ_PASS=${RABBITMQ_PASS}
+      - KEYCLOAK_URL=http://keycloak:8080
+      - PROGRAMARI_SERVICE_URL=http://programari-service:8085
+      - JAVA_TOOL_OPTIONS=-Xms128m -Xmx256m
+    deploy:
+      resources:
+        limits:
+          memory: 384M
+    depends_on:
+      - mysql
+      - rabbitmq
+      - keycloak
+    networks:
+      - kineto-network
+
+  notificari-service:
+    build:
+      context: ./backend/notificari-service
+    container_name: notificari-service
+    restart: on-failure
+    ports:
+      - "8088:8088"
+    environment:
+      - MYSQL_HOST=mysql
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_USER=${RABBITMQ_USER}
+      - RABBITMQ_PASS=${RABBITMQ_PASS}
+      - KEYCLOAK_URL=http://keycloak:8080
+      - JAVA_TOOL_OPTIONS=-Xms128m -Xmx256m
+    deploy:
+      resources:
+        limits:
+          memory: 384M
+    depends_on:
+      - mysql
+      - rabbitmq
+      - keycloak
+    networks:
+      - kineto-network
+
+  frontend:
+    build:
+      context: ./frontend
+    container_name: frontend
+    restart: always
+    ports:
+      - "3000:80"
+    deploy:
+      resources:
+        limits:
+          memory: 128M
+    depends_on:
+      - api-gateway
+    networks:
+      - kineto-network
+
+networks:
+  kineto-network:
+    driver: bridge
+
+volumes:
+  mysql_data:
+  keycloak_data:

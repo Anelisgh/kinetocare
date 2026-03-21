@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { programariService } from '../../../services/programariService';
-import '../../../styles/HomepagePacient.css';
+import '../../../styles/homepagePacient.css';
 
 // widget pentru calendarul de programare
 const BookingWidget = ({ pacientKeycloakId, terapeutKeycloakId, locatieId, onSuccess }) => {

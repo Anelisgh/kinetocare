@@ -7,7 +7,7 @@ import chatService from '../../services/chatService';
 import { authService } from '../../services/authService';
 import { profileService } from '../../services/profileService';
 import { programariService } from '../../services/programariService';
-import '../../styles/Chat.css';
+import '../../styles/chat.css';
 
 const ChatPacient = () => {
     const [conversatii, setConversatii] = useState([]);

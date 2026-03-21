@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
 
-@FeignClient(name = "pacienti-service", url = "http://localhost:8083", configuration = CustomErrorDecoder.class)
+@FeignClient(name = "pacienti-service", url = "${application.urls.pacienti-service:http://localhost:8083}", configuration = CustomErrorDecoder.class)
 public interface PacientiClient {
     // ia datele pacientului. returneaza keycloakId-ul pacientului
     @GetMapping("/pacient/{id}")
