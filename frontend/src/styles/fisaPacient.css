@@ -115,6 +115,12 @@
 
 .fisa-header-details {
     display: flex;
+    flex-direction: column;
+    gap: var(--space-xs, 0.25rem);
+}
+
+.fisa-details-row {
+    display: flex;
     flex-wrap: wrap;
     gap: var(--space-sm, 0.5rem);
 }

@@ -10,6 +10,8 @@ public record FisaPacientDetaliiDTO(
     String gen,
     String telefon,
     String email,
+    String faceSport,
+    String detaliiSport,
     SituatiePacientDTO situatie,
     List<EvaluareResponseDTO> evaluari,
     List<EvolutieResponseDTO> evolutii,

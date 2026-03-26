@@ -1,0 +1,4 @@
+apiVersion: v1
+kind: Namespace # Spațiu izolat de lucru. Toate resursele kinetocare trăiesc aici.
+metadata:
+  name: kinetocare

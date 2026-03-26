@@ -2,19 +2,21 @@ apiVersion: v1
 kind: Service
 metadata:
   name: frontend
+  namespace: kinetocare # Spațiul izolat de lucru al aplicației
 spec:
   ports:
-    - port: 80
-      targetPort: 80
-      nodePort: 30000
+    - port: 80 # Portul vizibil din interiorul clusterului
+      targetPort: 80 # Portul Nginx din container
+      nodePort: 30000 # PORTUL EXTERNAL: Poți accesa aplicația la http://localhost:30000
   selector:
     app: frontend
-  type: NodePort
+  type: NodePort # Tipul NodePort expune serviciul în afara clusterului pe un port fix
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: frontend
+  namespace: kinetocare
 spec:
   replicas: 1
   selector:
@@ -27,7 +29,7 @@ spec:
     spec:
       containers:
         - name: frontend
-          image: kinetocare/frontend:latest
+          image: kinetocare/frontend:latest # Imaginea noastră de Nginx + React
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 80

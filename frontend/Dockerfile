@@ -1,14 +1,12 @@
-# Stage 1: Build
 FROM node:20-alpine AS build
 WORKDIR /app
+# Docker nu va mai rula npm install economisind mult timp la build
 COPY package*.json ./
 RUN npm install
 COPY . .
 RUN npm run build
 
-# Stage 2: Serve
 FROM nginx:alpine
-# Copy custom nginx config for SPA
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 COPY --from=build /app/dist /usr/share/nginx/html
 EXPOSE 80

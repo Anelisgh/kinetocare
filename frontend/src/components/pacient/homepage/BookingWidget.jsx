@@ -167,7 +167,7 @@ const BookingWidget = ({ pacientKeycloakId, terapeutKeycloakId, locatieId, onSuc
                 key={index}
                 onClick={() => setSelectedDate(date)}
                 disabled={isBooking}
-                className={`booking-date-card ${isSelected ? 'selected' : ''} ${isToday ? 'today' : ''} ${isWeekend ? 'weekend' : ''}`}
+                className={`booking-date-card ${isSelected ? 'selected' : ''} ${isToday ? 'today' : ''}`}
               >
                 <div className="booking-date-day">{dayName}</div>
                 <div className="booking-date-number">{date.getDate()}</div>

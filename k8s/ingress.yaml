@@ -1,0 +1,45 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress # Un singur punct de intrare în cluster (înlocuiește NodePort-urile individuale)
+metadata:
+  name: kinetocare-ingress
+  namespace: kinetocare
+spec:
+  ingressClassName: nginx # Specifică că folosim Nginx Ingress Controller
+  rules:
+    - http:
+        paths:
+          - path: /realms # Autentificare și JWT (conform application.yml de la gateway)
+            pathType: Prefix
+            backend:
+              service:
+                name: keycloak
+                port:
+                  number: 8080
+          - path: /resources # Resurse statice Keycloak (imagini, css login)
+            pathType: Prefix
+            backend:
+              service:
+                name: keycloak
+                port:
+                  number: 8080
+          - path: /admin # Consola de administrare Keycloak
+            pathType: Prefix
+            backend:
+              service:
+                name: keycloak
+                port:
+                  number: 8080
+          - path: /api # TOT backend-ul (rutele mapate în API Gateway)
+            pathType: Prefix
+            backend:
+              service:
+                name: api-gateway
+                port:
+                  number: 8081
+          - path: / # Aplicația React (Frontend)
+            pathType: Prefix
+            backend:
+              service:
+                name: frontend
+                port:
+                  number: 80

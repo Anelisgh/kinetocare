@@ -1,11 +1,13 @@
 apiVersion: v1
-kind: ConfigMap
+kind: ConfigMap # Tipul resursei: ConfigMap (creierul aplicației, setări non-secrete)
 metadata:
-  name: kinetocare-config
+  name: kinetocare-config # Numele folosit pentru a fi referențiat în alte fișiere
+  namespace: kinetocare # Spațiul izolat de lucru al aplicației
 data:
   MYSQL_USER: "root"
-  MYSQL_HOST: "mysql"
-  KEYCLOAK_URL: "http://keycloak:8080"
+  MYSQL_HOST: "mysql" # Numele Service-ului de MySQL (Kubernetes va rezolva automat IP-ul)
+  KEYCLOAK_URL: "http://keycloak:8080" # URL comun pentru toate microserviciile
+
   MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE: "*"
   MANAGEMENT_ENDPOINT_HEALTH_SHOW_DETAILS: "ALWAYS"
   MANAGEMENT_HEALTH_DEFAULTS_ENABLED: "true"

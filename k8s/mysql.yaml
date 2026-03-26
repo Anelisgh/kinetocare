@@ -1,23 +1,25 @@
 apiVersion: v1
-kind: PersistentVolumeClaim
+kind: PersistentVolumeClaim # Tipul: PVC (cere un spațiu pe disc de la k8s)
 metadata:
-  name: mysql-pvc
+  name: mysql-pvc # Numele claim-ului pentru a fi folosit de Deployment
+  namespace: kinetocare
 spec:
   accessModes:
-    - ReadWriteOnce
+    - ReadWriteOnce # Discul poate fi montat de un singur Pod la un moment dat
   resources:
     requests:
-      storage: 1Gi
+      storage: 1Gi # Rezervă 1 Gigabyte de spațiu
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: mysql
+  namespace: kinetocare
 spec:
   ports:
     - port: 3306
       targetPort: 3306
-      nodePort: 31306
+      nodePort: 31306 # Accesează MySQL din exterior la localhost:31306
   selector:
     app: mysql
   type: NodePort
@@ -26,6 +28,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: mysql
+  namespace: kinetocare
 spec:
   replicas: 1
   selector:
@@ -47,20 +50,20 @@ spec:
                   key: MYSQL_ROOT_PASSWORD
           ports:
             - containerPort: 3306
-          volumeMounts:
+          volumeMounts: # Aici "lipim" volumele de folderele din container
             - name: mysql-persistent-storage
-              mountPath: /var/lib/mysql
+              mountPath: /var/lib/mysql # Locul unde MySQL își ține datele
             - name: mysql-initdb
-              mountPath: /docker-entrypoint-initdb.d
+              mountPath: /docker-entrypoint-initdb.d # Scripturi de inițializare
           resources:
             requests:
               memory: "256Mi"
             limits:
               memory: "512Mi"
-      volumes:
+      volumes: # Definirea surselor de date
         - name: mysql-persistent-storage
           persistentVolumeClaim:
-            claimName: mysql-pvc
+            claimName: mysql-pvc # Folosește spațiul cerut mai sus
         - name: mysql-initdb
           configMap:
-            name: mysql-init-config
+            name: mysql-init-config # Script SQL stocat într-un ConfigMap

@@ -84,19 +84,36 @@ public class FisaPacientService {
         // 1. Detalii user (nume, prenume, telefon, email, gen)
         UserDisplayCalendarDTO userDetails = userClient.getUserByKeycloakId(pacientKeycloakId);
 
-        // 2. Situatia curenta
+        // 2. Date medicale/sportive (data nasterii -> varsta, faceSport, detaliiSport)
+        Integer varsta = null;
+        String faceSport = null;
+        String detaliiSport = null;
+        try {
+            PacientMedicalDTO medicalInfo = pacientiClient.getMedicalInfo(pacientKeycloakId);
+            if (medicalInfo != null) {
+                if (medicalInfo.dataNasterii() != null) {
+                    varsta = java.time.Period.between(medicalInfo.dataNasterii(), java.time.LocalDate.now()).getYears();
+                }
+                faceSport = medicalInfo.faceSport();
+                detaliiSport = medicalInfo.detaliiSport();
+            }
+        } catch (Exception e) {
+            log.warn("Nu s-au putut obtine datele medicale pentru pacientul {}: {}", pacientKeycloakId, e.getMessage());
+        }
+
+        // 3. Situatia curenta
         SituatiePacientDTO situatie = programareService.getSituatiePacient(pacientKeycloakId);
 
-        // 3. Evaluari (de la TOTI terapeutii)
+        // 4. Evaluari (de la TOTI terapeutii)
         List<EvaluareResponseDTO> evaluari = buildEvaluariList(pacientKeycloakId);
 
-        // 4. Evolutii (doar ale TERAPEUTULUI CURENT)
+        // 5. Evolutii (doar ale TERAPEUTULUI CURENT)
         List<EvolutieResponseDTO> evolutii = evolutieService.getIstoricEvolutii(pacientKeycloakId, terapeutKeycloakId);
 
-        // 5. Programari (istoric complet) - reuse
+        // 6. Programari (istoric complet) - reuse
         List<IstoricProgramareDTO> programari = programareService.getIstoricPacient(pacientKeycloakId);
 
-        // 6. Jurnale - reuse
+        // 7. Jurnale - reuse
         List<JurnalIstoricDTO> jurnale = new ArrayList<>();
         try {
             jurnale = pacientiClient.getIstoricJurnal(pacientKeycloakId);
@@ -108,10 +125,12 @@ public class FisaPacientService {
                 pacientKeycloakId,
                 userDetails != null ? userDetails.nume() : null,
                 userDetails != null ? userDetails.prenume() : null,
-                null, // varsta missing in original mapping
+                varsta,
                 userDetails != null ? userDetails.gen() : null,
                 userDetails != null ? userDetails.telefon() : null,
                 userDetails != null ? userDetails.email() : null,
+                faceSport,
+                detaliiSport,
                 situatie,
                 evaluari,
                 evolutii,

@@ -589,9 +589,6 @@
     box-shadow: 0 8px 20px rgba(3, 105, 161, 0.4);
 }
 
-.booking-date-card.weekend {
-    opacity: 0.5;
-}
 
 .booking-date-day {
     font-size: 11px;

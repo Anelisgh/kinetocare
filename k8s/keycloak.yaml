@@ -1,7 +1,8 @@
 apiVersion: v1
-kind: PersistentVolumeClaim
+kind: PersistentVolumeClaim # Tipul: PVC (cere un spațiu pe disc de la k8s)
 metadata:
-  name: keycloak-pvc
+  name: keycloak-pvc # Persistența datelor Keycloak (realm-uri, utilizatori)
+  namespace: kinetocare
 spec:
   accessModes:
     - ReadWriteOnce
@@ -13,11 +14,12 @@ apiVersion: v1
 kind: Service
 metadata:
   name: keycloak
+  namespace: kinetocare
 spec:
   ports:
     - port: 8080
       targetPort: 8080
-      nodePort: 30080
+      nodePort: 30080 # Accesează panoul de administrare Keycloak la localhost:30080
   selector:
     app: keycloak
   type: NodePort
@@ -26,6 +28,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: keycloak
+  namespace: kinetocare
 spec:
   replicas: 1
   selector:
@@ -39,7 +42,7 @@ spec:
       containers:
         - name: keycloak
           image: quay.io/keycloak/keycloak:26.0.7
-          args: ["start-dev", "--import-realm"]
+          args: ["start-dev", "--import-realm"] # Pornire în modul development + importare realm automat
           env:
             - name: KC_BOOTSTRAP_ADMIN_USERNAME
               valueFrom:
@@ -61,19 +64,19 @@ spec:
             - containerPort: 8080
           volumeMounts:
             - name: keycloak-data
-              mountPath: /opt/keycloak/data
+              mountPath: /opt/keycloak/data # Datele persistente ale Keycloak
             - name: keycloak-realm
               mountPath: /opt/keycloak/data/import/kinetocare-realm.json
-              subPath: kinetocare-realm.json
+              subPath: kinetocare-realm.json # Importă configul realm-ului din ConfigMap
           resources:
             requests:
               memory: "256Mi"
             limits:
               memory: "768Mi"
-      volumes:
+      volumes: # Definirea surselor de date
         - name: keycloak-data
           persistentVolumeClaim:
             claimName: keycloak-pvc
         - name: keycloak-realm
           configMap:
-            name: keycloak-realm-config
+            name: keycloak-realm-config # Configul realm-ului stocat în ConfigMap

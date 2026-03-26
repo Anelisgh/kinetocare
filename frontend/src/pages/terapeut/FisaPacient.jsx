@@ -111,9 +111,22 @@ const FisaPacient = () => {
           <div className="fisa-header-info">
             <h1>{fisa.nume} {fisa.prenume}</h1>
             <div className="fisa-header-details">
-              {fisa.gen && <span className="fisa-detail-chip">{fisa.gen}</span>}
-              {fisa.telefon && <span className="fisa-detail-chip">📞 {fisa.telefon}</span>}
-              {fisa.email && <span className="fisa-detail-chip">✉ {fisa.email}</span>}
+              <div className="fisa-details-row">
+                {fisa.varsta != null && <span className="fisa-detail-chip">🎂 {fisa.varsta} ani</span>}
+                {fisa.gen && <span className="fisa-detail-chip">👤 {fisa.gen}</span>}
+              </div>
+              <div className="fisa-details-row">
+                {fisa.telefon && <span className="fisa-detail-chip">📞 {fisa.telefon}</span>}
+                {fisa.email && <span className="fisa-detail-chip">✉ {fisa.email}</span>}
+                {fisa.faceSport && (
+                  <span className="fisa-detail-chip">
+                    {fisa.faceSport === 'DA' ? '🏃 Face sport' : '🛋️ Nu face sport'}
+                  </span>
+                )}
+                {fisa.faceSport === 'DA' && fisa.detaliiSport && (
+                  <span className="fisa-detail-chip">🏋️ {fisa.detaliiSport}</span>
+                )}
+              </div>
             </div>
           </div>
         </div>
