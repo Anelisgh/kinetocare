@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="39ad0e72-3602-47fe-adda-6d31331ebd21" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/../../.idea/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../.idea/material_theme_project_new.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../docker-compose.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../.idea/compiler.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../api-gateway/logs/api-gateway.log.2025-12-05.0.gz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../api-gateway/logs/api-gateway.log.2025-12-06.0.gz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../api-gateway/src/main/java/com/example/api_gateway/config/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/../api-gateway/src/main/java/com/example/api_gateway/config/SecurityConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../api-gateway/src/main/java/com/example/api_gateway/config/WebClientConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/../api-gateway/src/main/java/com/example/api_gateway/config/WebClientConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../api-gateway/src/main/java/com/example/api_gateway/controller/SearchTerapeutController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../api-gateway/src/main/java/com/example/api_gateway/controller/SearchTerapeutController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../api-gateway/src/main/java/com/example/api_gateway/service/SearchTerapeutService.java" beforeDir="false" afterPath="$PROJECT_DIR$/../api-gateway/src/main/java/com/example/api_gateway/service/SearchTerapeutService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../api-gateway/src/main/resources/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/../api-gateway/src/main/resources/application.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/chat_service/ChatServiceApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/chat_service/ChatServiceApplication.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../programari-service/src/main/java/com/example/programari_service/service/ProgramareService.java" beforeDir="false" afterPath="$PROJECT_DIR$/../programari-service/src/main/java/com/example/programari_service/service/ProgramareService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../programari-service/src/main/java/com/example/programari_service/service/RelatieService.java" beforeDir="false" afterPath="$PROJECT_DIR$/../programari-service/src/main/java/com/example/programari_service/service/RelatieService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../user-service/src/main/java/com/example/user_service/controller/UserController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../user-service/src/main/java/com/example/user_service/controller/UserController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../user-service/src/main/java/com/example/user_service/service/UserService.java" beforeDir="false" afterPath="$PROJECT_DIR$/../user-service/src/main/java/com/example/user_service/service/UserService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../frontend/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/../../frontend/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../frontend/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/../../frontend/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../frontend/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/../../frontend/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../frontend/src/App.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../../frontend/src/App.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../frontend/src/components/Navbar.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../../frontend/src/components/Navbar.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../frontend/src/components/NotificationDropdown.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../../frontend/src/components/NotificationDropdown.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../frontend/src/services/authService.js" beforeDir="false" afterPath="$PROJECT_DIR$/../../frontend/src/services/authService.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../frontend/src/services/profileService.js" beforeDir="false" afterPath="$PROJECT_DIR$/../../frontend/src/services/profileService.js" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="CopilotPersistence">
+    <persistenceIdMap>
+      <entry key="_C:/Users/Aneliss/OneDrive/Desktop/kinetocare/backend/chat-service" value="3A7dFc8FFRd0BxhKBa8vpyGszMO" />
+    </persistenceIdMap>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../.." />
+  </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;Anelisgh&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/Anelisgh/kinetocare.git&quot;,
+    &quot;accountId&quot;: &quot;6d9e138b-38b4-46d0-b038-fd086f857904&quot;
+  }
+}</component>
+  <component name="MavenImportPreferences">
+    <option name="generalSettings">
+      <MavenGeneralSettings>
+        <option name="mavenHomeTypeForPersistence" value="WRAPPER" />
+      </MavenGeneralSettings>
+    </option>
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;customColor&quot;: &quot;&quot;,
+  &quot;associatedIndex&quot;: 1
+}</component>
+  <component name="ProjectId" id="3A7dFc8FFRd0BxhKBa8vpyGszMO" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RequestMappingsPanelOrder0": "0",
+    "RequestMappingsPanelOrder1": "1",
+    "RequestMappingsPanelWidth0": "75",
+    "RequestMappingsPanelWidth1": "75",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "Spring Boot.ChatServiceApplication.executor": "Run",
+    "git-widget-placeholder": "main",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/Users/Aneliss/OneDrive/Desktop/kinetocare/backend/chat-service",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="RunManager">
+    <configuration name="ChatServiceApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UpdateClassesAndResources" />
+      <module name="chat-service" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.example.chat_service.ChatServiceApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-jdk-9823dce3aa75-bf35d07a577b-intellij.indexing.shared.core-IU-252.28238.7" />
+        <option value="bundled-js-predefined-d6986cc7102b-a71380e98a7c-JavaScript-IU-252.28238.7" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="39ad0e72-3602-47fe-adda-6d31331ebd21" name="Changes" comment="" />
+      <created>1771947440665</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1771947440665</updated>
+      <workItem from="1771947442405" duration="795000" />
+      <workItem from="1771949267183" duration="679000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="github-copilot-workspace">
+    <instructionFileLocations>
+      <option value=".github/instructions" />
+    </instructionFileLocations>
+    <promptFileLocations>
+      <option value=".github/prompts" />
+    </promptFileLocations>
+  </component>
+</project>

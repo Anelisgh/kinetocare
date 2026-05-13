@@ -1,0 +1,310 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="ada58259-7e1f-4132-91aa-755299770068" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/common/target/classes/com/example/common/exception/BaseGlobalExceptionHandler.class" beforeDir="false" afterPath="$PROJECT_DIR$/common/target/classes/com/example/common/exception/BaseGlobalExceptionHandler.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/common/target/classes/com/example/common/exception/ExternalServiceException.class" beforeDir="false" afterPath="$PROJECT_DIR$/common/target/classes/com/example/common/exception/ExternalServiceException.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/common/target/classes/com/example/common/exception/ForbiddenOperationException.class" beforeDir="false" afterPath="$PROJECT_DIR$/common/target/classes/com/example/common/exception/ForbiddenOperationException.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/common/target/classes/com/example/common/exception/ResourceAlreadyExistsException.class" beforeDir="false" afterPath="$PROJECT_DIR$/common/target/classes/com/example/common/exception/ResourceAlreadyExistsException.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/common/target/classes/com/example/common/exception/ResourceNotFoundException.class" beforeDir="false" afterPath="$PROJECT_DIR$/common/target/classes/com/example/common/exception/ResourceNotFoundException.class" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="CopilotChats">
+    <option name="panelChat">
+      <chat>
+        <option name="activeSessionId" value="ad984fb9-7482-4d36-9f99-dfd609c214c4" />
+        <option name="sessions">
+          <session>
+            <option name="chatType" value="PANEL" />
+            <option name="id" value="ad984fb9-7482-4d36-9f99-dfd609c214c4" />
+            <option name="modeId" value="Ask" />
+            <option name="modelType" value="builtin_family" />
+            <option name="modelValue" value="auto" />
+            <option name="targetType" value="LOCAL" />
+          </session>
+        </option>
+        <option name="type" value="PANEL" />
+      </chat>
+    </option>
+  </component>
+  <component name="CopilotPersistence">
+    <persistenceIdMap>
+      <entry key="_C:/Users/Aneliss/Desktop/kinetocare/backend" value="3AGIsJwZZy4v1MhEvmDFtMynZgI" />
+      <entry key="_C:/Users/Aneliss/OneDrive/Desktop/kinetocare/backend" value="37NzYgQYQauzEBRtexH1IGrLfhV" />
+    </persistenceIdMap>
+  </component>
+  <component name="CopilotUserSelectedModel">
+    <selectedModels>
+      <entry key="edit-panel" value="GPT-5 mini" />
+      <entry key="chat-panel" value="GPT-5 mini" />
+      <entry key="agent-panel" value="GPT-5 mini" />
+    </selectedModels>
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;Anelisgh&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/Anelisgh/kinetocare.git&quot;,
+    &quot;accountId&quot;: &quot;6d9e138b-38b4-46d0-b038-fd086f857904&quot;
+  }
+}</component>
+  <component name="KubernetesApiPersistence">{}</component>
+  <component name="KubernetesApiProvider">{
+  &quot;isMigrated&quot;: true
+}</component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="CurrentFile" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 4
+}</component>
+  <component name="ProjectId" id="37NzYgQYQauzEBRtexH1IGrLfhV" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Maven.parent [clean].executor&quot;: &quot;Run&quot;,
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;PowerShell.clean-all.ps1.executor&quot;: &quot;Run&quot;,
+    &quot;RequestMappingsPanelOrder0&quot;: &quot;0&quot;,
+    &quot;RequestMappingsPanelOrder1&quot;: &quot;1&quot;,
+    &quot;RequestMappingsPanelWidth0&quot;: &quot;75&quot;,
+    &quot;RequestMappingsPanelWidth1&quot;: &quot;75&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;Spring Boot.ApiGatewayApplication.executor&quot;: &quot;Run&quot;,
+    &quot;Spring Boot.ChatServiceApplication.executor&quot;: &quot;Run&quot;,
+    &quot;Spring Boot.NotificariServiceApplication.executor&quot;: &quot;Run&quot;,
+    &quot;Spring Boot.PacientiServiceApplication.executor&quot;: &quot;Run&quot;,
+    &quot;Spring Boot.ProgramariServiceApplication.executor&quot;: &quot;Run&quot;,
+    &quot;Spring Boot.ServiciiServiceApplication.executor&quot;: &quot;Run&quot;,
+    &quot;Spring Boot.TerapeutiServiceApplication.executor&quot;: &quot;Run&quot;,
+    &quot;Spring Boot.UserServiceApplication.executor&quot;: &quot;Run&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/Aneliss/Desktop/kinetocare/backend&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;run.configurations.included.in.services&quot;: &quot;true&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  }
+}</component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\Aneliss\OneDrive\Desktop\kinetocare\backend\chat-service\src\main\java\com\example\chat_service" />
+      <recent name="C:\Users\Aneliss\OneDrive\Desktop\kinetocare\backend\notificari-service\src\main\java\com\example\notificari_service" />
+      <recent name="C:\Users\Aneliss\OneDrive\Desktop\kinetocare\backend\api-gateway\src\main\java\com\example\api_gateway" />
+      <recent name="C:\Users\Aneliss\OneDrive\Desktop\kinetocare\backend\servicii-service\src\main\java\com\example\servicii_service" />
+      <recent name="C:\Users\Aneliss\OneDrive\Desktop\kinetocare\backend\programari-service\src\main\java\com\example\programari_service" />
+    </key>
+  </component>
+  <component name="RunDashboard">
+    <option name="configurationTypes">
+      <set>
+        <option value="KtorApplicationConfigurationType" />
+        <option value="MicronautRunConfigurationType" />
+        <option value="QuarkusRunConfigurationType" />
+        <option value="SpringBootApplicationConfigurationType" />
+      </set>
+    </option>
+    <option name="configurationStatuses">
+      <map>
+        <entry key="SpringBootApplicationConfigurationType">
+          <value>
+            <map>
+              <entry key="ApiGatewayApplication" value="STOPPED" />
+              <entry key="ChatServiceApplication" value="STOPPED" />
+              <entry key="NotificariServiceApplication" value="STOPPED" />
+              <entry key="PacientiServiceApplication" value="STOPPED" />
+              <entry key="ProgramariServiceApplication" value="STOPPED" />
+              <entry key="ServiciiServiceApplication" value="STOPPED" />
+              <entry key="TerapeutiServiceApplication" value="STOPPED" />
+              <entry key="UserServiceApplication" value="STOPPED" />
+            </map>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="RunManager" selected="Spring Boot.PacientiServiceApplication">
+    <configuration name="ApiGatewayApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UpdateClassesAndResources" />
+      <module name="api-gateway" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.example.api_gateway.ApiGatewayApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="ChatServiceApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UpdateClassesAndResources" />
+      <module name="chat-service" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.example.chat_service.ChatServiceApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="NotificariServiceApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UpdateClassesAndResources" />
+      <module name="notificari-service" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.example.notificari_service.NotificariServiceApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="PacientiServiceApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UpdateClassesAndResources" />
+      <module name="pacienti-service" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.example.pacienti_service.PacientiServiceApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="ProgramariServiceApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UpdateClassesAndResources" />
+      <module name="programari-service" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.example.programari_service.ProgramariServiceApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="ServiciiServiceApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UpdateClassesAndResources" />
+      <module name="servicii-service" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.example.servicii_service.ServiciiServiceApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="TerapeutiServiceApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UpdateClassesAndResources" />
+      <module name="terapeuti-service" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.example.terapeuti_service.TerapeutiServiceApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="UserServiceApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UpdateClassesAndResources" />
+      <module name="user-service" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.example.user_service.UserServiceApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <list>
+      <item itemvalue="Spring Boot.ApiGatewayApplication" />
+      <item itemvalue="Spring Boot.TerapeutiServiceApplication" />
+      <item itemvalue="Spring Boot.ChatServiceApplication" />
+      <item itemvalue="Spring Boot.NotificariServiceApplication" />
+      <item itemvalue="Spring Boot.PacientiServiceApplication" />
+      <item itemvalue="Spring Boot.ProgramariServiceApplication" />
+      <item itemvalue="Spring Boot.ServiciiServiceApplication" />
+      <item itemvalue="Spring Boot.UserServiceApplication" />
+    </list>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-jdk-9823dce3aa75-bf35d07a577b-intellij.indexing.shared.core-IU-252.28238.7" />
+        <option value="bundled-js-predefined-d6986cc7102b-a71380e98a7c-JavaScript-IU-252.28238.7" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="ada58259-7e1f-4132-91aa-755299770068" name="Changes" comment="" />
+      <created>1766758369026</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1766758369026</updated>
+      <workItem from="1766758371066" duration="3511000" />
+      <workItem from="1766826806353" duration="3853000" />
+      <workItem from="1766852946622" duration="3465000" />
+      <workItem from="1766857534972" duration="4753000" />
+      <workItem from="1766912707801" duration="10433000" />
+      <workItem from="1766999051750" duration="8112000" />
+      <workItem from="1770739079419" duration="16403000" />
+      <workItem from="1771085914823" duration="2891000" />
+      <workItem from="1771148046619" duration="480000" />
+      <workItem from="1771582509284" duration="53000" />
+      <workItem from="1771612134264" duration="42000" />
+      <workItem from="1771668520735" duration="6925000" />
+      <workItem from="1771759270121" duration="6219000" />
+      <workItem from="1771783707812" duration="230000" />
+      <workItem from="1771785109501" duration="831000" />
+      <workItem from="1771852366569" duration="31000" />
+      <workItem from="1771852435975" duration="23000" />
+      <workItem from="1771853126041" duration="183000" />
+      <workItem from="1771943951878" duration="2639000" />
+      <workItem from="1771949628890" duration="1594000" />
+      <workItem from="1771951751158" duration="111000" />
+      <workItem from="1771951887700" duration="4352000" />
+      <workItem from="1772031273138" duration="1899000" />
+      <workItem from="1772212649534" duration="895000" />
+      <workItem from="1772276171194" duration="4614000" />
+      <workItem from="1772293187764" duration="4954000" />
+      <workItem from="1772360522080" duration="236000" />
+      <workItem from="1772457175424" duration="472000" />
+      <workItem from="1772459185633" duration="577000" />
+      <workItem from="1772462695818" duration="4542000" />
+      <workItem from="1772555189386" duration="2499000" />
+      <workItem from="1773583779836" duration="7742000" />
+      <workItem from="1773656406147" duration="808000" />
+      <workItem from="1773675472659" duration="7320000" />
+      <workItem from="1773764206983" duration="5372000" />
+      <workItem from="1773833796572" duration="2680000" />
+      <workItem from="1773847456188" duration="3394000" />
+      <workItem from="1774003339162" duration="76000" />
+      <workItem from="1774271306437" duration="2790000" />
+      <workItem from="1774279736738" duration="818000" />
+      <workItem from="1774281920547" duration="1661000" />
+      <workItem from="1774364534896" duration="994000" />
+      <workItem from="1774369893563" duration="1812000" />
+      <workItem from="1774452861312" duration="2470000" />
+      <workItem from="1778333868416" duration="409000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="github-copilot-workspace">
+    <instructionFileLocations>
+      <option value=".github/instructions" />
+    </instructionFileLocations>
+    <promptFileLocations>
+      <option value=".github/prompts" />
+    </promptFileLocations>
+  </component>
+</project>

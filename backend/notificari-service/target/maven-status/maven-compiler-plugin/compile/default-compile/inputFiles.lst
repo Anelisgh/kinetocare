@@ -1,0 +1,15 @@
+C:\Users\Aneliss\Desktop\kinetocare\backend\notificari-service\src\main\java\com\example\notificari_service\config\RabbitMQConfig.java
+C:\Users\Aneliss\Desktop\kinetocare\backend\notificari-service\src\main\java\com\example\notificari_service\config\SecurityConfig.java
+C:\Users\Aneliss\Desktop\kinetocare\backend\notificari-service\src\main\java\com\example\notificari_service\consumer\DeadLetterConsumer.java
+C:\Users\Aneliss\Desktop\kinetocare\backend\notificari-service\src\main\java\com\example\notificari_service\consumer\NotificareConsumer.java
+C:\Users\Aneliss\Desktop\kinetocare\backend\notificari-service\src\main\java\com\example\notificari_service\controller\NotificareController.java
+C:\Users\Aneliss\Desktop\kinetocare\backend\notificari-service\src\main\java\com\example\notificari_service\dto\NotificareDTO.java
+C:\Users\Aneliss\Desktop\kinetocare\backend\notificari-service\src\main\java\com\example\notificari_service\dto\NotificareEvent.java
+C:\Users\Aneliss\Desktop\kinetocare\backend\notificari-service\src\main\java\com\example\notificari_service\entity\Notificare.java
+C:\Users\Aneliss\Desktop\kinetocare\backend\notificari-service\src\main\java\com\example\notificari_service\entity\TipNotificare.java
+C:\Users\Aneliss\Desktop\kinetocare\backend\notificari-service\src\main\java\com\example\notificari_service\entity\TipUser.java
+C:\Users\Aneliss\Desktop\kinetocare\backend\notificari-service\src\main\java\com\example\notificari_service\exception\GlobalExceptionHandler.java
+C:\Users\Aneliss\Desktop\kinetocare\backend\notificari-service\src\main\java\com\example\notificari_service\mapper\NotificareMapper.java
+C:\Users\Aneliss\Desktop\kinetocare\backend\notificari-service\src\main\java\com\example\notificari_service\NotificariServiceApplication.java
+C:\Users\Aneliss\Desktop\kinetocare\backend\notificari-service\src\main\java\com\example\notificari_service\repository\NotificareRepository.java
+C:\Users\Aneliss\Desktop\kinetocare\backend\notificari-service\src\main\java\com\example\notificari_service\service\NotificareService.java

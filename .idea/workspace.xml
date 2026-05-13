@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="4ced9673-8b14-436e-8309-b0d0251d5f77" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/backend/common/target/classes/com/example/common/exception/BaseGlobalExceptionHandler.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/common/target/classes/com/example/common/exception/BaseGlobalExceptionHandler.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/common/target/classes/com/example/common/exception/ExternalServiceException.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/common/target/classes/com/example/common/exception/ExternalServiceException.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/common/target/classes/com/example/common/exception/ForbiddenOperationException.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/common/target/classes/com/example/common/exception/ForbiddenOperationException.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/common/target/classes/com/example/common/exception/ResourceAlreadyExistsException.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/common/target/classes/com/example/common/exception/ResourceAlreadyExistsException.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/common/target/classes/com/example/common/exception/ResourceNotFoundException.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/common/target/classes/com/example/common/exception/ResourceNotFoundException.class" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="CopilotChats">
+    <option name="panelChat">
+      <chat>
+        <option name="activeSessionId" value="259924b4-cbb5-46c2-a6cb-634c5409dfbd" />
+        <option name="sessions">
+          <session>
+            <option name="chatType" value="PANEL" />
+            <option name="id" value="259924b4-cbb5-46c2-a6cb-634c5409dfbd" />
+            <option name="modeId" value="Agent" />
+            <option name="modelType" value="builtin_family" />
+            <option name="modelValue" value="auto" />
+            <option name="targetType" value="LOCAL" />
+          </session>
+        </option>
+        <option name="type" value="PANEL" />
+      </chat>
+    </option>
+  </component>
+  <component name="CopilotPersistence">
+    <persistenceIdMap>
+      <entry key="_C:/Users/Aneliss/Desktop/kinetocare" value="3AGG8cPi8sg0hdhmsXFxdDLY9nX" />
+      <entry key="_C:/Users/Aneliss/OneDrive/Desktop/kinetocare" value="3A7OPCLjjTTMnwI9WDt5VcE19yH" />
+    </persistenceIdMap>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;Anelisgh&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/Anelisgh/kinetocare.git&quot;,
+    &quot;accountId&quot;: &quot;6d9e138b-38b4-46d0-b038-fd086f857904&quot;
+  }
+}</component>
+  <component name="KubernetesApiPersistence">{}</component>
+  <component name="KubernetesApiProvider">{
+  &quot;isMigrated&quot;: true
+}</component>
+  <component name="ProjectColorInfo">{
+  &quot;customColor&quot;: &quot;&quot;,
+  &quot;associatedIndex&quot;: 6
+}</component>
+  <component name="ProjectId" id="3A7OPCLjjTTMnwI9WDt5VcE19yH" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/Aneliss/Desktop/kinetocare&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  }
+}</component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-jdk-9823dce3aa75-bf35d07a577b-intellij.indexing.shared.core-IU-252.28238.7" />
+        <option value="bundled-js-predefined-d6986cc7102b-a71380e98a7c-JavaScript-IU-252.28238.7" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="4ced9673-8b14-436e-8309-b0d0251d5f77" name="Changes" comment="" />
+      <created>1771940123909</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1771940123909</updated>
+      <workItem from="1771940128524" duration="80000" />
+      <workItem from="1771941521610" duration="1496000" />
+      <workItem from="1771951791150" duration="96000" />
+      <workItem from="1772211310272" duration="31000" />
+      <workItem from="1774274433824" duration="26000" />
+      <workItem from="1774280226490" duration="355000" />
+      <workItem from="1778334288047" duration="2085000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="github-copilot-workspace">
+    <instructionFileLocations>
+      <option value=".github/instructions" />
+    </instructionFileLocations>
+    <promptFileLocations>
+      <option value=".github/prompts" />
+    </promptFileLocations>
+  </component>
+</project>

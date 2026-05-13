@@ -1,0 +1,19 @@
+2026-03-25T18:41:16.313+02:00  INFO 13712 --- [api-gateway] [main] c.e.a.ApiGatewayApplicationTests         : Starting ApiGatewayApplicationTests using Java 21.0.7 with PID 13712 (started by Anelis in C:\Users\Aneliss\Desktop\kinetocare\backend\api-gateway)
+2026-03-25T18:41:16.327+02:00 DEBUG 13712 --- [api-gateway] [main] c.e.a.ApiGatewayApplicationTests         : Running with Spring Boot v3.5.7, Spring v6.2.12
+2026-03-25T18:41:16.328+02:00  INFO 13712 --- [api-gateway] [main] c.e.a.ApiGatewayApplicationTests         : No active profile set, falling back to 1 default profile: "default"
+2026-03-25T18:41:18.337+02:00  INFO 13712 --- [api-gateway] [main] o.s.cloud.context.scope.GenericScope     : BeanFactory id=1323bae8-87d1-3a79-a368-5236445dfb21
+2026-03-25T18:41:20.000+02:00  INFO 13712 --- [api-gateway] [main] o.s.c.g.r.RouteDefinitionRouteLocator    : Loaded RoutePredicateFactory [After]
+2026-03-25T18:41:20.000+02:00  INFO 13712 --- [api-gateway] [main] o.s.c.g.r.RouteDefinitionRouteLocator    : Loaded RoutePredicateFactory [Before]
+2026-03-25T18:41:20.000+02:00  INFO 13712 --- [api-gateway] [main] o.s.c.g.r.RouteDefinitionRouteLocator    : Loaded RoutePredicateFactory [Between]
+2026-03-25T18:41:20.000+02:00  INFO 13712 --- [api-gateway] [main] o.s.c.g.r.RouteDefinitionRouteLocator    : Loaded RoutePredicateFactory [Cookie]
+2026-03-25T18:41:20.001+02:00  INFO 13712 --- [api-gateway] [main] o.s.c.g.r.RouteDefinitionRouteLocator    : Loaded RoutePredicateFactory [Header]
+2026-03-25T18:41:20.001+02:00  INFO 13712 --- [api-gateway] [main] o.s.c.g.r.RouteDefinitionRouteLocator    : Loaded RoutePredicateFactory [Host]
+2026-03-25T18:41:20.001+02:00  INFO 13712 --- [api-gateway] [main] o.s.c.g.r.RouteDefinitionRouteLocator    : Loaded RoutePredicateFactory [Method]
+2026-03-25T18:41:20.002+02:00  INFO 13712 --- [api-gateway] [main] o.s.c.g.r.RouteDefinitionRouteLocator    : Loaded RoutePredicateFactory [Path]
+2026-03-25T18:41:20.002+02:00  INFO 13712 --- [api-gateway] [main] o.s.c.g.r.RouteDefinitionRouteLocator    : Loaded RoutePredicateFactory [Query]
+2026-03-25T18:41:20.002+02:00  INFO 13712 --- [api-gateway] [main] o.s.c.g.r.RouteDefinitionRouteLocator    : Loaded RoutePredicateFactory [ReadBody]
+2026-03-25T18:41:20.002+02:00  INFO 13712 --- [api-gateway] [main] o.s.c.g.r.RouteDefinitionRouteLocator    : Loaded RoutePredicateFactory [RemoteAddr]
+2026-03-25T18:41:20.002+02:00  INFO 13712 --- [api-gateway] [main] o.s.c.g.r.RouteDefinitionRouteLocator    : Loaded RoutePredicateFactory [XForwardedRemoteAddr]
+2026-03-25T18:41:20.002+02:00  INFO 13712 --- [api-gateway] [main] o.s.c.g.r.RouteDefinitionRouteLocator    : Loaded RoutePredicateFactory [Weight]
+2026-03-25T18:41:20.002+02:00  INFO 13712 --- [api-gateway] [main] o.s.c.g.r.RouteDefinitionRouteLocator    : Loaded RoutePredicateFactory [CloudFoundryRouteService]
+2026-03-25T18:41:20.460+02:00  INFO 13712 --- [api-gateway] [main] c.e.a.ApiGatewayApplicationTests         : Started ApiGatewayApplicationTests in 4.733 seconds (process running for 6.406)

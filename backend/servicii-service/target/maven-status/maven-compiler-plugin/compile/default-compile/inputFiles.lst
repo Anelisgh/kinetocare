@@ -1,0 +1,16 @@
+C:\Users\Aneliss\Desktop\kinetocare\backend\servicii-service\src\main\java\com\example\servicii_service\config\SecurityConfig.java
+C:\Users\Aneliss\Desktop\kinetocare\backend\servicii-service\src\main\java\com\example\servicii_service\controller\ServiciuController.java
+C:\Users\Aneliss\Desktop\kinetocare\backend\servicii-service\src\main\java\com\example\servicii_service\controller\TipServiciuController.java
+C:\Users\Aneliss\Desktop\kinetocare\backend\servicii-service\src\main\java\com\example\servicii_service\dto\ServiciuAdminDTO.java
+C:\Users\Aneliss\Desktop\kinetocare\backend\servicii-service\src\main\java\com\example\servicii_service\dto\ServiciuDTO.java
+C:\Users\Aneliss\Desktop\kinetocare\backend\servicii-service\src\main\java\com\example\servicii_service\dto\TipServiciuDTO.java
+C:\Users\Aneliss\Desktop\kinetocare\backend\servicii-service\src\main\java\com\example\servicii_service\entity\Serviciu.java
+C:\Users\Aneliss\Desktop\kinetocare\backend\servicii-service\src\main\java\com\example\servicii_service\entity\TipServiciu.java
+C:\Users\Aneliss\Desktop\kinetocare\backend\servicii-service\src\main\java\com\example\servicii_service\exception\GlobalExceptionHandler.java
+C:\Users\Aneliss\Desktop\kinetocare\backend\servicii-service\src\main\java\com\example\servicii_service\mapper\ServiciuMapper.java
+C:\Users\Aneliss\Desktop\kinetocare\backend\servicii-service\src\main\java\com\example\servicii_service\mapper\TipServiciuMapper.java
+C:\Users\Aneliss\Desktop\kinetocare\backend\servicii-service\src\main\java\com\example\servicii_service\repository\ServiciuRepository.java
+C:\Users\Aneliss\Desktop\kinetocare\backend\servicii-service\src\main\java\com\example\servicii_service\repository\TipServiciuRepository.java
+C:\Users\Aneliss\Desktop\kinetocare\backend\servicii-service\src\main\java\com\example\servicii_service\service\ServiciuService.java
+C:\Users\Aneliss\Desktop\kinetocare\backend\servicii-service\src\main\java\com\example\servicii_service\service\TipServiciuService.java
+C:\Users\Aneliss\Desktop\kinetocare\backend\servicii-service\src\main\java\com\example\servicii_service\ServiciiServiceApplication.java
