@@ -78,8 +78,16 @@ Acest setup elimină nevoia de a expune porturi manuale (NodePort) pentru fiecar
 Arhitectura completă include și servicii de notificări, chat și programări. Totuși, configurile Kubernetes de față acoperă în mod deliberat **nucleul aplicației** — infrastructura de autentificare și serviciile principale.
 
 Motivul este practic: Kubernetes este o platformă destinată mediilor de producție cu resurse de server generoase. Rularea unui cluster complet local necesită resurse semnificative. Scopul acestui setup este de a **demonstra conceptele și buna practică** a containerizării cu Kubernetes, nu de a simula un cluster de producție real.
-
 Adăugarea celorlalte servicii în k8s ar urma același pattern și ar fi trivială — dovada că arhitectura este corectă și scalabilă.
+
+### Ce funcționează în acest setup restrâns (Graceful Degradation)
+
+Deoarece arhitectura este strict decuplată, chiar și cu `programari-service` sau `chat-service` absente din clusterul k8s, aplicația demonstrează funcționalități critice prin **izolarea defecțiunilor (Graceful Degradation)**:
+- **Autentificarea și Înregistrarea** funcționează perfect (via `keycloak` și `user-service`).
+- **Onboarding-ul și Profilul** (completare date, setare preferințe) sunt complet operaționale (via `pacienti-service`).
+- **Motorul de căutare a terapeuților** funcționează (via `terapeuti-service`).
+
+**Dovada Toleranței la Defecte:** Dacă un pacient își schimbă terapeutul preferat, `pacienti-service` face un apel asincron (Feign) către `programari-service` pentru a anula programările viitoare. Deoarece `programari-service` lipsește din cluster, apelul Feign va eșua. Totuși, deoarece apelul este protejat de un bloc `try-catch` în codul sursă, eroarea este izolată și ignorată: actualizarea profilului pacientului se va salva cu succes în baza de date. Paginile care depind strict de serviciile lipsă (cum ar fi Dashboard-ul cu programări) vor afișa erori de rețea gestionate de Error Boundaries în React, demonstrând că o "cădere" a domeniului de programări nu distruge domeniile de identitate și profil.
 
 ### Concepte cheie demonstrate
 

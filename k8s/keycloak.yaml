@@ -41,19 +41,9 @@ spec:
     spec:
       containers:
         - name: keycloak
-          image: quay.io/keycloak/keycloak:26.0.7
+          image: quay.io/keycloak/keycloak:26.3.4
           args: ["start-dev", "--import-realm"] # Pornire în modul development + importare realm automat
           env:
-            - name: KC_BOOTSTRAP_ADMIN_USERNAME
-              valueFrom:
-                configMapKeyRef:
-                  name: kinetocare-config
-                  key: KEYCLOAK_ADMIN
-            - name: KC_BOOTSTRAP_ADMIN_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: kinetocare-secrets
-                  key: KEYCLOAK_ADMIN_PASSWORD
             - name: KC_HTTP_ENABLED
               value: "true"
             - name: KC_HOSTNAME_STRICT

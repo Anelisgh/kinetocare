@@ -8,7 +8,13 @@ services:
     ports:
       - "3307:3306"
     volumes:
-      - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
+      - ./db-init/user_service.sql:/docker-entrypoint-initdb.d/user_service.sql
+      - ./db-init/pacienti_service.sql:/docker-entrypoint-initdb.d/pacienti_service.sql
+      - ./db-init/terapeuti_service.sql:/docker-entrypoint-initdb.d/terapeuti_service.sql
+      - ./db-init/programari_service.sql:/docker-entrypoint-initdb.d/programari_service.sql
+      - ./db-init/servicii_service.sql:/docker-entrypoint-initdb.d/servicii_service.sql
+      - ./db-init/chat_service.sql:/docker-entrypoint-initdb.d/chat_service.sql
+      - ./db-init/notificari_service.sql:/docker-entrypoint-initdb.d/notificari_service.sql
       - mysql_data:/var/lib/mysql
     deploy:
       resources:
@@ -16,6 +22,12 @@ services:
           memory: 512M
     networks:
       - kineto-network
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -u root -p$$MYSQL_ROOT_PASSWORD"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+      start_period: 15s
 
   rabbitmq:
     image: rabbitmq:3-management
@@ -35,12 +47,10 @@ services:
       - kineto-network
 
   keycloak:
-    image: quay.io/keycloak/keycloak:26.0.7
+    image: quay.io/keycloak/keycloak:26.3.4
     container_name: keycloak
     command: start-dev --import-realm
     environment:
-      - KC_BOOTSTRAP_ADMIN_USERNAME=${KEYCLOAK_ADMIN}
-      - KC_BOOTSTRAP_ADMIN_PASSWORD=${KEYCLOAK_ADMIN_PASSWORD}
       - KC_HTTP_ENABLED=true
       - KC_HOSTNAME_STRICT=false
       - JAVA_OPTS=-Xms256m -Xmx512m
@@ -51,7 +61,7 @@ services:
     ports:
       - "8080:8080"
     volumes:
-      - ./kinetocare-realm.json:/opt/keycloak/data/import/kinetocare-realm.json
+      - ./db-init/realm-export.json:/opt/keycloak/data/import/realm-export.json
       - keycloak_data:/opt/keycloak/data
     networks:
       - kineto-network
@@ -79,8 +89,10 @@ services:
         limits:
           memory: 384M
     depends_on:
-      - mysql
-      - keycloak
+      mysql:
+        condition: service_healthy
+      keycloak:
+        condition: service_started
     networks:
       - kineto-network
 
@@ -105,8 +117,10 @@ services:
         limits:
           memory: 384M
     depends_on:
-      - mysql
-      - keycloak
+      mysql:
+        condition: service_healthy
+      keycloak:
+        condition: service_started
     networks:
       - kineto-network
 
@@ -132,9 +146,12 @@ services:
         limits:
           memory: 384M
     depends_on:
-      - mysql
-      - rabbitmq
-      - keycloak
+      mysql:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_started
+      keycloak:
+        condition: service_started
     networks:
       - kineto-network
 
@@ -156,8 +173,10 @@ services:
         limits:
           memory: 384M
     depends_on:
-      - mysql
-      - keycloak
+      mysql:
+        condition: service_healthy
+      keycloak:
+        condition: service_started
     networks:
       - kineto-network
 
@@ -186,9 +205,12 @@ services:
         limits:
           memory: 384M
     depends_on:
-      - mysql
-      - rabbitmq
-      - keycloak
+      mysql:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_started
+      keycloak:
+        condition: service_started
     networks:
       - kineto-network
 
@@ -210,8 +232,10 @@ services:
         limits:
           memory: 384M
     depends_on:
-      - mysql
-      - keycloak
+      mysql:
+        condition: service_healthy
+      keycloak:
+        condition: service_started
     networks:
       - kineto-network
 
@@ -237,9 +261,12 @@ services:
         limits:
           memory: 384M
     depends_on:
-      - mysql
-      - rabbitmq
-      - keycloak
+      mysql:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_started
+      keycloak:
+        condition: service_started
     networks:
       - kineto-network
 
@@ -264,9 +291,12 @@ services:
         limits:
           memory: 384M
     depends_on:
-      - mysql
-      - rabbitmq
-      - keycloak
+      mysql:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_started
+      keycloak:
+        condition: service_started
     networks:
       - kineto-network
 

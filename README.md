@@ -63,6 +63,17 @@ Prevenind erorile umane, la procesul de creare a unei programări, platforma det
 ### Comunicare Asincronă (Event-Driven cu RabbitMQ)
 Pentru scalabilitate, evenimentele non-critice temporal (*programare nouă*, *jurnal completat*, *mesaj offline necitit*) sunt emise pe un Exchange **RabbitMQ** si procesate asincron de `notificari-service`, lăsând fluxul principal liber.
 
+### Reziliență și Gestionarea Erorilor (Resilience)
+Pentru a garanta stabilitatea sistemului în scenarii de eșec parțial, platforma implementează:
+- **Standardizare Erori (RFC 9457):** Utilizarea `ProblemDetail` pe tot backend-ul pentru a oferi frontend-ului erori predictibile și mapate corect pe interfață.
+- **Circuit-Breaker & Fail-Fast:** `CustomErrorDecoder` pentru apelurile Feign, transformând erorile de rețea HTTP în excepții de domeniu.
+- **Dead Letter Queue (DLQ):** Evenimentele eșuate din RabbitMQ sunt direcționate către un DLX (Dead Letter Exchange) pentru a preveni blocarea cozilor (poison messages).
+- **Tranzacționalitate Distribuită (Compensating Transactions):** Crearea conturilor se face printr-un dual-write sincronizat (Keycloak + MySQL), cu mecanism de rollback manual în caz de eșec parțial.
+- **Frontend Error Boundaries:** Prevenirea colapsului interfeței (White Screen of Death) prin interceptoare globale și fallback UI-uri izolate.
+
+### Automatizare State Machine
+- **Cron Jobs Tranzacționale:** Ciclul de viață al programărilor (trecerea din "Programată" în "Finalizată") și actualizarea relațiilor terapeutice sunt conduse de joburi asincrone (`@Scheduled`), eliminând necesitatea inputului manual constant.
+
 ---
 
 ## 🏗 Infrastructură & Stack Tehnologic
@@ -75,3 +86,8 @@ Pentru scalabilitate, evenimentele non-critice temporal (*programare nouă*, *ju
 - **Backend:** Java 21, Spring Boot 3.x, Spring Cloud Gateway, WebFlux, OpenFeign, Spring Security (OAuth2 Resource Server), Spring AMQP, Spring Data JPA / Hibernate, MapStruct, Lombok
 - **Frontend:** React 19, Vite, React Router DOM v7, Axios, SockJS & StompJS, Recharts, FullCalendar
 - **Infrastructură & DB:** MySQL, RabbitMQ, Keycloak, Docker, Kubernetes
+
+### Infrastructură & DevOps
+- Containerizare completă cu **Docker** și orchestrare locală via `docker-compose`.
+- **Multi-stage Docker Builds:** Frontend-ul este compilat într-un mediu Node.js volatil și livrat în producție printr-un container **Nginx** ultra-ușor și securizat.
+- Arhitectură orchestrată parțial prin **Kubernetes** (Namespaces, ConfigMaps, Secrets, Ingress Controller pentru rutarea traficului global).
