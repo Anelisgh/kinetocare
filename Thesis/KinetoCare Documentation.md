@@ -13,6 +13,8 @@
 - [Section 9: Frontend Architecture (Deep Dive)](about:blank#section-9-frontend-architecture-deep-dive)
 - [Section 10: Infrastructure & DevOps](about:blank#section-10-infrastructure--devops)
 - [Section 11: Resilience & Error Handling](about:blank#section-11-resilience--error-handling)
+- [Section 12: Algorithmic Complexity & Engineering Highlights](about:blank#section-12-algorithmic-complexity--engineering-highlights)
+- [Section 13: Database Schema & Entities](about:blank#section-13-database-schema--entities)
 
 ---
 
@@ -182,20 +184,22 @@ For **TERAPEUT**, only the profile is returned (no appointment summary needed).
 
 **`ProfileController` → `ProfileService`**
 
-Called at `GET /api/profile` and `PATCH /api/profile`. `ProfileService.getProfile()` is the most complex aggregation in the codebase:
+Called at `GET /api/profile` and `PATCH /api/profile`. `ProfileService.getProfile()` is a representative reactive aggregation in the Gateway layer:
 
-- For **PACIENT**: fires two parallel calls — `user-service` (base identity) and `pacienti-service` (clinical profile). If the patient has a preferred therapist, it additionally fires two more parallel calls to `terapeuti-service` (professional data) and `user-service` again (therapist’s name). Finally, if a preferred location exists, it calls `terapeuti-service` for location details. All are executed with `Mono.zip()` and merged into one flat map. Duplicate keys (`keycloakId`, `id`) are explicitly removed before merging.
-- For **TERAPEUT**: fires two parallel calls — `user-service` and `terapeuti-service`. The therapist’s internal DB `id` is preserved as `terapeutId` in the response.
+- For **PACIENT**: fires two parallel calls — `user-service` (base identity) and `pacienti-service` (clinical profile). If the patient has a preferred therapist, it additionally fires two more parallel calls to `terapeuti-service` (professional data) and `user-service` again (therapist's name). Finally, if a preferred location exists, it calls `terapeuti-service` for location details. All are executed with `Mono.zip()` and merged into one flat map. Duplicate keys (`keycloakId`, `id`) are explicitly removed before merging.
+- For **TERAPEUT**: fires two parallel calls — `user-service` and `terapeuti-service`. The therapist's internal DB `id` is preserved as `terapeutId` in the response.
 
 `ProfileService.updateProfile()` does the reverse: it receives a flat update payload, splits it into user/pacient/terapeut field groups using `extractUserFields()`, `extractPacientFields()`, and `extractTerapeutFields()`, fires all applicable PATCH calls concurrently via `Mono.when(updates)`, then calls `getProfile()` to return the refreshed state.
 
+> **Note:** While `ProfileService` is a substantial Gateway-layer aggregation (up to 5 parallel HTTP calls), the most complex aggregation in the entire codebase is `FisaPacientService.getFisaPacient()` inside `programari-service`, which orchestrates data from **4 different microservices** plus multiple local database queries, including a nested N+1 loop over evaluations. This is documented in full in Section 8.4.4.
+
 **`ChatGatewayController` → `ChatGatewayService`**
 
-Called at `GET /api/chat/conversatii/agregat`. Aggregates conversation list from `chat-service` with participant name data from `user-service`, producing enriched `ConversatieAgregataDTO` objects.
+Called at `GET /api/chat/conversatii/agregat`. This is the second-most complex BFF aggregation in the Gateway. It performs three-phase orchestration: (1) fetches existing conversations from `chat-service`, (2) fetches active therapeutic partners from `programari-service` to create **virtual conversations** (Lazy Initialization pattern — partners with an active relationship but no message history yet appear immediately in the chat list), (3) resolves all partner names via a single batch call to `user-service` (`POST /users/batch`), and (4) for each conversation, makes an individual call to `programari-service` to determine the relationship status (`activa`/`arhivata`). The virtual conversation creation ensures that when a patient is assigned a new therapist, the chat interface immediately shows a conversation entry — even before any messages are exchanged — eliminating the need for the user to manually "start" a chat.
 
 **`SearchTerapeutController` → `SearchTerapeutService`**
 
-Handles therapist search for the patient’s onboarding flow, combining therapist professional data from `terapeuti-service` with names from `user-service`.
+Handles therapist search for the patient's onboarding flow, combining therapist professional data from `terapeuti-service` with names from `user-service`. Uses a batch endpoint (`POST /users/batch`) for efficient name resolution, avoiding an N+1 call pattern.
 
 ### 1.2.3 Token Proxy: `KeycloakProxyController`
 
@@ -784,7 +788,47 @@ This private method runs within the same `@Transactional` context as the cron jo
 
 ---
 
-## 3.6 Full RabbitMQ Event Map
+## 3.6 The `ReminderScheduler`: Temporal Window Algorithm with Midnight Edge Case
+
+Method: `ReminderScheduler.gasesteInFereastra(int oreInainte, int marjaMinute)`
+
+The `ReminderScheduler` is a pair of Spring `@Scheduled` cron jobs that sends proactive push notifications to patients before their upcoming appointments: one at **24 hours** before (runs every 30 minutes) and one at **2 hours** before (runs every 15 minutes). The core algorithmic challenge lies in the `gasesteInFereastra` helper method, which implements a **temporal window search** with an elegant edge case handler for the midnight boundary.
+
+**The Algorithm:**
+
+1. **Compute the target window:** Given the current time `acum`, the algorithm calculates a center point (`centruFereastra = acum + oreInainte`) and constructs a symmetric search window: `[centruFereastra - marjaMinute, centruFereastra + marjaMinute]`. For example, at 14:00 with `oreInainte=24` and `marjaMinute=15`, the window becomes `[tomorrow 13:45, tomorrow 14:15]`.
+
+2. **Normal case — same-day window:** If the start and end of the computed window fall on the same calendar date, a single database query retrieves all matching appointments:
+
+    ```java
+    if (startFereastra.toLocalDate().equals(endFereastra.toLocalDate())) {
+        return programareRepository.findProgramariInFereastra(
+            startFereastra.toLocalDate(),
+            startFereastra.toLocalTime(),
+            endFereastra.toLocalTime());
+    }
+    ```
+
+3. **Midnight edge case — cross-day window:** When the window straddles midnight (e.g., `23:50 -> 00:10`), a single query would fail because `23:50 < oraInceput < 00:10` is logically impossible with `LocalTime`. The algorithm elegantly splits the window into two sub-queries:
+
+    ```java
+    // [23:50 - 23:59] on day 1
+    rezultat.addAll(programareRepository.findProgramariInFereastra(
+        startFereastra.toLocalDate(),
+        startFereastra.toLocalTime(),
+        LocalTime.of(23, 59)));
+    // [00:00 - 00:10] on day 2
+    rezultat.addAll(programareRepository.findProgramariInFereastra(
+        endFereastra.toLocalDate(),
+        LocalTime.of(0, 0),
+        endFereastra.toLocalTime()));
+    ```
+
+**Why this is architecturally significant:** This is a classic temporal boundary problem that many production systems fail to handle, leading to missed notifications for appointments scheduled around midnight. The split-query approach ensures 100% coverage without requiring complex date-time arithmetic in SQL. The margin-based window also provides tolerance for cron scheduling jitter — even if the cron fires a few minutes late, the window overlap ensures no appointment is missed.
+
+---
+
+## 3.7 Full RabbitMQ Event Map
 
 All events are published to exchange `notificari.exchange` (a `TopicExchange`). The routing key pattern `notificare.#` in `notificari-service` captures all of them.
 
@@ -797,13 +841,13 @@ All events are published to exchange `notificari.exchange` (a `TopicExchange`). 
 | `programareAnulataDeTerapeut` | `notificare.programare.anulata.terapeut` | Patient | Therapist cancels |
 | `reminderJurnal` | `notificare.reminder.jurnal` | Patient | Appointment auto-finalized |
 | `reevaluareRecomandata` | `notificare.reevaluare.recomandata` | Patient | Package sessions exhausted |
-| `reminder24h` | `notificare.reminder.24h` | Patient | 24h before appointment (unused in cron currently) |
-| `reminder2h` | `notificare.reminder.2h` | Patient | 2h before appointment (unused in cron currently) |
+| `reminder24h` | `notificare.reminder.24h` | Patient | 24h before appointment (ReminderScheduler cron, Section 3.6) |
+| `reminder2h` | `notificare.reminder.2h` | Patient | 2h before appointment (ReminderScheduler cron, Section 3.6) |
 | `jurnalCompletat` | `notificare.jurnal.completat` | Therapist | Patient submits journal |
 
 ---
 
-## 3.7 Transactional Guarantees and Race Condition Handling
+## 3.8 Transactional Guarantees and Race Condition Handling
 
 The `creeazaProgramare` method is the primary race condition target: two patients (or the same patient in two browser tabs) might attempt to book the same therapist slot at the same instant.
 
@@ -1822,6 +1866,68 @@ The `programari-service` is the central orchestrator of the business domain. It 
 
 *(Refer to Sections 3 and 4 for an exhaustive analysis of the `determinaServiciulCorect` booking algorithm, the overlap matrix, and the `@Transactional` cron jobs).*
 
+### 8.4.4 The Most Complex Aggregation: `FisaPacientService.getFisaPacient()`
+
+Method: `FisaPacientService.getFisaPacient(String pacientKeycloakId, String terapeutKeycloakId)`
+
+Annotation: `@Transactional(readOnly = true)`
+
+This method is the **most complex data aggregation in the entire KinetoCare codebase**. It constructs a complete 360-degree clinical view of a patient by orchestrating data from **4 different microservices** and **4 local database queries**, producing a `FisaPacientDetaliiDTO` with 13 fields. It is the data engine behind the therapist's "Fisa Pacientului" (Patient File) interface — the screen where a therapist can see everything about a patient in a single glance.
+
+**Step-by-step orchestration:**
+
+| Step | Source | Data Retrieved | Communication Type |
+|------|--------|----------------|-------------------|
+| 1 | `userClient` -> `user-service` | Patient identity (name, email, phone, gender) | Synchronous Feign |
+| 2 | `pacientiClient` -> `pacienti-service` | Medical profile (birth date -> computed age, sport habits) | Synchronous Feign |
+| 3 | `programareService` (local) | Current clinical situation (active diagnosis, sessions remaining) | Local method call |
+| 4 | `evaluareRepository` (local) | Complete evaluation history (all evaluations, from all therapists) | Local JPA query |
+| 4a | `userClient` x N -> `user-service` | Name of the therapist who performed each evaluation | Synchronous Feign (per evaluation) |
+| 4b | `serviciiClient` x N -> `servicii-service` | Name of the recommended service for each evaluation | Synchronous Feign (per evaluation) |
+| 5 | `evolutieService` (local) | Progress notes history (only from the current therapist) | Local method call |
+| 6 | `programareService` (local) | Complete appointment history (past and future) | Local method call |
+| 7 | `pacientiClient` -> `pacienti-service` | Patient journal history (subjective feedback entries) | Synchronous Feign |
+
+**Total external calls:** 3 fixed Feign calls + **2 x N** Feign calls (where N = number of evaluations in the patient's history) + 4 local database queries.
+
+**The N+1 Pattern in `buildEvaluariList`:**
+
+The private helper `buildEvaluariList(pacientKeycloakId)` first fetches all `Evaluare` entities from the local database. Then, for **each** evaluation, it makes two additional cross-service calls:
+
+```java
+return evaluari.stream().map(eval -> {
+    // Call 1: Resolve therapist name from user-service
+    UserDisplayCalendarDTO terapeutDetails = userClient.getUserByKeycloakId(eval.getTerapeutKeycloakId());
+    numeTerapeut = terapeutDetails.nume() + " " + terapeutDetails.prenume();
+
+    // Call 2: Resolve service name from servicii-service
+    DetaliiServiciuDTO serviciu = serviciiClient.getServiciuById(eval.getServiciuRecomandatId());
+    serviciuNume = serviciu.nume();
+
+    return new EvaluareResponseDTO(/* ... 10 fields ... */);
+}).toList();
+```
+
+This is a classic **N+1 query problem** at the inter-service level — the kind that is easy to overlook in a monolith but becomes a significant performance consideration in a microservice architecture. For a patient with 5 evaluations, this single method generates 3 + (5 x 2) = **13 external HTTP calls**. Each call wraps a Feign error handler (`try/catch`) that gracefully degrades: if `user-service` is temporarily unavailable, the therapist name defaults to `null` rather than failing the entire aggregation.
+
+**Why this is the most complex aggregation:**
+
+1. **Breadth:** It touches 4 different microservices (`user-service`, `pacienti-service`, `servicii-service`, and the local `programari-service` DB), more than any other function in the system.
+2. **Depth:** The nested N+1 loop inside `buildEvaluariList` creates a multiplicative call pattern — the total number of external calls is not fixed but grows with the patient's clinical history.
+3. **Data diversity:** The output DTO (`FisaPacientDetaliiDTO`) merges identity data, medical data, clinical assessments, progress notes, appointment history, and subjective journal feedback into a single cohesive payload — a complete patient dossier.
+4. **Error resilience:** Every external call is wrapped in defensive `try/catch` blocks with `log.warn` fallbacks, ensuring that a temporary failure in one service (e.g., `servicii-service` being slow) degrades only one section of the patient file, not the entire view.
+
+**Comparison with `ProfileService.getProfile()` (Gateway):**
+
+| Dimension | `ProfileService.getProfile()` | `FisaPacientService.getFisaPacient()` |
+|-----------|------------------------------|--------------------------------------|
+| Location | API Gateway (reactive WebFlux) | programari-service (imperative MVC) |
+| External calls | Up to 5 (fixed) | 3 + 2xN (variable) |
+| Data sources | 3 microservices | 4 microservices + local DB |
+| Output fields | ~15 (flat map) | 13 top-level (nested lists) |
+| N+1 pattern | None | Double N+1 per evaluation |
+| Communication | Non-blocking (`Mono.zip`) | Blocking (Feign) |
+
 ---
 
 ## 8.5 Microservice: `servicii-service`
@@ -2165,7 +2271,126 @@ The frontend mirrors backend resilience through two main mechanisms:
 
 ---
 
-# Section 12: Database Schema & Entities
+# Section 12: Algorithmic Complexity & Engineering Highlights
+
+This section presents a consolidated analysis of the most algorithmically significant functions in the KinetoCare codebase — the implementations that go beyond standard CRUD operations and demonstrate real engineering problem-solving. These are ranked by algorithmic sophistication, not by code length or number of lines.
+
+## 12.1 Finite State Machine: `determinaServiciulCorect`
+
+**Location:** `ProgramareService.determinaServiciulCorect()` (programari-service)
+
+**Pattern:** Implicit Finite State Machine (FSM) / Decision Tree
+
+This is the most intellectually significant algorithm in the system. At its core, it implements a **three-state finite automaton** that automatically determines the therapeutic trajectory of a patient — without any manual intervention from the therapist or patient. Every time a patient books an appointment, the system infers what clinical service should be applied based on the patient's current state in their treatment lifecycle:
+
+```
+State A: [No evaluation exists]                  -> Service: "Evaluare Initiala" (Initial Assessment)
+State B: [Evaluation exists, sessions < quota]    -> Service: evaluare.serviciuRecomandatId (Active Treatment)
+State C: [Evaluation exists, sessions >= quota]   -> Service: "Reevaluare" (Re-assessment)
+```
+
+The state transitions are driven by two data points: (1) whether an evaluation record exists for the patient, and (2) a comparison between `countSedintePacientDupaData` (completed sessions since the evaluation date) and `evaluare.getSedinteRecomandate()` (the therapist's prescribed quota). The FSM is **self-cycling**: after a re-evaluation, a new `Evaluare` record is created with a fresh `sedinteRecomandate` count, and the patient re-enters State B — creating an infinite treatment loop that only terminates when the therapist decides not to prescribe further sessions.
+
+This design eliminates an entire class of human errors — a receptionist accidentally booking the wrong service type, or a patient being charged for an evaluation when they should receive a regular session. The system enforces clinical correctness at the infrastructure level.
+
+*(Full algorithm walkthrough in Section 3.4)*
+
+## 12.2 Greedy Interval Scheduling: `getSloturiDisponibile`
+
+**Location:** `ProgramareService.getSloturiDisponibile()` (programari-service)
+
+**Pattern:** Greedy Algorithm / Constraint-Based Interval Scheduling
+
+This method solves a constrained scheduling problem: given a therapist's working hours, existing appointments, and the duration of the requested service, compute all valid time slots where a new appointment can be placed. The algorithm operates as a **sliding window cursor** that advances through the therapist's workday:
+
+1. **Constraint collection phase:** The algorithm first gathers all constraints — leave periods (blocking the entire day), availability records (defining the workable time window per location and weekday), and existing bookings (occupying specific intervals).
+2. **Slot generation phase:** A cursor starts at `orar.oraInceput()` and advances by `durataMinute + 10` minutes per iteration (the 10-minute buffer provides inter-patient transition time for the therapist). At each position, it checks:
+   - **Boundary constraint:** Does the slot fit within the working hours? (`!cursor.plusMinutes(durataMinute).isAfter(limitaSfarsit)`)
+   - **Collision constraint:** Does the slot overlap with any existing booking? (Using the canonical interval overlap test: `startNou < p.oraSfarsit && endNou > p.oraInceput`)
+   - **Temporal constraint:** If the date is today, is the slot still in the future? (`cursor.isAfter(LocalTime.now())`)
+
+This is a classic **greedy algorithm** — it processes candidates left-to-right and emits valid slots without backtracking. The collision check against existing bookings runs in O(N) per slot (where N = number of existing appointments on that day), making the overall complexity O(S x N) where S = number of candidate slots. Given typical clinic parameters (8-hour workday, 60-minute sessions), S ~= 8 and N < 10, making this highly efficient for real-world use.
+
+*(Full algorithm walkthrough in Section 3.3, Phase 2)*
+
+## 12.3 Temporal Window with Midnight Boundary: `ReminderScheduler`
+
+**Location:** `ReminderScheduler.gasesteInFereastra()` (programari-service)
+
+**Pattern:** Temporal Window Search with Boundary Split
+
+This cron-based scheduler sends proactive notifications (24h and 2h reminders) to patients before their appointments. The algorithmic elegance lies in handling the **midnight boundary edge case**: when the search window (e.g., `[23:50, 00:10]`) crosses from one calendar day to the next, a single SQL query with `BETWEEN` semantics would fail because `23:50 < oraInceput < 00:10` is a logical impossibility with `LocalTime`.
+
+The solution splits the window into two sub-queries: `[23:50-23:59]` on day 1 and `[00:00-00:10]` on day 2, then merges the results. This ensures zero missed notifications regardless of when patients schedule their appointments. Many production scheduling systems silently fail at midnight boundaries — this implementation handles it explicitly.
+
+*(Full algorithm walkthrough in Section 3.6)*
+
+## 12.4 Cascading Cron with FSM Re-verification: `finalizeazaProgramariExpirate`
+
+**Location:** `ProgramareService.finalizeazaProgramariExpirate()` + `trimiteNotificariDupaFinalizare()` (programari-service)
+
+**Pattern:** Scheduled Batch Processing with Cascading Side Effects
+
+This `@Scheduled` cron job does far more than mark appointments as complete. After each finalization, it triggers a cascade of side effects within the same `@Transactional` boundary:
+
+1. **Relationship activation:** `asiguraRelatieActiva()` — ensures the patient-therapist relationship entity exists and is marked as active (creating it if this is the first completed session between them).
+2. **Journal reminder:** Publishes `notificare.reminder.jurnal` to RabbitMQ, prompting the patient to fill in their post-session feedback.
+3. **FSM re-check:** Re-runs the session count logic from `determinaServiciulCorect` to detect if the patient has exhausted their treatment package. If `sedinteEfectuate >= sedinteRecomandate`, it fires `notificare.reevaluare.recomandata` — proactively informing the patient that their treatment plan is complete and a re-evaluation is needed.
+
+This third step is particularly elegant: the cron job effectively **re-evaluates the patient's FSM state** after every session completion, ensuring that the system's awareness of the patient's therapeutic progress is always current — even without any manual intervention from the therapist.
+
+*(Full algorithm walkthrough in Section 3.5)*
+
+## 12.5 Distributed Saga: `UserService.toggleUserActive`
+
+**Location:** `UserService.toggleUserActive()` (user-service)
+
+**Pattern:** Orchestrated Saga Pattern / Compensating Transactions
+
+When an administrator deactivates a user account, the system must propagate this state change across **four independent systems** in a coordinated sequence:
+
+1. **Local DB:** `user.setActive(false)` — update the local database.
+2. **Keycloak IAM:** `keycloakSyncService.setUserEnabled(keycloakId, false)` — disable the identity provider account, immediately invalidating all active JWT tokens and blocking future logins. If this step fails, the method throws `ExternalServiceException`, which triggers a Spring `@Transactional` rollback of Step 1 — implementing a **compensating transaction** that prevents the database and Keycloak from becoming inconsistent.
+3. **Profile service:** `pacientiClient.toggleActive()` or `terapeutiClient.toggleActive()` — propagate the disabled state to the role-specific service, preventing the deactivated account from appearing in search results or active patient lists.
+4. **Appointment cancellation:** `programariClient.cancelByTerapeut()` or `cancelByPacient()` — cancel all future appointments for the deactivated user, triggering RabbitMQ notifications to all affected counterparties.
+
+This is a textbook implementation of the **Saga pattern** in a microservice architecture. The key design decision is the **failure boundary**: Steps 1-2 are atomic (Keycloak failure rolls back the DB), while Steps 3-4 are best-effort (failures are logged but do not roll back the deactivation). This asymmetry reflects a deliberate business decision: it is acceptable for a deactivated user to still appear in a patient list temporarily (eventual consistency), but it is unacceptable for a user to be disabled in Keycloak while still showing as active in the local database (strong consistency for the authentication boundary).
+
+*(Referenced in Section 8.1.3)*
+
+## 12.6 WebSocket Authentication Bridge: `StompSecurityInterceptor`
+
+**Location:** `StompSecurityInterceptor.preSend()` (chat-service)
+
+**Pattern:** Protocol Bridge / Thread-Local Security Context Injection
+
+HTTP endpoints automatically benefit from Spring Security's filter chain — JWT validation, role extraction, and `SecurityContextHolder` population happen transparently. **STOMP/WebSocket frames bypass this entirely.** The `StompSecurityInterceptor` solves this architectural gap by implementing a `ChannelInterceptor` that intercepts every inbound STOMP frame and manually bridges the security context:
+
+1. **On CONNECT and SEND frames:** Extracts the `Authorization` header from STOMP native headers (not HTTP headers), decodes the JWT via `jwtDecoder.decode(token)`, converts it to a `JwtAuthenticationToken`, and injects it into both the STOMP session (`accessor.setUser()`) and the thread-local `SecurityContextHolder`.
+2. **Why `SecurityContextHolder` matters:** The chat service's `ChatService.salveazaSiNotifica()` calls `programariClient.getRelatieStatusByKeycloak()` — a synchronous Feign call that needs a valid JWT to authenticate with `programari-service`. Spring's `RequestInterceptor` on the Feign client reads the JWT from `SecurityContextHolder.getContext()`. Without the interceptor populating this context, every Feign call from a WebSocket handler would fail with `401 Unauthorized`.
+3. **Thread pool pollution prevention:** `postSend()` calls `SecurityContextHolder.clearContext()` after every frame, preventing one user's security credentials from leaking to the next message processed by the same thread in the pool.
+
+This is a non-trivial integration challenge that arises specifically in architectures combining **WebSocket real-time messaging** with **synchronous inter-service authentication** — a scenario that most tutorials and documentation do not cover.
+
+*(Referenced in Sections 2.5 and 6.3)*
+
+## 12.7 The Most Complex Data Aggregation: `FisaPacientService.getFisaPacient()`
+
+**Location:** `FisaPacientService.getFisaPacient()` (programari-service)
+
+**Pattern:** Cross-Service Orchestrator with Nested N+1 Enrichment
+
+This method constructs the most data-rich response in the entire system — a complete patient dossier spanning identity data, medical profile, clinical assessments, progress notes, appointment history, and subjective journal feedback. It orchestrates **4 different microservices** and **4 local database queries**, with a nested N+1 call loop over evaluations that generates `3 + 2xN` external HTTP calls per invocation. Every external call is defensively wrapped in `try/catch` blocks with graceful degradation, ensuring that a temporary failure in one service degrades only one section of the patient file, not the entire view.
+
+*(Full aggregation analysis in Section 8.4.4)*
+
+---
+
+*— End of Section 12 —*
+
+---
+
+# Section 13: Database Schema & Entities
 
 Această secțiune detaliază structura exactă a entităților din baza de date pentru fiecare microserviciu, incluzând cheile primare, tipurile de date, constrângerile și relațiile stabilite prin enumerări.
 
@@ -2379,9 +2604,3 @@ Această secțiune detaliază structura exactă a entităților din baza de date
 │
 ├── TipUser enum (PACIENT, TERAPEUT)
 └── TipNotificare enum (PROGRAMARE_ANULATA_DE_TERAPEUT, REMINDER_24H, REMINDER_2H, MESAJ_DE_LA_TERAPEUT, REMINDER_JURNAL, REEVALUARE_RECOMANDATA, PROGRAMARE_NOUA, EVALUARE_INITIALA_NOUA, PROGRAMARE_ANULATA_DE_PACIENT, JURNAL_COMPLETAT, MESAJ_DE_LA_PACIENT, REEVALUARE_NECESARA)
-
----
-
-*— End of Documentation —*
-
----

@@ -2,7 +2,8 @@ FROM node:20-alpine AS build
 WORKDIR /app
 # Docker nu va mai rula npm install economisind mult timp la build
 COPY package*.json ./
-RUN npm install
+RUN npm install --include=dev
+RUN npm install -g vite
 COPY . .
 RUN npm run build
 
