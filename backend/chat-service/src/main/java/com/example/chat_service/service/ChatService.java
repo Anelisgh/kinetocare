@@ -169,7 +169,10 @@ public class ChatService {
                 .urlActiune("/chat/" + conversatie.getId())
                 .build();
 
-        rabbitTemplate.convertAndSend("notificari.exchange", "notificare.mesaj.nou", event);
+        rabbitTemplate.convertAndSend("notificari.exchange", "notificare.mesaj.nou", event, message -> {
+            message.getMessageProperties().setMessageId(java.util.UUID.randomUUID().toString());
+            return message;
+        });
         log.info("Notificare trimisa in RabbitMQ pentru destinatarul {} ({})", recipientKeycloakId, eventType);
     }
 }

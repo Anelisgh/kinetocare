@@ -86,7 +86,7 @@ public class ChatGatewayService {
                     .filter(java.util.Objects::nonNull)
                     .collect(Collectors.toSet());
 
-            // Conversații virtuale (Lazy Init) pentru parteneri activi fără istoric
+            // Conversații virtuale (Virtual Proxy / Resource On-Demand) pentru parteneri activi fără istoric
             for (String partenerKeycloakId : parteneriActivi) {
                 if (!parteneriInConversatii.contains(partenerKeycloakId)) {
                     Map<String, Object> virtualConv = new HashMap<>();

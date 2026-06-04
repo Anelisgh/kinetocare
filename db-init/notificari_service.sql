@@ -49,7 +49,12 @@ CREATE TABLE `notificari` (
   KEY `idx_notif_creata` (`created_at`),
   KEY `idx_notif_user_query` (`user_keycloak_id`,`tip_user`,`este_citita`,`created_at`)
 ) ENGINE=InnoDB AUTO_INCREMENT=51 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `mesaje_procesate`;
+CREATE TABLE `mesaje_procesate` (
+  `message_id` varchar(36) NOT NULL,
+  `processed_at` datetime(6) NOT NULL,
+  PRIMARY KEY (`message_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Dumping data for table `notificari`

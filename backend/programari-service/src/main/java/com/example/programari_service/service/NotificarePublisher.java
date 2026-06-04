@@ -82,7 +82,10 @@ public class NotificarePublisher {
             return;
         }
         try {
-            rabbitTemplate.convertAndSend(RabbitMQConfig.EXCHANGE_NAME, routingKey, event);
+            rabbitTemplate.convertAndSend(RabbitMQConfig.EXCHANGE_NAME, routingKey, event, message -> {
+                message.getMessageProperties().setMessageId(java.util.UUID.randomUUID().toString());
+                return message;
+            });
             log.info("Notificare trimisă: {} → userKeycloakId={}", event.tipNotificare(), event.userKeycloakId());
         } catch (Exception e) {
             log.error("Eroare la trimiterea notificării {}: {}", event.tipNotificare(), e.getMessage());

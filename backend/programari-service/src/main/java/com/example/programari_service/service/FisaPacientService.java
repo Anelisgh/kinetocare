@@ -36,8 +36,21 @@ public class FisaPacientService {
     public ListaPacientiDTO getListaPacienti(String terapeutKeycloakId) {
         List<FisaPacientDTO> activi = buildPatientList(
                 relatieRepository.findByTerapeutKeycloakIdAndActivaTrue(terapeutKeycloakId), true);
-        List<FisaPacientDTO> arhivati = buildPatientList(
-                relatieRepository.findByTerapeutKeycloakIdAndActivaFalse(terapeutKeycloakId), false);
+
+        List<RelatiePacientTerapeut> relatiiInactive = relatieRepository.findByTerapeutKeycloakIdAndActivaFalse(terapeutKeycloakId);
+
+        // Deduplicare și eliminare pacienți care sunt deja în lista activă
+        java.util.Set<String> activePatientIds = activi.stream()
+                .map(FisaPacientDTO::pacientKeycloakId)
+                .collect(java.util.stream.Collectors.toSet());
+
+        java.util.Set<String> seenArchivedIds = new java.util.HashSet<>();
+        List<RelatiePacientTerapeut> filteredInactive = relatiiInactive.stream()
+                .filter(rel -> !activePatientIds.contains(rel.getPacientKeycloakId()))
+                .filter(rel -> seenArchivedIds.add(rel.getPacientKeycloakId()))
+                .toList();
+
+        List<FisaPacientDTO> arhivati = buildPatientList(filteredInactive, false);
 
         return new ListaPacientiDTO(
                 activi,
@@ -145,16 +158,36 @@ public class FisaPacientService {
     private List<EvaluareResponseDTO> buildEvaluariList(String pacientKeycloakId) {
         List<Evaluare> evaluari = evaluareRepository.findAllByPacientKeycloakIdOrderByDataDesc(pacientKeycloakId);
 
-        return evaluari.stream().map(eval -> {
-            // Numele terapeutului care a facut evaluarea
-            String numeTerapeut = null;
+        // Colectam ID-urile unice ale terapeutilor pentru batch fetch
+        List<String> terapeutKeycloakIds = evaluari.stream()
+                .map(Evaluare::getTerapeutKeycloakId)
+                .filter(java.util.Objects::nonNull)
+                .distinct()
+                .toList();
+
+        // Incarcam detaliile terapeutului in batch
+        java.util.Map<String, UserDisplayCalendarDTO> terapeutiMap = new java.util.HashMap<>();
+        if (!terapeutKeycloakIds.isEmpty()) {
             try {
-                UserDisplayCalendarDTO terapeutDetails = userClient.getUserByKeycloakId(eval.getTerapeutKeycloakId());
-                if (terapeutDetails != null) {
-                    numeTerapeut = terapeutDetails.nume() + " " + terapeutDetails.prenume();
+                List<UserDisplayCalendarDTO> users = userClient.getUsersByKeycloakIds(terapeutKeycloakIds);
+                if (users != null) {
+                    for (UserDisplayCalendarDTO u : users) {
+                        if (u.keycloakId() != null) {
+                            terapeutiMap.put(u.keycloakId(), u);
+                        }
+                    }
                 }
             } catch (Exception e) {
-                log.warn("Nu s-a putut obține numele terapeutului {}: {}", eval.getTerapeutKeycloakId(), e.getMessage());
+                log.warn("Nu s-au putut încărca detaliile terapeuților în batch: {}", e.getMessage());
+            }
+        }
+
+        return evaluari.stream().map(eval -> {
+            // Numele terapeutului care a facut evaluarea (lookup in map-ul din batch fetch)
+            String numeTerapeut = null;
+            UserDisplayCalendarDTO terapeutDetails = terapeutiMap.get(eval.getTerapeutKeycloakId());
+            if (terapeutDetails != null) {
+                numeTerapeut = terapeutDetails.nume() + " " + terapeutDetails.prenume();
             }
 
             // Numele serviciului recomandat

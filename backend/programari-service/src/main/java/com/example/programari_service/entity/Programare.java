@@ -12,18 +12,21 @@ import java.time.OffsetDateTime;
 
 @Entity
 @Table(name = "programari",
+        uniqueConstraints = {
+                @UniqueConstraint(name = "uk_terapeut_data_ora", columnNames = {"terapeut_keycloak_id", "data", "ora_inceput"})
+        },
         indexes = {
                 @Index(name = "idx_prog_terapeut_data_status", columnList = "terapeut_keycloak_id, data, status"),
                 @Index(name = "idx_prog_pacient_status_data", columnList = "pacient_keycloak_id, status, data, ora_inceput"),
-                @Index(name = "idx_prog_stats", columnList = "locatie_id, data"),
+                @Index(name = "idx_prog_stats", columnList = "locatie_id, data, pret"),
                 @Index(name = "idx_prog_overlap", columnList = "terapeut_keycloak_id, data, ora_inceput, ora_sfarsit")
         })
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-public class Programare {
+@lombok.experimental.SuperBuilder
+public class Programare extends BaseAuditableEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -78,12 +81,4 @@ public class Programare {
     @Column(name = "are_jurnal", nullable = false)
     @Builder.Default
     private Boolean areJurnal = false;
-
-    @CreationTimestamp
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private OffsetDateTime createdAt;
-
-    @UpdateTimestamp
-    @Column(name = "updated_at", nullable = false)
-    private OffsetDateTime updatedAt;
 }

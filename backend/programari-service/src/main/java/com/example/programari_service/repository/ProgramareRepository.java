@@ -2,6 +2,8 @@ package com.example.programari_service.repository;
 
 import com.example.programari_service.entity.Programare;
 import com.example.programari_service.entity.StatusProgramare;
+import org.springframework.data.jpa.repository.Lock;
+import jakarta.persistence.LockModeType;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -27,6 +29,7 @@ public interface ProgramareRepository extends JpaRepository<Programare, Long> {
         long countByPacientKeycloakIdAndTerapeutKeycloakId(String pacientKeycloakId, String terapeutKeycloakId);
 
         // verifica suprapunerea programarilor
+        @Lock(LockModeType.PESSIMISTIC_WRITE)
         @Query("SELECT CASE WHEN COUNT(p) > 0 THEN true ELSE false END " +
                         "FROM Programare p " +
                         "WHERE p.terapeutKeycloakId = :terapeutKeycloakId " +

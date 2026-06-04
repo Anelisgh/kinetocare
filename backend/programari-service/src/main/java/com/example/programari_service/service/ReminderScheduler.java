@@ -59,15 +59,15 @@ public class ReminderScheduler {
         }
  
         // caz limita: fereastra trece peste miezul noptii (ex: 23:50-00:10)
-        // splitam in 2 query-uri: [23:50-23:59] in ziua 1 si [00:00-00:10] in ziua 2
+        // splitam in 2 query-uri: [23:50-23:59:59.999] in ziua 1 si [00:00-00:10] in ziua 2
         List<Programare> rezultat = new ArrayList<>();
         rezultat.addAll(programareRepository.findProgramariInFereastra(
                 startFereastra.toLocalDate(),
                 startFereastra.toLocalTime(),
-                LocalTime.of(23, 59)));
+                LocalTime.MAX));
         rezultat.addAll(programareRepository.findProgramariInFereastra(
                 endFereastra.toLocalDate(),
-                LocalTime.of(0, 0),
+                LocalTime.MIN,
                 endFereastra.toLocalTime()));
         return rezultat;
     }

@@ -15,11 +15,16 @@ out/
 # Log-uri și mediu
 *.log
 logs/
-.env
 
 # OS specific
 .DS_Store
 Thumbs.db
 
-# K8s
-secrets.yaml
+# Executables
+zipkin.jar
+*.jar
+
+# Node dependencies
+node_modules/
+**/node_modules/
+

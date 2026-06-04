@@ -244,20 +244,7 @@
     font-size: 0.75rem;
 }
 
-/* Status Colors - Simple left border only */
-.custom-event-card.status-programata {
-    border-left-color: #3b82f6;
-}
-
-.custom-event-card.status-programata.prima-intalnire {
-    border-left-color: #f59e0b;
-    background: #fffbeb;
-}
-
-.custom-event-card.status-finalizata {
-    border-left-color: #10b981;
-    background: #f0fdf4;
-}
+/* Status Colors - Anulata pastreaza stilul de text taiat */
 
 .custom-event-card.status-anulata {
     border-left-color: #dc2626;

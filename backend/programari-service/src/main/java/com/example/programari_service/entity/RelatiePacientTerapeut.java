@@ -18,8 +18,8 @@ import java.time.OffsetDateTime;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-public class RelatiePacientTerapeut {
+@lombok.experimental.SuperBuilder
+public class RelatiePacientTerapeut extends BaseAuditableEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -39,12 +39,4 @@ public class RelatiePacientTerapeut {
     @Column(nullable = false)
     @Builder.Default
     private Boolean activa = true;
-
-    @CreationTimestamp
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private OffsetDateTime createdAt;
-
-    @UpdateTimestamp
-    @Column(name = "updated_at", nullable = false)
-    private OffsetDateTime updatedAt;
 }

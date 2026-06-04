@@ -1,5 +1,5 @@
 # Script to forcefully clean all target directories
-$services = @("api-gateway", "user-service", "terapeuti-service", "pacienti-service", "programari-service", "servicii-service", "notificari-service", "chat-service")
+$services = @("common", "api-gateway", "user-service", "terapeuti-service", "pacienti-service", "programari-service", "servicii-service", "notificari-service", "chat-service")
 
 foreach ($service in $services) {
     $targetPath = ".\$service\target"
@@ -11,4 +11,13 @@ foreach ($service in $services) {
 }
 
 Write-Host "`nAll target directories cleaned!" -ForegroundColor Green
-Write-Host "Now you can run: mvn clean install" -ForegroundColor Cyan
+Write-Host "Now we can run: mvn clean install -DskipTests" -ForegroundColor Green
+
+mvn clean install -DskipTests
+
+if ($LASTEXITCODE -ne 0) {
+    Write-Host "Build failed!" -ForegroundColor Red
+    exit 1
+}
+
+Write-Host "Build successful!" -ForegroundColor Green

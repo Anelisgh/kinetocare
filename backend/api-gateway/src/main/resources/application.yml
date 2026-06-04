@@ -110,12 +110,38 @@ spring:
                 - StripPrefix=1
           default-filters:
             - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials, RETAIN_UNIQUE
+  tracing:
+    sampling:
+      probability: 1.0
+  zipkin:
+    tracing:
+      endpoint: ${ZIPKIN_URL:http://localhost:9411/api/v2/spans}
   security:
     oauth2:
       resourceserver:
         jwt:
           issuer-uri: ${KEYCLOAK_URL:http://localhost:8080}/realms/kinetocare
           jwk-set-uri: ${KEYCLOAK_URL:http://localhost:8080}/realms/kinetocare/protocol/openid-connect/certs
+
+springdoc:
+  swagger-ui:
+    urls:
+      - name: Gateway Service
+        url: /v3/api-docs
+      - name: User Service
+        url: /api/users/v3/api-docs
+      - name: Pacienti Service
+        url: /api/pacient/v3/api-docs
+      - name: Terapeuti Service
+        url: /api/terapeut/v3/api-docs
+      - name: Programari Service
+        url: /api/programari/v3/api-docs
+      - name: Servicii Service
+        url: /api/servicii/v3/api-docs
+      - name: Chat Service
+        url: /api/chat/v3/api-docs
+      - name: Notificari Service
+        url: /api/notificari/v3/api-docs
 
 server:
   port: 8081
@@ -139,13 +165,10 @@ logging:
     com.example.api_gateway: DEBUG
     org.springframework.web: INFO
     org.springframework.security: DEBUG
-
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
-
   file:
     name: logs/api-gateway.log
-
   logback:
     rollingpolicy:
       max-file-size: 10MB

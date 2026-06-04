@@ -7,7 +7,9 @@ import java.util.List;
 import java.util.Optional;
 
 public interface RelatieRepository extends JpaRepository<RelatiePacientTerapeut, Long> {
-    Optional<RelatiePacientTerapeut> findByPacientKeycloakIdAndTerapeutKeycloakId(String pacientKeycloakId, String terapeutKeycloakId);
+    List<RelatiePacientTerapeut> findByPacientKeycloakIdAndTerapeutKeycloakId(String pacientKeycloakId, String terapeutKeycloakId);
+
+    Optional<RelatiePacientTerapeut> findByPacientKeycloakIdAndTerapeutKeycloakIdAndActivaTrue(String pacientKeycloakId, String terapeutKeycloakId);
 
     // pacientii activi ai unui terapeut
     List<RelatiePacientTerapeut> findByTerapeutKeycloakIdAndActivaTrue(String terapeutKeycloakId);

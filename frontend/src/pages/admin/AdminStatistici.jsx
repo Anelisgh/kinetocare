@@ -114,13 +114,17 @@ export default function AdminStatistici() {
   };
 
   const processAllData = () => {
+      const venituri = filterByLocation(stats.venituriLocatie);
+      const rata = filterByLocation(stats.rataAnulare);
+      const terapeuti = filterByLocation(stats.terapeutiActivi);
+
       setProcessedData({
           programariLunare: processProgramariLunare(stats.programariLunare),
-          venituriLocatie: filterByLocation(stats.venituriLocatie),
-          rataAnulare: filterByLocation(stats.rataAnulare),
+          venituriLocatie: [...venituri].sort((a, b) => b.totalVenituri - a.totalVenituri),
+          rataAnulare: [...rata].sort((a, b) => b.rataAnulare - a.rataAnulare),
           pacientiNoi: processPacientiNoi(stats.pacientiNoi),
           programariTerapeut: processProgramariTerapeut(stats.programariTerapeut),
-          terapeutiActivi: filterByLocation(stats.terapeutiActivi)
+          terapeutiActivi: [...terapeuti].sort((a, b) => b.numarTerapeutiActivi - a.numarTerapeutiActivi)
       });
   };
 
@@ -396,10 +400,10 @@ export default function AdminStatistici() {
         <div className="chart-card">
           <h3>Venituri {filters.locatieId === 'all' ? 'per Locație' : 'Totale'}</h3>
           <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={processedData.venituriLocatie} layout={filters.locatieId !== 'all' ? 'horizontal' : 'vertical'} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+            <BarChart data={processedData.venituriLocatie} layout={filters.locatieId !== 'all' ? 'horizontal' : 'vertical'} margin={{ top: 20, right: 30, left: 20, bottom: filters.locatieId !== 'all' ? 40 : 5 }}>
               <CartesianGrid strokeDasharray="3 3" />
-              {filters.locatieId !== 'all' ? <XAxis type="category" dataKey="locatieNume" /> : <XAxis type="number" />}
-              {filters.locatieId !== 'all' ? <YAxis type="number" /> : <YAxis type="category" dataKey="locatieNume" width={100} />}
+              {filters.locatieId !== 'all' ? <XAxis type="category" dataKey="locatieNume" interval={0} angle={-25} textAnchor="end" height={60} tick={{ fontSize: 11 }} /> : <XAxis type="number" />}
+              {filters.locatieId !== 'all' ? <YAxis type="number" /> : <YAxis type="category" dataKey="locatieNume" width={140} interval={0} tick={{ fontSize: 11 }} />}
               <Tooltip formatter={(value) => `${value} RON`} />
               <Legend />
               <Bar dataKey="totalVenituri" fill="#10b981" name="Venit Total" radius={[0, 4, 4, 0]} />
@@ -410,13 +414,13 @@ export default function AdminStatistici() {
         <div className="chart-card">
             <h3>Rata de Anulare (%)</h3>
             <ResponsiveContainer width="100%" height={300}>
-                <BarChart data={processedData.rataAnulare}>
+                <BarChart data={processedData.rataAnulare} layout="vertical" margin={{ top: 20, right: 30, left: 40, bottom: 5 }}>
                     <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="locatieNume" />
-                    <YAxis />
+                    <XAxis type="number" />
+                    <YAxis type="category" dataKey="locatieNume" width={140} interval={0} tick={{ fontSize: 11 }} />
                     <Tooltip formatter={(value) => `${value}%`} />
                     <Legend />
-                    <Bar dataKey="rataAnulare" fill="#f43f5e" name="Rata Anulare" radius={[4, 4, 0, 0]} />
+                    <Bar dataKey="rataAnulare" fill="#f43f5e" name="Rata Anulare" radius={[0, 4, 4, 0]} />
                 </BarChart>
             </ResponsiveContainer>
         </div>
@@ -445,13 +449,13 @@ export default function AdminStatistici() {
         <div className="chart-card full-width">
             <h3>Terapeuți Activi per Locație</h3>
              <ResponsiveContainer width="100%" height={300}>
-                <BarChart data={processedData.terapeutiActivi}>
+                <BarChart data={processedData.terapeutiActivi} layout="vertical" margin={{ top: 20, right: 30, left: 40, bottom: 5 }}>
                     <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="locatieNume" />
-                    <YAxis />
+                    <XAxis type="number" />
+                    <YAxis type="category" dataKey="locatieNume" width={140} interval={0} tick={{ fontSize: 11 }} />
                     <Tooltip />
                     <Legend />
-                    <Bar dataKey="numarTerapeutiActivi" fill="#ec4899" name="Terapeuți Activi" radius={[4, 4, 0, 0]} />
+                    <Bar dataKey="numarTerapeutiActivi" fill="#ec4899" name="Terapeuți Activi" radius={[0, 4, 4, 0]} />
                 </BarChart>
             </ResponsiveContainer>
         </div>

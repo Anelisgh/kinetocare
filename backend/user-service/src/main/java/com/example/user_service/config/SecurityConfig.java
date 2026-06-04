@@ -27,6 +27,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/actuator/health").permitAll()
+                        .requestMatchers("/users/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                         .requestMatchers("/users/auth/**").permitAll()
                         // admin-only endpoints
                         .requestMatchers(org.springframework.http.HttpMethod.PATCH, "/users/*/toggle-active").hasRole("admin")
@@ -58,3 +59,7 @@ public class SecurityConfig {
         return converter;
     }
 }
+
+
+
+

@@ -14,8 +14,8 @@ import java.time.OffsetDateTime;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-public class Evolutie {
+@lombok.experimental.SuperBuilder
+public class Evolutie extends BaseAuditableEntity {
 
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,12 +29,4 @@ public class Evolutie {
 
         @Column(columnDefinition = "TEXT", nullable = false)
         private String observatii;
-
-        @CreationTimestamp
-        @Column(name = "created_at", nullable = false, updatable = false)
-        private OffsetDateTime createdAt;
-
-        @UpdateTimestamp
-        @Column(name = "updated_at")
-        private OffsetDateTime updatedAt;
 }

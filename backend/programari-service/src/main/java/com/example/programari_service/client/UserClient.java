@@ -4,6 +4,9 @@ import com.example.programari_service.dto.UserDisplayCalendarDTO;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import java.util.List;
 
 @FeignClient(name = "user-service", url = "${application.urls.user-service:http://localhost:8082}", configuration = CustomErrorDecoder.class)
 public interface UserClient {
@@ -19,6 +22,9 @@ public interface UserClient {
 
     // [STATISTICI] ia toti userii (sau filtrat prin params) pentru a mapa id -> nume eficient
     @GetMapping("/users")
-    java.util.List<UserDisplayCalendarDTO> getAllUsers();
+    List<UserDisplayCalendarDTO> getAllUsers();
 
+    // Rezolva problema N+1 de retea prin incarcarea batch a userilor
+    @PostMapping("/users/batch")
+    List<UserDisplayCalendarDTO> getUsersByKeycloakIds(@RequestBody List<String> keycloakIds);
 }

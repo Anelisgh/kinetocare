@@ -26,6 +26,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/actuator/health").permitAll()
+                        .requestMatchers("/pacient/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                         .requestMatchers("/pacient/initialize/**", "/pacient/by-keycloak/*/toggle-active").permitAll()
                         .anyRequest().authenticated()
                 )
@@ -57,3 +58,7 @@ public class SecurityConfig {
         return converter;
     }
 }
+
+
+
+

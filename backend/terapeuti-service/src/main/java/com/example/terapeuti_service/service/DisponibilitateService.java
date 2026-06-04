@@ -70,7 +70,6 @@ public class DisponibilitateService {
         // verifica daca exista suprapuneri
         List<DisponibilitateTerapeut> overlapping = disponibilitateRepository.findOverlappingDisponibilitate(
                 terapeut.getId(),
-                dto.locatieId(),
                 dto.ziSaptamana(),
                 dto.oraInceput(),
                 dto.oraSfarsit()

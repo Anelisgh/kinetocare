@@ -10,6 +10,30 @@ import { programariService } from '../../../services/programariService';
 const TerapeutCalendar = ({ onEventClick, refreshTrigger, locatieId }) => {
     const calendarRef = useRef(null);
 
+    // Paleta de 20 de culori pastelate reordonată pentru contrast maxim între pacienți consecutivi
+    const COLORS_PALETTE = [
+        { bg: '#e0f2fe', border: '#0284c7' }, // 1. Sky Blue
+        { bg: '#fee2e2', border: '#dc2626' }, // 2. Red
+        { bg: '#dcfce7', border: '#16a34a' }, // 3. Green
+        { bg: '#fef3c7', border: '#d97706' }, // 4. Amber
+        { bg: '#f3e8ff', border: '#9333ea' }, // 5. Purple
+        { bg: '#ffedd5', border: '#ea580c' }, // 6. Orange
+        { bg: '#ccfbf1', border: '#0d9488' }, // 7. Teal
+        { bg: '#fce7f3', border: '#db2777' }, // 8. Pink
+        { bg: '#ecfccb', border: '#65a30d' }, // 9. Lime
+        { bg: '#e0e7ff', border: '#4f46e5' }, // 10. Indigo
+        { bg: '#ffe4e6', border: '#e11d48' }, // 11. Rose
+        { bg: '#cffafe', border: '#0891b2' }, // 12. Cyan
+        { bg: '#fffaee', border: '#b45309' }, // 13. Apricot
+        { bg: '#d1fae5', border: '#059669' }, // 14. Emerald
+        { bg: '#ede9fe', border: '#7c3aed' }, // 15. Violet
+        { bg: '#fef9c3', border: '#ca8a04' }, // 16. Yellow
+        { bg: '#fae8ff', border: '#c026d3' }, // 17. Fuchsia
+        { bg: '#f1f5f9', border: '#475569' }, // 18. Slate
+        { bg: '#f5f5f4', border: '#57534e' }, // 19. Stone
+        { bg: '#e2e8f0', border: '#334155' }, // 20. Blue-Gray
+    ];
+
     const fetchEvents = async (info, successCallback, failureCallback) => {
         try {
             const startStr = info.start.toISOString().split('T')[0];
@@ -37,23 +61,39 @@ const TerapeutCalendar = ({ onEventClick, refreshTrigger, locatieId }) => {
                 return false;
             });
 
-            const events = filteredData.map(appt => ({
-                id: appt.id,
-                title: appt.title,
-                start: appt.start,
-                end: appt.end,
-                // O facem vizual distincta (mai stearsa) daca e neprezentare
-                display: 'auto',
-                extendedProps: {
-                    numeLocatie: appt.numeLocatie,
-                    tipServiciu: appt.tipServiciu,
-                    status: appt.status,
-                    motivAnulare: appt.motivAnulare,
-                    primaIntalnire: appt.primaIntalnire,
-                    areJurnal: appt.areJurnal,
-                    telefonPacient: appt.telefonPacient
+            // Generam culorile secvential pentru fiecare pacient UNIC din aceasta saptamana
+            const patientColorMap = {};
+            let nextColorIndex = 0;
+
+            const events = filteredData.map(appt => {
+                const patientName = appt.title || 'Necunoscut';
+                if (patientColorMap[patientName] === undefined) {
+                    patientColorMap[patientName] = nextColorIndex % COLORS_PALETTE.length;
+                    nextColorIndex++;
                 }
-            }));
+                const colorObj = COLORS_PALETTE[patientColorMap[patientName]];
+
+                return {
+                    id: appt.id,
+                    title: appt.title,
+                    start: appt.start,
+                    end: appt.end,
+                    // O facem vizual distincta (mai stearsa) daca e neprezentare
+                    display: 'auto',
+                    extendedProps: {
+                        numeLocatie: appt.numeLocatie,
+                        tipServiciu: appt.tipServiciu,
+                        status: appt.status,
+                        motivAnulare: appt.motivAnulare,
+                        primaIntalnire: appt.primaIntalnire,
+                        areJurnal: appt.areJurnal,
+                        telefonPacient: appt.telefonPacient,
+                        // Alocam culoarea garantat distincta
+                        patientBg: colorObj.bg,
+                        patientBorder: colorObj.border
+                    }
+                };
+            });
 
             successCallback(events);
         } catch (error) {
@@ -69,25 +109,38 @@ const TerapeutCalendar = ({ onEventClick, refreshTrigger, locatieId }) => {
         }
     }, [refreshTrigger, locatieId]);
 
-    // Helper: le coloram inteligent
+
+
+    // Pastram doar clasele functionale pentru text taiat / extra styling (nu culorile de status)
     const getStatusClass = (props) => {
-        if (props.status === 'ANULATA') return 'status-anulata'; // rosu
-        if (props.status === 'FINALIZATA') return 'status-finalizata'; // verde
-        if (props.status === 'PROGRAMATA' && props.primaIntalnire) return 'status-programata prima-intalnire'; // galben
-        return 'status-programata'; // albastru
+        let classes = [];
+        if (props.status === 'ANULATA') classes.push('status-anulata');
+        if (props.primaIntalnire) classes.push('prima-intalnire');
+        return classes.join(' ');
     };
 
     // 4. Custom Rendering pentru "Casuta"
     const renderEventContent = (eventInfo) => {
         const props = eventInfo.event.extendedProps;
+        const patientName = eventInfo.event.title;
+
+        // Folosim culorile precalculate in fetchEvents
+        const eventStyle = {
+            backgroundColor: props.patientBg,
+            borderLeftColor: props.patientBorder
+        };
 
         return (
-            <div className={`custom-event-card ${getStatusClass(props)}`}>
+            <div 
+                className={`custom-event-card ${getStatusClass(props)}`}
+                style={eventStyle}
+            >
                 <div className="event-time">
                     {eventInfo.timeText}
                 </div>
                 <div className="event-title">
-                    {eventInfo.event.title}
+                    {props.primaIntalnire && <span title="Prima Întâlnire" style={{ marginRight: '4px' }}>⭐</span>}
+                    {patientName}
                 </div>
                 <div className="event-details">
                     {props.tipServiciu}

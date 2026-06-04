@@ -26,22 +26,13 @@ public class RelatieService {
     // asigura ca relatia e activa
     @Transactional
     public void asiguraRelatieActiva(String pacientKeycloakId, String terapeutKeycloakId, LocalDate dataInceput) {
-        Optional<RelatiePacientTerapeut> relatieOpt = relatieRepository.findByPacientKeycloakIdAndTerapeutKeycloakId(pacientKeycloakId, terapeutKeycloakId);
+        Optional<RelatiePacientTerapeut> relatieOpt = relatieRepository.findByPacientKeycloakIdAndTerapeutKeycloakIdAndActivaTrue(pacientKeycloakId, terapeutKeycloakId);
 
         if (relatieOpt.isPresent()) {
-            // cazul 1: relatia exista deja cu acest terapeut
-            RelatiePacientTerapeut relatie = relatieOpt.get();
-            // daca era inactiva (poate au lucrat in trecut), o reactivam
-            if (Boolean.FALSE.equals(relatie.getActiva())) {
-                // dezactivam orice alta relatie activa a pacientului
-                dezactiveazaRelatiaActiva(pacientKeycloakId);
-                relatie.setActiva(true);
-                relatie.setDataSfarsit(null); // stergem data de sfarsit anterioara
-                relatieRepository.save(relatie);
-            }
-            // daca e deja activa cu acest terapeut, nu facem nimic
+            // cazul 1: relatia este deja activa cu acest terapeut, nu facem nimic
         } else {
-            // cazul 2: relatia noua — dezactivam relatia veche (daca exista)
+            // cazul 2: nu exista o relatie activa cu acest terapeut (fie e noua, fie exista una inactiva in trecut)
+            // dezactivam orice alta relatie activa a pacientului
             dezactiveazaRelatiaActiva(pacientKeycloakId);
             RelatiePacientTerapeut nouaRelatie = relatieMapper.toEntity(pacientKeycloakId, terapeutKeycloakId, dataInceput);
             relatieRepository.save(nouaRelatie);
@@ -62,9 +53,8 @@ public class RelatieService {
     // verifica daca o relatie anume intre pacient si terapeut este activa
     @Transactional(readOnly = true)
     public boolean isRelatieActiva(String pacientKeycloakId, String terapeutKeycloakId) {
-        return relatieRepository.findByPacientKeycloakIdAndTerapeutKeycloakId(pacientKeycloakId, terapeutKeycloakId)
-                .map(RelatiePacientTerapeut::getActiva)
-                .orElse(false);
+        return relatieRepository.findByPacientKeycloakIdAndTerapeutKeycloakIdAndActivaTrue(pacientKeycloakId, terapeutKeycloakId)
+                .isPresent();
     }
 
     // verifica statusul relatiei folosind keycloakId (apelat de chat-service prin WebSocket)

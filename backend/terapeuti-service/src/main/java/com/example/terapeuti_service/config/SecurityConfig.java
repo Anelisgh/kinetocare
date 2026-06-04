@@ -26,6 +26,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/actuator/health").permitAll()
+                        .requestMatchers("/terapeut/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                         .requestMatchers("/terapeut/by-keycloak/**", "/terapeut/initialize/**", "/concediu/check/**", "/disponibilitate/**", "/terapeut/by-keycloak/*/toggle-active").permitAll()
                         .anyRequest().authenticated()
                 )
@@ -55,3 +56,7 @@ public class SecurityConfig {
         return converter;
     }
 }
+
+
+
+

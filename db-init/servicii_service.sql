@@ -39,6 +39,8 @@ CREATE TABLE `servicii` (
   `pret` decimal(10,2) NOT NULL,
   `updated_at` datetime(6) NOT NULL,
   `tip_serviciu_id` bigint NOT NULL,
+  `created_by` varchar(36) DEFAULT 'SYSTEM',
+  `last_modified_by` varchar(36) DEFAULT 'SYSTEM',
   PRIMARY KEY (`id`),
   KEY `idx_servicii_tip` (`tip_serviciu_id`),
   KEY `idx_serviciu_nume` (`nume`),
@@ -70,6 +72,8 @@ CREATE TABLE `tip_serviciu` (
   `descriere` text COLLATE utf8mb4_unicode_ci,
   `nume` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
   `updated_at` datetime(6) NOT NULL,
+  `created_by` varchar(36) DEFAULT 'SYSTEM',
+  `last_modified_by` varchar(36) DEFAULT 'SYSTEM',
   PRIMARY KEY (`id`),
   UNIQUE KEY `UKb3q5assjdgtplxgwp1pfr5qqx` (`nume`),
   KEY `idx_tip_serviciu_nume` (`nume`)

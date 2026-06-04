@@ -34,7 +34,10 @@ public class NotificarePublisher {
 
         try {
             rabbitTemplate.convertAndSend(RabbitMQConfig.EXCHANGE_NAME,
-                    "notificare.jurnal.completat", event);
+                    "notificare.jurnal.completat", event, message -> {
+                        message.getMessageProperties().setMessageId(java.util.UUID.randomUUID().toString());
+                        return message;
+                    });
             log.info("Notificare trimisă: JURNAL_COMPLETAT → terapeutKeycloakId={}", terapeutKeycloakId);
         } catch (Exception e) {
             log.error("Eroare la trimiterea notificării JURNAL_COMPLETAT: {}", e.getMessage());

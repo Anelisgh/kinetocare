@@ -19,8 +19,8 @@ import java.time.OffsetDateTime;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-public class User {
+@lombok.experimental.SuperBuilder
+public class User extends BaseAuditableEntity {
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
         private Long id;
@@ -51,8 +51,4 @@ public class User {
         @Column(nullable = false)
         @Builder.Default
         private Boolean active = true;
-
-        @CreationTimestamp
-        @Column(name = "created_at", nullable = false, updatable = false)
-        private OffsetDateTime createdAt;
 }

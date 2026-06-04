@@ -103,6 +103,8 @@ CREATE TABLE `locatii` (
   `oras` varchar(100) NOT NULL,
   `telefon` varchar(20) DEFAULT NULL,
   `updated_at` datetime(6) NOT NULL,
+  `created_by` varchar(36) DEFAULT 'SYSTEM',
+  `last_modified_by` varchar(36) DEFAULT 'SYSTEM',
   PRIMARY KEY (`id`),
   KEY `idx_locatii_oras` (`oras`),
   KEY `idx_locatii_active` (`active`)
@@ -134,6 +136,8 @@ CREATE TABLE `terapeuti` (
   `poza_profil` mediumtext,
   `specializare` enum('ADULTI','PEDIATRIE') DEFAULT NULL,
   `updated_at` datetime(6) NOT NULL,
+  `created_by` varchar(36) DEFAULT 'SYSTEM',
+  `last_modified_by` varchar(36) DEFAULT 'SYSTEM',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_terapeuti_keycloak_id` (`keycloak_id`),
   KEY `idx_terapeuti_specializare` (`specializare`),
