@@ -1,5 +1,4 @@
 # Build artifacts
-target/
 build/
 out/
 
@@ -28,3 +27,5 @@ zipkin.jar
 node_modules/
 **/node_modules/
 
+# Thesis
+Thesis/
