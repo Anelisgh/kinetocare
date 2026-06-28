@@ -12,6 +12,8 @@ public interface EvolutieMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
+    @Mapping(target = "createdBy", ignore = true)
+    @Mapping(target = "lastModifiedBy", ignore = true)
     Evolutie toEntity(EvolutieRequestDTO request);
 
     EvolutieResponseDTO toDto(Evolutie entity);

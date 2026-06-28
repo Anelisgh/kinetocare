@@ -1,7 +1,7 @@
 import React from 'react';
 import '../../styles/chat.css'; // O să creăm niște stiluri simple
 
-const ListaConversatii = ({ conversatii, conversatieActivaId, peSelectieConversatie, userId, tipUser, numeMap = {}, arhivatiIds = [] }) => {
+const ListaConversatii = ({ conversatii, conversatieActivaPartnerId, peSelectieConversatie, userId, tipUser, numeMap = {}, arhivatiIds = [] }) => {
 
   const obtineNumePartener = (conversatie) => {
       if (conversatie.numeDisplay) return conversatie.numeDisplay;
@@ -50,14 +50,16 @@ const ListaConversatii = ({ conversatii, conversatieActivaId, peSelectieConversa
           <p className="no-conversatii">Nicio conversație recentă.</p>
         ) : (
           conversatiiSortate.map(conv => {
-            const isActive = conv.id === conversatieActivaId;
+            const partnerId = tipUser === 'PACIENT' ? conv.terapeutKeycloakId : conv.pacientKeycloakId;
+            const uniqueKey = conv.id || partnerId;
+            const isActive = partnerId === conversatieActivaPartnerId;
             const ultimulMesaj = conv.ultimulMesaj;
             // Presupunem că e necitit dacă expeditorul nu e user-ul curent și esteCitit e false
             const isNecitit = ultimulMesaj && !ultimulMesaj.esteCitit && ultimulMesaj.expeditorKeycloakId !== userId;
 
             return (
               <div 
-                key={conv.id} 
+                key={uniqueKey} 
                 className={`conversatie-item ${isActive ? 'active' : ''} ${isNecitit ? 'necitit' : ''} ${isArhivat(conv) ? 'arhivat' : ''}`}
                 onClick={() => peSelectieConversatie(conv)}
               >

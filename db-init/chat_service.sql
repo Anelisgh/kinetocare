@@ -46,6 +46,16 @@ CREATE TABLE `conversatii` (
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `conversatii`
+--
+
+LOCK TABLES `conversatii` WRITE;
+/*!40000 ALTER TABLE `conversatii` DISABLE KEYS */;
+INSERT INTO `conversatii` (`id`, `created_at`, `pacient_keycloak_id`, `terapeut_keycloak_id`, `ultimul_mesaj_la`, `updated_at`) VALUES (5,'2026-06-07 18:00:00.000000','a2351fcd-9e0c-4ebc-b6fb-2530c9892556','51abc54c-0c2f-4f0a-aead-bdaa9627661e','2026-06-07 20:35:00.000000','2026-06-07 20:35:00.000000');
+/*!40000 ALTER TABLE `conversatii` ENABLE KEYS */;
+UNLOCK TABLES;
+
 
 --
 -- Table structure for table `mesaje`
@@ -72,6 +82,16 @@ CREATE TABLE `mesaje` (
   KEY `idx_mesaje_expeditor_keycloak_id` (`expeditor_keycloak_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `mesaje`
+--
+
+LOCK TABLES `mesaje` WRITE;
+/*!40000 ALTER TABLE `mesaje` DISABLE KEYS */;
+INSERT INTO `mesaje` (`id`, `citit_la`, `continut`, `conversatie_id`, `este_citit`, `expeditor_keycloak_id`, `tip_expeditor`, `trimis_la`) VALUES (15,'2026-06-07 20:10:00.000000','Bună seara, domnule terapeut! Aș dori să reprogramez ședința de mâine (luni, 8 iunie) pentru marți, 9 iunie, dacă este posibil.',5,b'1','a2351fcd-9e0c-4ebc-b6fb-2530c9892556','PACIENT','2026-06-07 18:00:00.000000'),(16,'2026-06-07 20:25:00.000000','Bună seara, Sabrina! Sigur că da. Te pot programa marți la ora 10:00. Este în regulă?',5,b'1','51abc54c-0c2f-4f0a-aead-bdaa9627661e','TERAPEUT','2026-06-07 20:15:00.000000'),(17,'2026-06-07 20:30:00.000000','Da, este perfect! Vă mulțumesc frumos.',5,b'1','a2351fcd-9e0c-4ebc-b6fb-2530c9892556','PACIENT','2026-06-07 20:30:00.000000'),(18,'2026-06-07 20:36:00.000000','Cu drag! Am operat modificarea în sistem. Ne vedem marți.',5,b'1','51abc54c-0c2f-4f0a-aead-bdaa9627661e','TERAPEUT','2026-06-07 20:35:00.000000');
+/*!40000 ALTER TABLE `mesaje` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Dumping data for table `mesaje`

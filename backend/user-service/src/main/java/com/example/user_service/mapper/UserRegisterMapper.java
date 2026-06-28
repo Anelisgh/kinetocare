@@ -10,6 +10,9 @@ import org.mapstruct.Mapping;
 public interface UserRegisterMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
+    @Mapping(target = "updatedAt", ignore = true)
+    @Mapping(target = "createdBy", ignore = true)
+    @Mapping(target = "lastModifiedBy", ignore = true)
     @Mapping(source = "request.email", target = "email")
     @Mapping(source = "request.gen", target = "gen")
     User toEntity(RegisterRequestDTO request, String keycloakId);

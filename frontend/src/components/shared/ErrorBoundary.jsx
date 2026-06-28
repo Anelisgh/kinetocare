@@ -32,10 +32,12 @@ export class ErrorBoundary extends React.Component {
       return (
         <div style={{
           display: 'flex',
+          flex: 1,
           flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
-          minHeight: '100vh',
+          height: '100%',
+          minHeight: '300px',
           padding: '2rem',
           textAlign: 'center',
           fontFamily: 'Inter, sans-serif',

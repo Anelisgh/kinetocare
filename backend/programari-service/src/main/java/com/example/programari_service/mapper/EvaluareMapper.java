@@ -14,6 +14,8 @@ public interface EvaluareMapper {
     @Mapping(target = "data", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
+    @Mapping(target = "createdBy", ignore = true)
+    @Mapping(target = "lastModifiedBy", ignore = true)
     Evaluare toEntity(EvaluareRequestDTO request);
 
     default SituatiePacientDTO toSituatiePacientDTO(Evaluare evaluare, long sedinteEfectuate) {

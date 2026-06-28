@@ -24,6 +24,8 @@ public interface ServiciuMapper {
     @Mapping(target = "active", source = "dto.active", defaultValue = "true")
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
+    @Mapping(target = "createdBy", ignore = true)
+    @Mapping(target = "lastModifiedBy", ignore = true)
     Serviciu toEntity(ServiciuAdminDTO dto, TipServiciu tipServiciu);
 
     @Mapping(target = "id", ignore = true)
@@ -34,6 +36,8 @@ public interface ServiciuMapper {
     @Mapping(target = "active", source = "dto.active")
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
+    @Mapping(target = "createdBy", ignore = true)
+    @Mapping(target = "lastModifiedBy", ignore = true)
     void updateEntityFromDto(ServiciuAdminDTO dto, @MappingTarget Serviciu entity, TipServiciu tipServiciu);
 
     default String formateazaNumeComplet(Serviciu serviciu) {

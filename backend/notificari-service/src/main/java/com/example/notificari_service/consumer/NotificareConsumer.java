@@ -26,7 +26,7 @@ public class NotificareConsumer {
     @RabbitListener(queues = RabbitMQConfig.QUEUE_NAME)
     public void primesteMesaj(NotificareEvent event, @Header(value = AmqpHeaders.MESSAGE_ID, required = false) String messageId) {
         log.info("Mesaj primit din RabbitMQ: {} → userKeycloakId={}, messageId={}", event.tipNotificare(), event.userKeycloakId(), messageId);
-        
+
         if (messageId != null) {
             try {
                 int rowsAffected = mesajProcesatRepository.insertIdempotent(messageId);

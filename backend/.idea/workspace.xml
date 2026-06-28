@@ -5,34 +5,48 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="ada58259-7e1f-4132-91aa-755299770068" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/../.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api-gateway/src/main/java/com/example/api_gateway/service/ChatGatewayService.java" beforeDir="false" afterPath="$PROJECT_DIR$/api-gateway/src/main/java/com/example/api_gateway/service/ChatGatewayService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/chat-service/src/main/java/com/example/chat_service/service/ChatService.java" beforeDir="false" afterPath="$PROJECT_DIR$/chat-service/src/main/java/com/example/chat_service/service/ChatService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/chat-service/src/main/java/com/example/chat_service/config/StompSecurityInterceptor.java" beforeDir="false" afterPath="$PROJECT_DIR$/chat-service/src/main/java/com/example/chat_service/config/StompSecurityInterceptor.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/chat-service/src/main/java/com/example/chat_service/controller/WebSocketChatController.java" beforeDir="false" afterPath="$PROJECT_DIR$/chat-service/src/main/java/com/example/chat_service/controller/WebSocketChatController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/chat-service/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/chat-service/src/main/resources/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/common/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/common/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/api-gateway.log" beforeDir="false" afterPath="$PROJECT_DIR$/logs/api-gateway.log" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/notificari-service/src/main/java/com/example/notificari_service/consumer/NotificareConsumer.java" beforeDir="false" afterPath="$PROJECT_DIR$/notificari-service/src/main/java/com/example/notificari_service/consumer/NotificareConsumer.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/notificari-service/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/notificari-service/src/main/resources/application.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pacienti-service/src/main/java/com/example/pacienti_service/entity/JurnalPacient.java" beforeDir="false" afterPath="$PROJECT_DIR$/pacienti-service/src/main/java/com/example/pacienti_service/entity/JurnalPacient.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pacienti-service/src/main/java/com/example/pacienti_service/entity/Pacient.java" beforeDir="false" afterPath="$PROJECT_DIR$/pacienti-service/src/main/java/com/example/pacienti_service/entity/Pacient.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pacienti-service/src/main/java/com/example/pacienti_service/service/NotificarePublisher.java" beforeDir="false" afterPath="$PROJECT_DIR$/pacienti-service/src/main/java/com/example/pacienti_service/service/NotificarePublisher.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/programari-service/src/main/java/com/example/programari_service/client/UserClient.java" beforeDir="false" afterPath="$PROJECT_DIR$/programari-service/src/main/java/com/example/programari_service/client/UserClient.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/programari-service/src/main/java/com/example/programari_service/dto/UserDisplayCalendarDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/programari-service/src/main/java/com/example/programari_service/dto/UserDisplayCalendarDTO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/programari-service/src/main/java/com/example/programari_service/entity/Evaluare.java" beforeDir="false" afterPath="$PROJECT_DIR$/programari-service/src/main/java/com/example/programari_service/entity/Evaluare.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/programari-service/src/main/java/com/example/programari_service/entity/Evolutie.java" beforeDir="false" afterPath="$PROJECT_DIR$/programari-service/src/main/java/com/example/programari_service/entity/Evolutie.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/programari-service/src/main/java/com/example/programari_service/entity/Programare.java" beforeDir="false" afterPath="$PROJECT_DIR$/programari-service/src/main/java/com/example/programari_service/entity/Programare.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/programari-service/src/main/java/com/example/programari_service/entity/RelatiePacientTerapeut.java" beforeDir="false" afterPath="$PROJECT_DIR$/programari-service/src/main/java/com/example/programari_service/entity/RelatiePacientTerapeut.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/programari-service/src/main/java/com/example/programari_service/repository/ProgramareRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/programari-service/src/main/java/com/example/programari_service/repository/ProgramareRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/programari-service/src/main/java/com/example/programari_service/service/FisaPacientService.java" beforeDir="false" afterPath="$PROJECT_DIR$/programari-service/src/main/java/com/example/programari_service/service/FisaPacientService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/programari-service/src/main/java/com/example/programari_service/service/NotificarePublisher.java" beforeDir="false" afterPath="$PROJECT_DIR$/programari-service/src/main/java/com/example/programari_service/service/NotificarePublisher.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/servicii-service/src/main/java/com/example/servicii_service/entity/Serviciu.java" beforeDir="false" afterPath="$PROJECT_DIR$/servicii-service/src/main/java/com/example/servicii_service/entity/Serviciu.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/servicii-service/src/main/java/com/example/servicii_service/entity/TipServiciu.java" beforeDir="false" afterPath="$PROJECT_DIR$/servicii-service/src/main/java/com/example/servicii_service/entity/TipServiciu.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/terapeuti-service/src/main/java/com/example/terapeuti_service/entity/Locatie.java" beforeDir="false" afterPath="$PROJECT_DIR$/terapeuti-service/src/main/java/com/example/terapeuti_service/entity/Locatie.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/terapeuti-service/src/main/java/com/example/terapeuti_service/entity/Terapeut.java" beforeDir="false" afterPath="$PROJECT_DIR$/terapeuti-service/src/main/java/com/example/terapeuti_service/entity/Terapeut.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/user-service/src/main/java/com/example/user_service/entity/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/user-service/src/main/java/com/example/user_service/entity/User.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pacienti-service/src/main/java/com/example/pacienti_service/entity/BaseAuditableEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/pacienti-service/src/main/java/com/example/pacienti_service/entity/BaseAuditableEntity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pacienti-service/src/main/java/com/example/pacienti_service/mapper/PacientMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/pacienti-service/src/main/java/com/example/pacienti_service/mapper/PacientMapper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pacienti-service/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/pacienti-service/src/main/resources/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/programari-service/src/main/java/com/example/programari_service/entity/BaseAuditableEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/programari-service/src/main/java/com/example/programari_service/entity/BaseAuditableEntity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/programari-service/src/main/java/com/example/programari_service/mapper/EvaluareMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/programari-service/src/main/java/com/example/programari_service/mapper/EvaluareMapper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/programari-service/src/main/java/com/example/programari_service/mapper/EvolutieMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/programari-service/src/main/java/com/example/programari_service/mapper/EvolutieMapper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/programari-service/src/main/java/com/example/programari_service/mapper/ProgramareMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/programari-service/src/main/java/com/example/programari_service/mapper/ProgramareMapper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/programari-service/src/main/java/com/example/programari_service/mapper/RelatieMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/programari-service/src/main/java/com/example/programari_service/mapper/RelatieMapper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/programari-service/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/programari-service/src/main/resources/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/servicii-service/src/main/java/com/example/servicii_service/entity/BaseAuditableEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/servicii-service/src/main/java/com/example/servicii_service/entity/BaseAuditableEntity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/servicii-service/src/main/java/com/example/servicii_service/mapper/ServiciuMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/servicii-service/src/main/java/com/example/servicii_service/mapper/ServiciuMapper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/servicii-service/src/main/java/com/example/servicii_service/mapper/TipServiciuMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/servicii-service/src/main/java/com/example/servicii_service/mapper/TipServiciuMapper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/servicii-service/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/servicii-service/src/main/resources/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/terapeuti-service/src/main/java/com/example/terapeuti_service/entity/BaseAuditableEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/terapeuti-service/src/main/java/com/example/terapeuti_service/entity/BaseAuditableEntity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/terapeuti-service/src/main/java/com/example/terapeuti_service/mapper/LocatieMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/terapeuti-service/src/main/java/com/example/terapeuti_service/mapper/LocatieMapper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/terapeuti-service/src/main/java/com/example/terapeuti_service/mapper/TerapeutMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/terapeuti-service/src/main/java/com/example/terapeuti_service/mapper/TerapeutMapper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/terapeuti-service/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/terapeuti-service/src/main/resources/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user-service/src/main/java/com/example/user_service/entity/BaseAuditableEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/user-service/src/main/java/com/example/user_service/entity/BaseAuditableEntity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user-service/src/main/java/com/example/user_service/mapper/UserRegisterMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/user-service/src/main/java/com/example/user_service/mapper/UserRegisterMapper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user-service/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/user-service/src/main/resources/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../db-init/chat_service.sql" beforeDir="false" afterPath="$PROJECT_DIR$/../db-init/chat_service.sql" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../db-init/notificari_service.sql" beforeDir="false" afterPath="$PROJECT_DIR$/../db-init/notificari_service.sql" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../db-init/pacienti_service.sql" beforeDir="false" afterPath="$PROJECT_DIR$/../db-init/pacienti_service.sql" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../db-init/programari_service.sql" beforeDir="false" afterPath="$PROJECT_DIR$/../db-init/programari_service.sql" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../db-init/servicii_service.sql" beforeDir="false" afterPath="$PROJECT_DIR$/../db-init/servicii_service.sql" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../db-init/terapeuti_service.sql" beforeDir="false" afterPath="$PROJECT_DIR$/../db-init/terapeuti_service.sql" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../db-init/user_service.sql" beforeDir="false" afterPath="$PROJECT_DIR$/../db-init/user_service.sql" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/src/components/shared/ErrorBoundary.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/src/components/shared/ErrorBoundary.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/src/components/shared/Navbar.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/src/components/shared/Navbar.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/src/components/terapeut/homepage/TerapeutCalendar.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/src/components/terapeut/homepage/TerapeutCalendar.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/src/pages/terapeut/HomepageTerapeut.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/src/pages/terapeut/HomepageTerapeut.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/src/styles/navbar.css" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/src/styles/navbar.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/vite.config.js" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/vite.config.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../k8s/keycloak.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/../k8s/keycloak.yaml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -140,40 +154,49 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "JUnit.programari_service in programari-service.executor": "Run",
-    "Maven.parent [clean].executor": "Run",
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "PowerShell.clean-all.ps1.executor": "Run",
-    "RequestMappingsPanelOrder0": "0",
-    "RequestMappingsPanelOrder1": "1",
-    "RequestMappingsPanelWidth0": "75",
-    "RequestMappingsPanelWidth1": "75",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "Spring Boot.ApiGatewayApplication.executor": "Run",
-    "Spring Boot.ChatServiceApplication.executor": "Run",
-    "Spring Boot.NotificariServiceApplication.executor": "Run",
-    "Spring Boot.PacientiServiceApplication.executor": "Run",
-    "Spring Boot.ProgramariServiceApplication.executor": "Run",
-    "Spring Boot.ServiciiServiceApplication.executor": "Run",
-    "Spring Boot.TerapeutiServiceApplication.executor": "Run",
-    "Spring Boot.UserServiceApplication.executor": "Run",
-    "git-widget-placeholder": "main",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/Users/Aneliss/Desktop/kinetocare/backend",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "run.configurations.included.in.services": "true",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Application.ApiGatewayApplication.executor&quot;: &quot;Run&quot;,
+    &quot;Application.ChatServiceApplication.executor&quot;: &quot;Run&quot;,
+    &quot;Application.NotificariServiceApplication.executor&quot;: &quot;Run&quot;,
+    &quot;Application.PacientiServiceApplication.executor&quot;: &quot;Run&quot;,
+    &quot;Application.ProgramariServiceApplication.executor&quot;: &quot;Run&quot;,
+    &quot;Application.ServiciiServiceApplication.executor&quot;: &quot;Run&quot;,
+    &quot;Application.TerapeutiServiceApplication.executor&quot;: &quot;Run&quot;,
+    &quot;Application.UserServiceApplication.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.programari_service in programari-service.executor&quot;: &quot;Run&quot;,
+    &quot;Maven.parent [clean].executor&quot;: &quot;Run&quot;,
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;PowerShell.clean-all.ps1.executor&quot;: &quot;Run&quot;,
+    &quot;RequestMappingsPanelOrder0&quot;: &quot;0&quot;,
+    &quot;RequestMappingsPanelOrder1&quot;: &quot;1&quot;,
+    &quot;RequestMappingsPanelWidth0&quot;: &quot;75&quot;,
+    &quot;RequestMappingsPanelWidth1&quot;: &quot;75&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;Spring Boot.ApiGatewayApplication.executor&quot;: &quot;Run&quot;,
+    &quot;Spring Boot.ChatServiceApplication.executor&quot;: &quot;Run&quot;,
+    &quot;Spring Boot.NotificariServiceApplication.executor&quot;: &quot;Run&quot;,
+    &quot;Spring Boot.PacientiServiceApplication.executor&quot;: &quot;Run&quot;,
+    &quot;Spring Boot.ProgramariServiceApplication.executor&quot;: &quot;Run&quot;,
+    &quot;Spring Boot.ServiciiServiceApplication.executor&quot;: &quot;Run&quot;,
+    &quot;Spring Boot.TerapeutiServiceApplication.executor&quot;: &quot;Run&quot;,
+    &quot;Spring Boot.UserServiceApplication.executor&quot;: &quot;Run&quot;,
+    &quot;deletionFromPopupRequiresConfirmation&quot;: &quot;false&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/Aneliss/Desktop/kinetocare/backend&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;run.configurations.included.in.services&quot;: &quot;true&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\Aneliss\OneDrive\Desktop\kinetocare\backend\chat-service\src\main\java\com\example\chat_service" />
@@ -193,82 +216,118 @@
       </set>
     </option>
   </component>
-  <component name="RunManager" selected="JUnit.programari_service in programari-service">
-    <configuration name="programari_service in programari-service" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="programari-service" />
-      <option name="TEST_OBJECT" value="directory" />
-      <dir value="$PROJECT_DIR$/programari-service/src/test/java/com/example/programari_service" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="ApiGatewayApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
-      <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UpdateClassesAndResources" />
+  <component name="RunManager" selected="Application.ChatServiceApplication">
+    <configuration name="ApiGatewayApplication" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="com.example.api_gateway.ApiGatewayApplication" />
       <module name="api-gateway" />
-      <option name="SPRING_BOOT_MAIN_CLASS" value="com.example.api_gateway.ApiGatewayApplication" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.example.api_gateway.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="ChatServiceApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
-      <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UpdateClassesAndResources" />
+    <configuration name="ChatServiceApplication" type="Application" factoryName="Application" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="com.example.chat_service.ChatServiceApplication" />
       <module name="chat-service" />
-      <option name="SPRING_BOOT_MAIN_CLASS" value="com.example.chat_service.ChatServiceApplication" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.example.chat_service.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="NotificariServiceApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
-      <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UpdateClassesAndResources" />
+    <configuration name="NotificariServiceApplication" type="Application" factoryName="Application" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="com.example.notificari_service.NotificariServiceApplication" />
       <module name="notificari-service" />
-      <option name="SPRING_BOOT_MAIN_CLASS" value="com.example.notificari_service.NotificariServiceApplication" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.example.notificari_service.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="PacientiServiceApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
-      <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UpdateClassesAndResources" />
+    <configuration name="PacientiServiceApplication" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="com.example.pacienti_service.PacientiServiceApplication" />
       <module name="pacienti-service" />
-      <option name="SPRING_BOOT_MAIN_CLASS" value="com.example.pacienti_service.PacientiServiceApplication" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.example.pacienti_service.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="ProgramariServiceApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
-      <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UpdateClassesAndResources" />
+    <configuration name="ProgramariServiceApplication" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="com.example.programari_service.ProgramariServiceApplication" />
       <module name="programari-service" />
-      <option name="SPRING_BOOT_MAIN_CLASS" value="com.example.programari_service.ProgramariServiceApplication" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.example.programari_service.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="ServiciiServiceApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
-      <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UpdateClassesAndResources" />
+    <configuration name="ServiciiServiceApplication" type="Application" factoryName="Application" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="com.example.servicii_service.ServiciiServiceApplication" />
       <module name="servicii-service" />
-      <option name="SPRING_BOOT_MAIN_CLASS" value="com.example.servicii_service.ServiciiServiceApplication" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.example.servicii_service.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="TerapeutiServiceApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
-      <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UpdateClassesAndResources" />
+    <configuration name="TerapeutiServiceApplication" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="com.example.terapeuti_service.TerapeutiServiceApplication" />
       <module name="terapeuti-service" />
-      <option name="SPRING_BOOT_MAIN_CLASS" value="com.example.terapeuti_service.TerapeutiServiceApplication" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.example.terapeuti_service.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="UserServiceApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
-      <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UpdateClassesAndResources" />
+    <configuration name="UserServiceApplication" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="com.example.user_service.UserServiceApplication" />
       <module name="user-service" />
-      <option name="SPRING_BOOT_MAIN_CLASS" value="com.example.user_service.UserServiceApplication" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.example.user_service.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="JUnit.programari_service in programari-service" />
+        <item itemvalue="Application.ProgramariServiceApplication" />
+        <item itemvalue="Application.PacientiServiceApplication" />
+        <item itemvalue="Application.TerapeutiServiceApplication" />
+        <item itemvalue="Application.UserServiceApplication" />
+        <item itemvalue="Application.ApiGatewayApplication" />
       </list>
     </recent_temporary>
   </component>

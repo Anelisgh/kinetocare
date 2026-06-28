@@ -14,5 +14,7 @@ public interface RelatieMapper {
     @Mapping(target = "dataSfarsit", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
+    @Mapping(target = "createdBy", ignore = true)
+    @Mapping(target = "lastModifiedBy", ignore = true)
     RelatiePacientTerapeut toEntity(String pacientKeycloakId, String terapeutKeycloakId, LocalDate dataInceput);
 }

@@ -25,8 +25,16 @@ public class WebSocketChatController {
     private final SimpMessagingTemplate messagingTemplate;
 
     @MessageMapping("/chat.send")
-    public void trimiteMesaj(@Payload @Valid TrimitereMesajRequest request) {
+    public void trimiteMesaj(@Payload @Valid TrimitereMesajRequest request, Principal principal) {
         log.info("Mesaj WebSocket primit pentru conversatia: {}", request.conversatieId());
+
+        if (principal == null) {
+            throw new org.springframework.security.access.AccessDeniedException("Neautorizat! Token JWT invalid sau lipsă.");
+        }
+        
+        if (!request.expeditorKeycloakId().equals(principal.getName())) {
+            throw new org.springframework.security.access.AccessDeniedException("Nu poți trimite mesaje în numele altui utilizator!");
+        }
 
         MesajDTO mesajSalvat = chatService.salveazaSiNotifica(request);
 

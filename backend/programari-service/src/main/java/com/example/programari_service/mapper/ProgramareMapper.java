@@ -20,6 +20,8 @@ public interface ProgramareMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
+    @Mapping(target = "createdBy", ignore = true)
+    @Mapping(target = "lastModifiedBy", ignore = true)
     @Mapping(target = "motivAnulare", ignore = true)
     @Mapping(target = "pacientKeycloakId", source = "request.pacientKeycloakId")
     @Mapping(target = "terapeutKeycloakId", source = "request.terapeutKeycloakId")

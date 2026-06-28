@@ -11,7 +11,7 @@ import '../../styles/chat.css';
 
 const ChatPacient = () => {
     const [conversatii, setConversatii] = useState([]);
-    const [conversatieActivaId, setConversatieActivaId] = useState(null);
+    const [conversatieActivaPartnerId, setConversatieActivaPartnerId] = useState(null);
     const [stompClient, setStompClient] = useState(null);
     const [userId, setUserId] = useState(null);
     const [numeMap, setNumeMap] = useState({});
@@ -113,16 +113,18 @@ const ChatPacient = () => {
     }, [incarcaConversatii]);
 
     const handleSelectConversatie = (conv) => {
-        setConversatieActivaId(conv.id);
+        setConversatieActivaPartnerId(tipUser === 'PACIENT' ? conv.terapeutKeycloakId : conv.pacientKeycloakId);
     };
 
-    const conversatieActiva = conversatii.find(c => c.id === conversatieActivaId);
+    const conversatieActiva = conversatii.find(c => 
+        (tipUser === 'PACIENT' ? c.terapeutKeycloakId : c.pacientKeycloakId) === conversatieActivaPartnerId
+    );
 
     return (
         <div className="chat-container-layout">
             <ListaConversatii 
                 conversatii={conversatii} 
-                conversatieActivaId={conversatieActivaId}
+                conversatieActivaPartnerId={conversatieActivaPartnerId}
                 peSelectieConversatie={handleSelectConversatie}
                 userId={userId}
                 tipUser={tipUser}
@@ -130,7 +132,7 @@ const ChatPacient = () => {
                 arhivatiIds={arhivatiIds}
             />
             <FereastraChat 
-                key={conversatieActivaId || 'none'}
+                key={conversatieActivaPartnerId || 'none'}
                 conversatieActiva={conversatieActiva}
                 userId={userId}
                 tipUser={tipUser}

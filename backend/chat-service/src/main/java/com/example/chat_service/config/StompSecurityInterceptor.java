@@ -47,6 +47,7 @@ public class StompSecurityInterceptor implements ChannelInterceptor {
                     } catch (Exception e) {
                         log.warn("Preluare JWT eșuată în STOMP preSend: {}", e.getMessage());
                         SecurityContextHolder.clearContext();
+                        accessor.setUser(null);
                     }
                 } else if (accessor.getUser() instanceof org.springframework.security.core.Authentication auth) {
                     // Dacă aveam deja User-ul setat din frame-ul CONNECT pe această sesiune:

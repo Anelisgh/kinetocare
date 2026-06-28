@@ -13,10 +13,14 @@ public interface TipServiciuMapper {
     @Mapping(target = "active", source = "active", defaultValue = "true")
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
+    @Mapping(target = "createdBy", ignore = true)
+    @Mapping(target = "lastModifiedBy", ignore = true)
     TipServiciu toEntity(TipServiciuDTO dto);
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
+    @Mapping(target = "createdBy", ignore = true)
+    @Mapping(target = "lastModifiedBy", ignore = true)
     void updateEntityFromDto(TipServiciuDTO dto, @MappingTarget TipServiciu entity);
 }

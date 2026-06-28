@@ -151,6 +151,7 @@ const TerapeutCalendar = ({ onEventClick, refreshTrigger, locatieId }) => {
             </div>
         );
     };
+
 // 5. Returnam calendarul
     return (
         <FullCalendar

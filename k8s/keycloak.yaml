@@ -50,6 +50,10 @@ spec:
               value: "false"
             - name: JAVA_OPTS
               value: "-Xms256m -Xmx512m"
+            - name: KC_BOOTSTRAP_ADMIN_USERNAME
+              value: "admin"
+            - name: KC_BOOTSTRAP_ADMIN_PASSWORD
+              value: "admin"
           ports:
             - containerPort: 8080
           volumeMounts:

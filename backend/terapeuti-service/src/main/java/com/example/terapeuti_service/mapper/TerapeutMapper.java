@@ -18,6 +18,8 @@ public interface TerapeutMapper {
     @Mapping(target = "pozaProfil", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
+    @Mapping(target = "createdBy", ignore = true)
+    @Mapping(target = "lastModifiedBy", ignore = true)
     @Mapping(target = "active", constant = "true")
     Terapeut toNewEntity(String keycloakId);
 
@@ -46,5 +48,7 @@ public interface TerapeutMapper {
     @Mapping(target = "active", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
+    @Mapping(target = "createdBy", ignore = true)
+    @Mapping(target = "lastModifiedBy", ignore = true)
     void updateEntity(@MappingTarget Terapeut terapeut, UpdateTerapeutDTO dto);
 }

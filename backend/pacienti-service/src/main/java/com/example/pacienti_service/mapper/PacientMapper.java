@@ -17,6 +17,8 @@ public interface PacientMapper {
     @Mapping(target = "active", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
+    @Mapping(target = "createdBy", ignore = true)
+    @Mapping(target = "lastModifiedBy", ignore = true)
     @Mapping(target = "keycloakId", source = "keycloakId")
     Pacient toEntity(PacientCompleteProfileRequest request, String keycloakId);
 
@@ -28,6 +30,8 @@ public interface PacientMapper {
     @Mapping(target = "active", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
+    @Mapping(target = "createdBy", ignore = true)
+    @Mapping(target = "lastModifiedBy", ignore = true)
     void updateEntity(@MappingTarget Pacient pacient, PacientRequest request);
 
     @AfterMapping

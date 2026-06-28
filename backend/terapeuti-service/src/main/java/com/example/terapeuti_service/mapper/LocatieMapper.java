@@ -18,6 +18,8 @@ public interface LocatieMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
+    @Mapping(target = "createdBy", ignore = true)
+    @Mapping(target = "lastModifiedBy", ignore = true)
     @Mapping(target = "active", constant = "true")
     Locatie toEntity(LocatieDTO dto);
 
@@ -26,6 +28,8 @@ public interface LocatieMapper {
     @Mapping(target = "active", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
+    @Mapping(target = "createdBy", ignore = true)
+    @Mapping(target = "lastModifiedBy", ignore = true)
     void updateEntityFromDTO(@MappingTarget Locatie locatie, LocatieDTO dto);
 
     LocatieDisponibilaDTO toDisponibilaDTO(Locatie locatie);
