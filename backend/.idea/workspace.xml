@@ -4,41 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="ada58259-7e1f-4132-91aa-755299770068" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api-gateway/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/api-gateway/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api-gateway/src/main/java/com/example/api_gateway/config/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/api-gateway/src/main/java/com/example/api_gateway/config/SecurityConfig.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api-gateway/src/main/resources/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/api-gateway/src/main/resources/application.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/chat-service/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/chat-service/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/chat-service/src/main/java/com/example/chat_service/config/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/chat-service/src/main/java/com/example/chat_service/config/SecurityConfig.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/chat-service/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/chat-service/src/main/resources/application.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/common/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/common/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/common/src/main/java/com/example/common/config/OpenApiConfig.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/common/target/classes/com/example/common/config/OpenApiConfig.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/common/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/common/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/common/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/common/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/api-gateway.log" beforeDir="false" afterPath="$PROJECT_DIR$/logs/api-gateway.log" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/notificari-service/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/notificari-service/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/notificari-service/src/main/java/com/example/notificari_service/config/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/notificari-service/src/main/java/com/example/notificari_service/config/SecurityConfig.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/notificari-service/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/notificari-service/src/main/resources/application.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pacienti-service/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pacienti-service/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pacienti-service/src/main/java/com/example/pacienti_service/config/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/pacienti-service/src/main/java/com/example/pacienti_service/config/SecurityConfig.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pacienti-service/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/pacienti-service/src/main/resources/application.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/programari-service/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/programari-service/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/programari-service/src/main/java/com/example/programari_service/config/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/programari-service/src/main/java/com/example/programari_service/config/SecurityConfig.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/programari-service/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/programari-service/src/main/resources/application.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/servicii-service/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/servicii-service/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/servicii-service/src/main/java/com/example/servicii_service/config/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/servicii-service/src/main/java/com/example/servicii_service/config/SecurityConfig.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/servicii-service/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/servicii-service/src/main/resources/application.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/terapeuti-service/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/terapeuti-service/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/terapeuti-service/src/main/java/com/example/terapeuti_service/config/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/terapeuti-service/src/main/java/com/example/terapeuti_service/config/SecurityConfig.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/terapeuti-service/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/terapeuti-service/src/main/resources/application.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/user-service/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/user-service/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/user-service/src/main/java/com/example/user_service/config/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/user-service/src/main/java/com/example/user_service/config/SecurityConfig.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/user-service/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/user-service/src/main/resources/application.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../diagramele_oficiale.md" beforeDir="false" afterPath="$PROJECT_DIR$/../diagramele_oficiale.md" afterDir="false" />
-    </list>
+    <list default="true" id="ada58259-7e1f-4132-91aa-755299770068" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
