@@ -5,48 +5,39 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="ada58259-7e1f-4132-91aa-755299770068" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/chat-service/src/main/java/com/example/chat_service/config/StompSecurityInterceptor.java" beforeDir="false" afterPath="$PROJECT_DIR$/chat-service/src/main/java/com/example/chat_service/config/StompSecurityInterceptor.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/chat-service/src/main/java/com/example/chat_service/controller/WebSocketChatController.java" beforeDir="false" afterPath="$PROJECT_DIR$/chat-service/src/main/java/com/example/chat_service/controller/WebSocketChatController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api-gateway/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/api-gateway/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api-gateway/src/main/java/com/example/api_gateway/config/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/api-gateway/src/main/java/com/example/api_gateway/config/SecurityConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api-gateway/src/main/resources/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/api-gateway/src/main/resources/application.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/chat-service/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/chat-service/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/chat-service/src/main/java/com/example/chat_service/config/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/chat-service/src/main/java/com/example/chat_service/config/SecurityConfig.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/chat-service/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/chat-service/src/main/resources/application.properties" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/common/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/common/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/common/src/main/java/com/example/common/config/OpenApiConfig.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/common/target/classes/com/example/common/config/OpenApiConfig.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/common/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/common/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/common/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/common/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/logs/api-gateway.log" beforeDir="false" afterPath="$PROJECT_DIR$/logs/api-gateway.log" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/notificari-service/src/main/java/com/example/notificari_service/consumer/NotificareConsumer.java" beforeDir="false" afterPath="$PROJECT_DIR$/notificari-service/src/main/java/com/example/notificari_service/consumer/NotificareConsumer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/notificari-service/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/notificari-service/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/notificari-service/src/main/java/com/example/notificari_service/config/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/notificari-service/src/main/java/com/example/notificari_service/config/SecurityConfig.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/notificari-service/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/notificari-service/src/main/resources/application.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pacienti-service/src/main/java/com/example/pacienti_service/entity/BaseAuditableEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/pacienti-service/src/main/java/com/example/pacienti_service/entity/BaseAuditableEntity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pacienti-service/src/main/java/com/example/pacienti_service/mapper/PacientMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/pacienti-service/src/main/java/com/example/pacienti_service/mapper/PacientMapper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pacienti-service/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pacienti-service/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pacienti-service/src/main/java/com/example/pacienti_service/config/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/pacienti-service/src/main/java/com/example/pacienti_service/config/SecurityConfig.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pacienti-service/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/pacienti-service/src/main/resources/application.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/programari-service/src/main/java/com/example/programari_service/entity/BaseAuditableEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/programari-service/src/main/java/com/example/programari_service/entity/BaseAuditableEntity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/programari-service/src/main/java/com/example/programari_service/mapper/EvaluareMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/programari-service/src/main/java/com/example/programari_service/mapper/EvaluareMapper.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/programari-service/src/main/java/com/example/programari_service/mapper/EvolutieMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/programari-service/src/main/java/com/example/programari_service/mapper/EvolutieMapper.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/programari-service/src/main/java/com/example/programari_service/mapper/ProgramareMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/programari-service/src/main/java/com/example/programari_service/mapper/ProgramareMapper.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/programari-service/src/main/java/com/example/programari_service/mapper/RelatieMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/programari-service/src/main/java/com/example/programari_service/mapper/RelatieMapper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/programari-service/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/programari-service/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/programari-service/src/main/java/com/example/programari_service/config/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/programari-service/src/main/java/com/example/programari_service/config/SecurityConfig.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/programari-service/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/programari-service/src/main/resources/application.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/servicii-service/src/main/java/com/example/servicii_service/entity/BaseAuditableEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/servicii-service/src/main/java/com/example/servicii_service/entity/BaseAuditableEntity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/servicii-service/src/main/java/com/example/servicii_service/mapper/ServiciuMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/servicii-service/src/main/java/com/example/servicii_service/mapper/ServiciuMapper.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/servicii-service/src/main/java/com/example/servicii_service/mapper/TipServiciuMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/servicii-service/src/main/java/com/example/servicii_service/mapper/TipServiciuMapper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/servicii-service/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/servicii-service/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/servicii-service/src/main/java/com/example/servicii_service/config/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/servicii-service/src/main/java/com/example/servicii_service/config/SecurityConfig.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/servicii-service/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/servicii-service/src/main/resources/application.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/terapeuti-service/src/main/java/com/example/terapeuti_service/entity/BaseAuditableEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/terapeuti-service/src/main/java/com/example/terapeuti_service/entity/BaseAuditableEntity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/terapeuti-service/src/main/java/com/example/terapeuti_service/mapper/LocatieMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/terapeuti-service/src/main/java/com/example/terapeuti_service/mapper/LocatieMapper.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/terapeuti-service/src/main/java/com/example/terapeuti_service/mapper/TerapeutMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/terapeuti-service/src/main/java/com/example/terapeuti_service/mapper/TerapeutMapper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/terapeuti-service/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/terapeuti-service/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/terapeuti-service/src/main/java/com/example/terapeuti_service/config/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/terapeuti-service/src/main/java/com/example/terapeuti_service/config/SecurityConfig.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/terapeuti-service/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/terapeuti-service/src/main/resources/application.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/user-service/src/main/java/com/example/user_service/entity/BaseAuditableEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/user-service/src/main/java/com/example/user_service/entity/BaseAuditableEntity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/user-service/src/main/java/com/example/user_service/mapper/UserRegisterMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/user-service/src/main/java/com/example/user_service/mapper/UserRegisterMapper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user-service/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/user-service/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user-service/src/main/java/com/example/user_service/config/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/user-service/src/main/java/com/example/user_service/config/SecurityConfig.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/user-service/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/user-service/src/main/resources/application.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../db-init/chat_service.sql" beforeDir="false" afterPath="$PROJECT_DIR$/../db-init/chat_service.sql" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../db-init/notificari_service.sql" beforeDir="false" afterPath="$PROJECT_DIR$/../db-init/notificari_service.sql" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../db-init/pacienti_service.sql" beforeDir="false" afterPath="$PROJECT_DIR$/../db-init/pacienti_service.sql" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../db-init/programari_service.sql" beforeDir="false" afterPath="$PROJECT_DIR$/../db-init/programari_service.sql" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../db-init/servicii_service.sql" beforeDir="false" afterPath="$PROJECT_DIR$/../db-init/servicii_service.sql" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../db-init/terapeuti_service.sql" beforeDir="false" afterPath="$PROJECT_DIR$/../db-init/terapeuti_service.sql" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend/src/components/shared/ErrorBoundary.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/src/components/shared/ErrorBoundary.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend/src/components/shared/Navbar.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/src/components/shared/Navbar.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend/src/components/terapeut/homepage/TerapeutCalendar.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/src/components/terapeut/homepage/TerapeutCalendar.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend/src/pages/terapeut/HomepageTerapeut.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/src/pages/terapeut/HomepageTerapeut.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend/src/styles/navbar.css" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/src/styles/navbar.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend/vite.config.js" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/vite.config.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../k8s/keycloak.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/../k8s/keycloak.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../diagramele_oficiale.md" beforeDir="false" afterPath="$PROJECT_DIR$/../diagramele_oficiale.md" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -209,11 +200,30 @@
   <component name="RunDashboard">
     <option name="configurationTypes">
       <set>
+        <option value="Application" />
         <option value="KtorApplicationConfigurationType" />
         <option value="MicronautRunConfigurationType" />
         <option value="QuarkusRunConfigurationType" />
         <option value="SpringBootApplicationConfigurationType" />
       </set>
+    </option>
+    <option name="configurationStatuses">
+      <map>
+        <entry key="Application">
+          <value>
+            <map>
+              <entry key="ApiGatewayApplication" value="STOPPED" />
+              <entry key="ChatServiceApplication" value="STOPPED" />
+              <entry key="NotificariServiceApplication" value="STOPPED" />
+              <entry key="PacientiServiceApplication" value="STOPPED" />
+              <entry key="ProgramariServiceApplication" value="STOPPED" />
+              <entry key="ServiciiServiceApplication" value="STOPPED" />
+              <entry key="TerapeutiServiceApplication" value="STOPPED" />
+              <entry key="UserServiceApplication" value="STOPPED" />
+            </map>
+          </value>
+        </entry>
+      </map>
     </option>
   </component>
   <component name="RunManager" selected="Application.ChatServiceApplication">
@@ -323,10 +333,10 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Application.UserServiceApplication" />
+        <item itemvalue="Application.TerapeutiServiceApplication" />
         <item itemvalue="Application.ProgramariServiceApplication" />
         <item itemvalue="Application.PacientiServiceApplication" />
-        <item itemvalue="Application.TerapeutiServiceApplication" />
-        <item itemvalue="Application.UserServiceApplication" />
         <item itemvalue="Application.ApiGatewayApplication" />
       </list>
     </recent_temporary>

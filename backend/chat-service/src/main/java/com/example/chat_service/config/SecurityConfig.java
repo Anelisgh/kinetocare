@@ -26,7 +26,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/actuator/health").permitAll()
-                        .requestMatchers("/chat/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
+
                         .requestMatchers("/chat/ws-chat/**").permitAll() // Permitere handshake SockJS & STOMP
                         .anyRequest().authenticated()
                 )

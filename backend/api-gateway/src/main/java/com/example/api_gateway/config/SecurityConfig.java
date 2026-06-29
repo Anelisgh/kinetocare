@@ -27,10 +27,6 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeExchange(exchange -> exchange
                         .pathMatchers("/actuator/health").permitAll()
-                        .pathMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/webjars/**").permitAll()
-                        .pathMatchers("/api/users/v3/api-docs/**", "/api/pacient/v3/api-docs/**", "/api/terapeut/v3/api-docs/**").permitAll()
-                        .pathMatchers("/api/programari/v3/api-docs/**", "/api/servicii/v3/api-docs/**", "/api/chat/v3/api-docs/**").permitAll()
-                        .pathMatchers("/api/notificari/v3/api-docs/**").permitAll()
                         .pathMatchers("/api/auth/token", "/api/auth/logout").permitAll()
                         .pathMatchers("/api/users/auth/**").permitAll()
                         .pathMatchers("/api/chat/ws-chat/**").permitAll()

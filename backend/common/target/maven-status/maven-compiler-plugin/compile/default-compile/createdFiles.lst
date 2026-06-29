@@ -1,4 +1,3 @@
-com\example\common\config\OpenApiConfig.class
 com\example\common\exception\ResourceAlreadyExistsException.class
 com\example\common\exception\ForbiddenOperationException.class
 com\example\common\exception\BaseGlobalExceptionHandler.class

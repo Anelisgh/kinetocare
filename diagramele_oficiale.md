@@ -1022,3 +1022,39 @@ flowchart LR
     classDef rezultat fill:#dbeafe,stroke:#3b82f6,stroke-width:2px,color:#1e3a8a
     style SlidingWindow fill:transparent,stroke:transparent
 ```
+
+
+# Scrierea duala PPT
+```mermaid
+---
+config:
+  layout: dagre
+---
+flowchart LR
+    A["Admin dezactivează contul"] --> T["Tranzacție @Transactional"]
+    T --> DB["Stare locală modificată<br/>(în tranzacție, neconfirmat încă)"]
+    DB --> K["Apel sincron → Keycloak"]
+    K --> D{"Keycloak confirmă?"}
+    D -- "Nu" --> RB["Excepție propagată<br/>→ rollback total"]
+    RB --> S1["ACTIVE în ambele sisteme<br/>(nicio schimbare)"]
+    D -- "Da" --> P["Apel Feign → profil + programări<br/>(best-effort, excepție absorbită)"]
+    P --> C["Commit tranzacție SQL"]
+    C --> S2["INACTIVE local + Keycloak"]
+    C -. "risc rezidual: commit eșuează<br/>DUPĂ confirmarea Keycloak" .-> R["Cont fantomă"]
+
+     A:::neutral
+     T:::neutral
+     DB:::neutral
+     K:::neutral
+     D:::decision
+     RB:::neutral
+     P:::neutral
+     C:::neutral
+     S1:::success
+     S2:::success
+     R:::risk
+    classDef neutral fill:#BBDEFB,stroke:#1565C0,color:#1B1B1B
+    classDef decision fill:#E1BEE7,stroke:#6A1B9A,color:#1B1B1B
+    classDef success fill:#C8E6C9,stroke:#2E7D32,color:#1B1B1B
+    classDef risk fill:#FFCDD2,stroke:#C62828,color:#1B1B1B
+```

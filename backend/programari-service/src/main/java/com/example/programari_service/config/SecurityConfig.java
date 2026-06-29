@@ -27,7 +27,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/actuator/health").permitAll()
-                        .requestMatchers("/programari/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
+
                         // endpoint-uri interne apelate de user-service (care a facut deja auth admin)
                         // Nu sunt expuse prin API Gateway.
                         .requestMatchers("/programari/admin/**").permitAll()

@@ -37,7 +37,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/servicii/search").permitAll()
                         .requestMatchers(HttpMethod.GET, "/servicii/tipuri").permitAll()
                         .requestMatchers("/actuator/health").permitAll()
-                        .requestMatchers("/servicii/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
+
                         
                         // Admin Only Actions
                         .requestMatchers(HttpMethod.POST, "/servicii/**").hasRole("ADMIN")

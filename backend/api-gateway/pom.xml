@@ -61,19 +61,7 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
-		<!-- Reactive Context Propagation for Distributed Tracing -->
-		<dependency>
-			<groupId>io.micrometer</groupId>
-			<artifactId>context-propagation</artifactId>
-		</dependency>
-	
-        <!-- Swagger OpenAPI (WebFlux) -->
-        <dependency>
-            <groupId>org.springdoc</groupId>
-            <artifactId>springdoc-openapi-starter-webflux-ui</artifactId>
-            <version>${springdoc.version}</version>
-        </dependency>
-    </dependencies>
+	</dependencies>
 
 	<build>
 		<plugins>
