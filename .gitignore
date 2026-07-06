@@ -26,6 +26,3 @@ zipkin.jar
 # Node dependencies
 node_modules/
 **/node_modules/
-
-# Thesis
-Thesis/
