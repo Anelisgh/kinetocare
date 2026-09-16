@@ -457,20 +457,34 @@ La recepționarea fiecărui cadru `CONNECT` sau `SEND`, interceptorul decodează
 Pentru a ghida pacientul fără eroare și a elimina selecția greșită a serviciilor, tranziția planului de recuperare este modelată ca un **Automat Finit Determinist (AFD)** implementat în metoda `determinaServiciulCorect` din `ProgramareService`.
 
 ```mermaid
-stateDiagram-v2
-    direction LR
+---
+config:
+  theme: base
+  flowchart:
+    curve: basis
+    nodeSpacing: 50
+    rankSpacing: 60
+---
+flowchart LR
+    Start(("●<br/>Start"))
+    SA["<b>S_A: Evaluare Inițială</b><br/><i>(Pacient nou, fără istoric în DB)</i>"]
+    SB["<b>S_B: Tratament Activ</b><br/><i>(Kinetoterapie / Serviciu prescris)</i>"]
+    SC["<b>S_C: Reevaluare</b><br/><i>(Buget de ședințe epuizat)</i>"]
 
-    [*] --> EvaluareInitiala : Nicio evaluare înregistrată în DB
+    Start -->|"Nicio evaluare înregistrată"| SA
+    SA -->|"Terapeutul salvează Evaluarea Inițială<br/>(stabilește bugetul de N ședințe)"| SB
+    SB -->|"Ședințe efectuate >= N<br/>(buget epuizat)"| SC
+    SC -->|"Terapeutul finalizează Reevaluarea<br/>(stabilește un nou buget)"| SB
 
-    EvaluareInitiala --> TratamentActiv : Terapeutul completează Evaluarea Inițială<br/>(stabilește bugetul de N ședințe)
+    classDef startNode fill:#f1f5f9,stroke:#64748b,stroke-width:2px,color:#334155;
+    classDef init fill:#fef9c3,stroke:#ca8a04,stroke-width:2px,color:#713f12;
+    classDef activ fill:#dcfce7,stroke:#16a34a,stroke-width:2px,color:#14532d;
+    classDef reeval fill:#fee2e2,stroke:#dc2626,stroke-width:2px,color:#7f1d1d;
 
-    TratamentActiv --> Reevaluare : Ședințe efectuate >= N<br/>(bugetul de tratament este epuizat)
-
-    Reevaluare --> TratamentActiv : Terapeutul finalizează Reevaluarea<br/>(stabilește un nou buget de ședințe)
-
-    state "S_A: Evaluare Inițială" as EvaluareInitiala
-    state "S_B: Tratament Activ" as TratamentActiv
-    state "S_C: Reevaluare" as Reevaluare
+    class Start startNode;
+    class SA init;
+    class SB activ;
+    class SC reeval;
 ```
 
 Starea clinică a pacientului este calculată determinist pe baza istoricului de evaluări și a numărului de ședințe finalizate (`countSedintePacientDupaData`):
