@@ -26,3 +26,7 @@ zipkin.jar
 # Node dependencies
 node_modules/
 **/node_modules/
+
+# Temporary files & scratch
+~$*
+scratch_*

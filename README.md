@@ -316,14 +316,17 @@ flowchart TD
 ### Arhitectură Microservicii (Database-per-Service)
 Sistemul este structurat pe patru niveluri decuplate (*Client, Edge, Domain Services, Data Layer*), respectând strict modelul **Database-per-Service**. Fiecare microserviciu deține propria schemă MySQL izolată, prevenind cuplajul la nivel de date și permițând evoluția și scalarea independentă a modulelor.
 
+![Arhitectură Microservicii (Database-per-Service)](md/diagrama_arhitectura.svg)
+
+<details>
+  <summary>🔍 Vezi definiția Mermaid oficială (ELK)</summary>
+
 ```mermaid
 ---
 config:
-  theme: base
+  layout: elk
   flowchart:
     curve: basis
-    nodeSpacing: 40
-    rankSpacing: 60
 ---
 flowchart LR
     classDef client fill:#eff6ff,stroke:#3b82f6,stroke-width:2px,color:#1e3a8a;
@@ -338,67 +341,57 @@ flowchart LR
     end
 
     subgraph EdgeLayer ["2. Nivelul de Margine"]
-        direction LR
-        APIGW["🚪 API Gateway<br/>(Spring WebFlux / BFF)"]:::edge
         Keycloak["🛡️ Keycloak Server<br/>(Identitate & Autentificare)"]:::auth
-        APIGW -->|"Proxy Auth & Validare JWKS"| Keycloak
+        APIGW["🚪 API Gateway<br/>(Spring WebFlux / BFF)"]:::edge
     end
 
     subgraph DomainLayer ["3. Nivelul Serviciilor de Domeniu"]
-        direction TB
-        PS["🏥 pacienti-service"]:::domain
-        CS["💬 chat-service"]:::domain
-        ProgS["📅 programari-service"]:::domain
-        subgraph BrokerZone [" "]
-            direction LR
-            RabbitMQ{{"🐰 RabbitMQ Broker<br/>(Topic Exchange & DLQ)"}}:::mq
-            NS["🔔 notificari-service"]:::domain
-        end
-        SS["📋 servicii-service"]:::domain
-        TS["👨‍⚕️ terapeuți-service"]:::domain
         US["👤 user-service"]:::domain
+        PS["🏥 pacienti-service"]:::domain
+        TS["👨‍⚕️ terapeuți-service"]:::domain
+        ProgS["📅 programari-service"]:::domain
+        SS["📋 servicii-service"]:::domain
+        CS["💬 chat-service"]:::domain
+        NS["🔔 notificari-service"]:::domain
+        RabbitMQ{{"🐰 RabbitMQ Broker<br/>(Topic Exchange & DLQ)"}}:::mq
     end
 
     subgraph DataLayer ["4. Nivelul de Date"]
-        direction TB
-        DB_PS[("🗄️ pacienti_db")]:::db
-        DB_CS[("🗄️ chat_db")]:::db
-        DB_ProgS[("🗄️ programari_db")]:::db
-        DB_NS[("🗄️ notificari_db")]:::db
-        DB_SS[("🗄️ servicii_db")]:::db
-        DB_TS[("🗄️ terapeuți_db")]:::db
         DB_US[("🗄️ user_db")]:::db
+        DB_PS[("🗄️ pacienti_db")]:::db
+        DB_TS[("🗄️ terapeuți_db")]:::db
+        DB_ProgS[("🗄️ programari_db")]:::db
+        DB_SS[("🗄️ servicii_db")]:::db
+        DB_CS[("🗄️ chat_db")]:::db
+        DB_NS[("🗄️ notificari_db")]:::db
     end
 
-    ClientLayer ~~~ EdgeLayer ~~~ DomainLayer ~~~ DataLayer
-
     React -->|"Cereri REST & WebSocket"| APIGW
+    APIGW <-->|"Proxy Auth & Validare JWKS"| Keycloak
+    US -.->|"Keycloak Admin API (REST)"| Keycloak
 
-    APIGW ==> PS
-    APIGW ==> CS
-    APIGW ==> ProgS
-    APIGW ==> NS
-    APIGW ==> SS
-    APIGW ==> TS
     APIGW ==> US
+    APIGW ==> PS
+    APIGW ==> TS
+    APIGW ==> ProgS
+    APIGW ==> SS
+    APIGW ==> CS
+    APIGW ==> NS
 
     ProgS -.->|"notificare.programare.*"| RabbitMQ
     PS -.->|"notificare.jurnal.completat"| RabbitMQ
     CS -.->|"notificare.mesaj.nou"| RabbitMQ
     RabbitMQ -.->|"notificare.#"| NS
 
-    PS --- DB_PS
-    CS --- DB_CS
-    ProgS --- DB_ProgS
-    NS --- DB_NS
-    SS --- DB_SS
-    TS --- DB_TS
     US --- DB_US
-
-    US -.->|"Keycloak Admin API (REST)"| Keycloak
-
-    style BrokerZone fill:transparent,stroke:transparent
+    PS --- DB_PS
+    TS --- DB_TS
+    ProgS --- DB_ProgS
+    SS --- DB_SS
+    CS --- DB_CS
+    NS --- DB_NS
 ```
+</details>
 
 Traficul extern este interceptat exclusiv de API Gateway și Keycloak, în timp ce serviciile de domeniu comunică sincron prin clienți declarativi OpenFeign și asincron prin mesagerie bazată pe evenimente.
 
