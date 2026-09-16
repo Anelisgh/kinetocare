@@ -470,34 +470,28 @@ La recepționarea fiecărui cadru `CONNECT` sau `SEND`, interceptorul decodează
 Pentru a ghida pacientul fără eroare și a elimina selecția greșită a serviciilor, tranziția planului de recuperare este modelată ca un **Automat Finit Determinist (AFD)** implementat în metoda `determinaServiciulCorect` din `ProgramareService`.
 
 ```mermaid
----
-config:
-  theme: base
-  flowchart:
-    curve: basis
-    nodeSpacing: 50
-    rankSpacing: 60
----
-flowchart LR
-    Start(("●<br/>Start"))
-    SA["<b>S_A: Evaluare Inițială</b><br/><i>(Pacient nou, fără istoric în DB)</i>"]
-    SB["<b>S_B: Tratament Activ</b><br/><i>(Kinetoterapie / Serviciu prescris)</i>"]
-    SC["<b>S_C: Reevaluare</b><br/><i>(Buget de ședințe epuizat)</i>"]
+stateDiagram-v2
+    direction LR
 
-    Start -->|"Nicio evaluare înregistrată"| SA
-    SA -->|"Terapeutul salvează Evaluarea Inițială<br/>(stabilește bugetul de N ședințe)"| SB
-    SB -->|"Ședințe efectuate >= N<br/>(buget epuizat)"| SC
-    SC -->|"Terapeutul finalizează Reevaluarea<br/>(stabilește un nou buget)"| SB
+    [*] --> EvaluareInitiala : Nicio evaluare înregistrată în DB
 
-    classDef startNode fill:#f1f5f9,stroke:#64748b,stroke-width:2px,color:#334155;
-    classDef init fill:#fef9c3,stroke:#ca8a04,stroke-width:2px,color:#713f12;
-    classDef activ fill:#dcfce7,stroke:#16a34a,stroke-width:2px,color:#14532d;
-    classDef reeval fill:#fee2e2,stroke:#dc2626,stroke-width:2px,color:#7f1d1d;
+    EvaluareInitiala --> TratamentActiv : Terapeutul completează Evaluarea Inițială<br/>(stabilește bugetul de N ședințe)
 
-    class Start startNode;
-    class SA init;
-    class SB activ;
-    class SC reeval;
+    TratamentActiv --> Reevaluare : Ședințe efectuate >= N<br/>(bugetul de tratament este epuizat)
+
+    Reevaluare --> TratamentActiv : Terapeutul finalizează Reevaluarea<br/>(stabilește un nou buget de ședințe)
+
+    state "S_A: Evaluare Inițială" as EvaluareInitiala
+    state "S_B: Tratament Activ" as TratamentActiv
+    state "S_C: Reevaluare" as Reevaluare
+
+    classDef init fill:#fef9c3,stroke:#ca8a04,stroke-width:2px,color:#713f12
+    classDef activ fill:#dcfce7,stroke:#16a34a,stroke-width:2px,color:#14532d
+    classDef reeval fill:#fee2e2,stroke:#dc2626,stroke-width:2px,color:#7f1d1d
+
+    class EvaluareInitiala init
+    class TratamentActiv activ
+    class Reevaluare reeval
 ```
 
 Starea clinică a pacientului este calculată determinist pe baza istoricului de evaluări și a numărului de ședințe finalizate (`countSedintePacientDupaData`):
@@ -518,42 +512,30 @@ config:
     rankSpacing: 55
 ---
 flowchart LR
-    subgraph ConfigBox ["📋 Parametri Algoritm"]
-        Config["🗓️ <b>Program:</b> 08:00–12:00<br/>⏱️ <b>Serviciu:</b> 60 min<br/>⏳ <b>Buffer:</b> +10 min<br/>🔒 <b>Blocat:</b> 09:00–10:00"]
-    end
+    Config["🗓️ Program: 08:00–12:00 <br> ⏱️ Serviciu: 60 min  <br>⏳ Buffer: +10 min <br> 🔒 Blocat: 09:00–10:00"]:::config
 
-    subgraph WindowFlow ["Fereastră Glisantă (Avans Cursor +70 min)"]
+    subgraph SlidingWindow [" "]
         direction LR
-        I1["Iterația 1<br/><b>08:00–09:00</b><br/>🟢 Validat ➔ <b>08:00</b>"]
-        I2["Iterația 2<br/><b>09:10–10:10</b><br/>🔴 Respins (Suprapunere)"]
-        I3["Iterația 3<br/><b>10:20–11:20</b><br/>🟢 Validat ➔ <b>10:20</b>"]
-        I4["Iterația 4<br/><b>11:30–12:30</b><br/>🔴 Respins (Depășire)"]
+        I1["Iterația 1<br><b>08:00–09:00</b><br>✓ Liber"]:::liber
+        I2["Iterația 2<br><b>09:10–10:10</b><br>✗ Suprapunere"]:::eroare
+        I3["Iterația 3<br><b>10:20–11:20</b><br>✓ Liber"]:::liber
+        I4["Iterația 4<br><b>11:30–12:30</b><br>✗ Depășit"]:::eroare
 
-        I1 ==>|"Pas +70 min"| I2
-        I2 ==>|"Pas +70 min"| I3
-        I3 ==>|"Pas +70 min"| I4
+        I1 ==> I2
+        I2 ==> I3
+        I3 ==> I4
     end
 
-    subgraph OutputBox ["🎯 Rezultat API"]
-        Result["<b>Sloturi returnate:</b><br/><code>08:00 · 10:20</code>"]
-    end
+    Result["<b>Sloturi returnate: 08:00 · 10:20</b>"]:::rezultat
 
-    ConfigBox --> WindowFlow
-    WindowFlow --> OutputBox
+    Config --> SlidingWindow
+    SlidingWindow --> Result
 
-    classDef config fill:#f8fafc,stroke:#94a3b8,stroke-width:1px,color:#334155;
-    classDef liber fill:#dcfce7,stroke:#16a34a,stroke-width:2px,color:#14532d;
-    classDef eroare fill:#fee2e2,stroke:#dc2626,stroke-width:2px,color:#7f1d1d;
-    classDef rez fill:#dbeafe,stroke:#2563eb,stroke-width:2px,color:#1e3a8a;
-
-    class Config config;
-    class I1,I3 liber;
-    class I2,I4 eroare;
-    class Result rez;
-
-    style ConfigBox fill:#f8fafc,stroke:#cbd5e1,stroke-width:1px
-    style WindowFlow fill:#ffffff,stroke:#cbd5e1,stroke-width:1px
-    style OutputBox fill:#eff6ff,stroke:#93c5fd,stroke-width:1px
+    classDef config fill:#f8fafc,stroke:#94a3b8,stroke-width:1px,color:#334155,font-weight:bold,stroke-dasharray: 5 5;
+    classDef liber fill:#dcfce7,stroke:#22c55e,stroke-width:2px,color:#14532d;
+    classDef eroare fill:#fee2e2,stroke:#ef4444,stroke-width:2px,color:#991b1b;
+    classDef rezultat fill:#dbeafe,stroke:#3b82f6,stroke-width:2px,color:#1e3a8a;
+    style SlidingWindow fill:transparent,stroke:transparent
 ```
 
 Procesul se desfășoară în trei etape riguroase:
