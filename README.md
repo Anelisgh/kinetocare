@@ -319,9 +319,11 @@ Sistemul este structurat pe patru niveluri decuplate (*Client, Edge, Domain Serv
 ```mermaid
 ---
 config:
-  layout: elk
+  theme: base
   flowchart:
     curve: basis
+    nodeSpacing: 40
+    rankSpacing: 60
 ---
 flowchart LR
     classDef client fill:#eff6ff,stroke:#3b82f6,stroke-width:2px,color:#1e3a8a;
@@ -336,55 +338,66 @@ flowchart LR
     end
 
     subgraph EdgeLayer ["2. Nivelul de Margine"]
-        Keycloak["🛡️ Keycloak Server<br/>(Identitate & Autentificare)"]:::auth
+        direction LR
         APIGW["🚪 API Gateway<br/>(Spring WebFlux / BFF)"]:::edge
+        Keycloak["🛡️ Keycloak Server<br/>(Identitate & Autentificare)"]:::auth
+        APIGW -->|"Proxy Auth & Validare JWKS"| Keycloak
     end
 
     subgraph DomainLayer ["3. Nivelul Serviciilor de Domeniu"]
-        US["👤 user-service"]:::domain
+        direction TB
         PS["🏥 pacienti-service"]:::domain
-        TS["👨‍⚕️ terapeuți-service"]:::domain
-        ProgS["📅 programari-service"]:::domain
-        SS["📋 servicii-service"]:::domain
         CS["💬 chat-service"]:::domain
-        NS["🔔 notificari-service"]:::domain
-        RabbitMQ{{"🐰 RabbitMQ Broker<br/>(Topic Exchange & DLQ)"}}:::mq
+        ProgS["📅 programari-service"]:::domain
+        subgraph BrokerZone [" "]
+            direction LR
+            RabbitMQ{{"🐰 RabbitMQ Broker<br/>(Topic Exchange & DLQ)"}}:::mq
+            NS["🔔 notificari-service"]:::domain
+        end
+        SS["📋 servicii-service"]:::domain
+        TS["👨‍⚕️ terapeuți-service"]:::domain
+        US["👤 user-service"]:::domain
     end
 
     subgraph DataLayer ["4. Nivelul de Date"]
-        DB_US[("🗄️ user_db")]:::db
+        direction TB
         DB_PS[("🗄️ pacienti_db")]:::db
-        DB_TS[("🗄️ terapeuți_db")]:::db
-        DB_ProgS[("🗄️ programari_db")]:::db
-        DB_SS[("🗄️ servicii_db")]:::db
         DB_CS[("🗄️ chat_db")]:::db
+        DB_ProgS[("🗄️ programari_db")]:::db
         DB_NS[("🗄️ notificari_db")]:::db
+        DB_SS[("🗄️ servicii_db")]:::db
+        DB_TS[("🗄️ terapeuți_db")]:::db
+        DB_US[("🗄️ user_db")]:::db
     end
 
-    React -->|"Cereri REST & WebSocket"| APIGW
-    APIGW <-->|"Proxy Auth & Validare JWKS"| Keycloak
-    US -.->|"Keycloak Admin API (REST)"| Keycloak
+    ClientLayer ~~~ EdgeLayer ~~~ DomainLayer ~~~ DataLayer
 
-    APIGW ==> US
+    React -->|"Cereri REST & WebSocket"| APIGW
+
     APIGW ==> PS
-    APIGW ==> TS
-    APIGW ==> ProgS
-    APIGW ==> SS
     APIGW ==> CS
+    APIGW ==> ProgS
     APIGW ==> NS
+    APIGW ==> SS
+    APIGW ==> TS
+    APIGW ==> US
 
     ProgS -.->|"notificare.programare.*"| RabbitMQ
     PS -.->|"notificare.jurnal.completat"| RabbitMQ
     CS -.->|"notificare.mesaj.nou"| RabbitMQ
     RabbitMQ -.->|"notificare.#"| NS
 
-    US --- DB_US
     PS --- DB_PS
-    TS --- DB_TS
-    ProgS --- DB_ProgS
-    SS --- DB_SS
     CS --- DB_CS
+    ProgS --- DB_ProgS
     NS --- DB_NS
+    SS --- DB_SS
+    TS --- DB_TS
+    US --- DB_US
+
+    US -.->|"Keycloak Admin API (REST)"| Keycloak
+
+    style BrokerZone fill:transparent,stroke:transparent
 ```
 
 Traficul extern este interceptat exclusiv de API Gateway și Keycloak, în timp ce serviciile de domeniu comunică sincron prin clienți declarativi OpenFeign și asincron prin mesagerie bazată pe evenimente.
@@ -498,37 +511,49 @@ Calculul intervalelor libere pentru rezervări combină date distribuite din mul
 ```mermaid
 ---
 config:
-  layout: elk
+  theme: base
   flowchart:
     curve: basis
+    nodeSpacing: 45
+    rankSpacing: 55
 ---
 flowchart LR
- subgraph SlidingWindow[" "]
-    direction LR
-        I1["Iterația 1<br><b>08:00–09:00</b><br>✓ Liber"]
-        I2["Iterația 2<br><b>09:10–10:10</b><br>✗ Suprapunere"]
-        I3["Iterația 3<br><b>10:20–11:20</b><br>✓ Liber"]
-        I4["Iterația 4<br><b>11:30–12:30</b><br>✗ Depășit"]
-  end
-    I1 ==> I2
-    I2 ==> I3
-    I3 ==> I4
-    Config["🗓️ Program: 08:00–12:00 <br> ⏱️ Serviciu: 60 min  <br>⏳ Buffer: +10 min <br> 🔒 Blocat: 09:00–10:00"] ~~~ SlidingWindow
-    SlidingWindow ~~~ Result["<b>Sloturi returnate: 08:00 · 10:20</b>"]
-    I1 -.-> Result
-    I3 -.-> Result
+    subgraph ConfigBox ["📋 Parametri Algoritm"]
+        Config["🗓️ <b>Program:</b> 08:00–12:00<br/>⏱️ <b>Serviciu:</b> 60 min<br/>⏳ <b>Buffer:</b> +10 min<br/>🔒 <b>Blocat:</b> 09:00–10:00"]
+    end
 
-     Config:::config
-     I1:::liber
-     I2:::eroare
-     I3:::liber
-     I4:::eroare
-     Result:::rezultat
-    classDef config fill:#f8fafc,stroke:#94a3b8,stroke-width:1px,color:#334155,font-weight:bold,stroke-dasharray: 5 5
-    classDef liber fill:#dcfce7,stroke:#22c55e,stroke-width:2px,color:#14532d
-    classDef eroare fill:#fee2e2,stroke:#ef4444,stroke-width:2px,color:#991b1b
-    classDef rezultat fill:#dbeafe,stroke:#3b82f6,stroke-width:2px,color:#1e3a8a
-    style SlidingWindow fill:transparent,stroke:transparent
+    subgraph WindowFlow ["Fereastră Glisantă (Avans Cursor +70 min)"]
+        direction LR
+        I1["Iterația 1<br/><b>08:00–09:00</b><br/>🟢 Validat ➔ <b>08:00</b>"]
+        I2["Iterația 2<br/><b>09:10–10:10</b><br/>🔴 Respins (Suprapunere)"]
+        I3["Iterația 3<br/><b>10:20–11:20</b><br/>🟢 Validat ➔ <b>10:20</b>"]
+        I4["Iterația 4<br/><b>11:30–12:30</b><br/>🔴 Respins (Depășire)"]
+
+        I1 ==>|"Pas +70 min"| I2
+        I2 ==>|"Pas +70 min"| I3
+        I3 ==>|"Pas +70 min"| I4
+    end
+
+    subgraph OutputBox ["🎯 Rezultat API"]
+        Result["<b>Sloturi returnate:</b><br/><code>08:00 · 10:20</code>"]
+    end
+
+    ConfigBox --> WindowFlow
+    WindowFlow --> OutputBox
+
+    classDef config fill:#f8fafc,stroke:#94a3b8,stroke-width:1px,color:#334155;
+    classDef liber fill:#dcfce7,stroke:#16a34a,stroke-width:2px,color:#14532d;
+    classDef eroare fill:#fee2e2,stroke:#dc2626,stroke-width:2px,color:#7f1d1d;
+    classDef rez fill:#dbeafe,stroke:#2563eb,stroke-width:2px,color:#1e3a8a;
+
+    class Config config;
+    class I1,I3 liber;
+    class I2,I4 eroare;
+    class Result rez;
+
+    style ConfigBox fill:#f8fafc,stroke:#cbd5e1,stroke-width:1px
+    style WindowFlow fill:#ffffff,stroke:#cbd5e1,stroke-width:1px
+    style OutputBox fill:#eff6ff,stroke:#93c5fd,stroke-width:1px
 ```
 
 Procesul se desfășoară în trei etape riguroase:
